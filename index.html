@@ -186,7 +186,7 @@ if (lang === "en") {
     function piLogin() {
       showMsg("1/3: تم استدعاء piLogin...");
       if (!window.Pi) {
-        showMsg("خطأ: window.Pi غير موجود (لست داخل Pi SDK).");
+        showMsg("خطأ: window.Pi غير موجود (افتح الرابط داخل Pi Browser).");
         return;
       }
       if (typeof window.Pi.authenticate !== "function") {
