@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Asmar 1972 — KAHLA SALIM</title>
+  <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+  <style>
+    body {
+      font-family: Arial, Tahoma, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f7f5f0;
+      color: #222;
+      line-height: 1.7;
+    }
+    .box {
+      max-width: 820px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 14px;
+      margin-bottom: 20px;
+    }
+    button {
+      padding: 8px 14px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background: #fff;
+      cursor: pointer;
+    }
+    button.primary {
+      background: #6c3ce9;
+      color: #fff;
+      border-color: #6c3ce9;
+    }
+    .card {
+      border: 1px solid #e5e5e5;
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <div class="topbar">
+      <div>
+        <h1 id="storeTitle" style="margin:0;">Asmar 1972</h1>
+        <small id="authorName">KAHLA SALIM</small>
+      </div>
+      <div>
+        <button onclick="setLang('ar')">العربية</button>
+        <button onclick="setLang('en')">English</button>
+        <button onclick="setLang('fr')">Français</button>
+        <button class="primary" id="loginBtn" onclick="piLogin()">تسجيل الدخول عبر Pi</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 id="freeTitle">قصة دودو ودراجته الحمراء (عينة مجانية)</h2>
+      <p id="freeDesc">اقرأ وحمّل العينة المجانية مباشرة من المتجر.</p>
+      <button class="primary" id="freeBtn" onclick="alert('تم تفعيل تحميل العينة المجانية: قصة دودو ودراجته الحمراء')">تحميل العينة المجانية</button>
+    </div>
+
+    <div class="card">
+      <h2 id="paidTitle">إصدارات وكتب KAHLA SALIM الرقمية</h2>
+      <p id="paidDesc">الأسعار مرتبطة بالدولار الأمريكي (USD) ويتم احتساب ما يعادلها بعملة Pi.</p>
+      <p id="priceInfo">سعر الكتاب النموذجي: $10 USD</p>
+      <button class="primary" id="buyBtn" onclick="piPay(10)">شراء عبر Pi</button>
+    </div>
+  </div>
+
+  <script>
+    const PI_BACKEND_URL = "https://YOUR_BACKEND_URL_HERE";
+
+    if (window.Pi) {
+      Pi.init({ version: "2.0", sandbox: true });
+    }
+
+    const texts = {
+      ar: {
+        dir: "rtl",
+        lang: "ar",
+        login: "تسجيل الدخول عبر Pi",
+        freeTitle: "قصة دودو ودراجته الحمراء (عينة مجانية)",
+        freeDesc: "اقرأ وحمّل العينة المجانية مباشرة من المتجر.",
+        freeBtn: "تحميل العينة المجانية",
+        paidTitle: "إصدارات وكتب KAHLA SALIM الرقمية",
+        paidDesc: "الأسعار مرتبطة بالدولار الأمريكي (USD) ويتم احتساب ما يعادلها بعملة Pi.",
+        price: "سعر الكتاب النموذجي: $10 USD",
+        buyBtn: "شراء عبر Pi"
+      },
+      en: {
+        dir: "ltr",
+        lang: "en",
+        login: "Sign in with Pi",
+        freeTitle: "Dodo and his Red Bicycle (Free Sample)",
+        freeDesc: "Read and download the free sample directly from the store.",
+        freeBtn: "Download Free Sample",
+        paidTitle: "KAHLA SALIM Digital Books & Releases",
+        paidDesc: "Prices are pegged to USD and converted dynamically to Pi.",
+        price: "Sample Book Price: $10 USD",
+        buyBtn: "Buy with Pi"
+      },
+      fr: {
+        dir: "ltr",
+        lang: "fr",
+        login: "Connexion avec Pi",
+        freeTitle: "Dodo et son vélo rouge (Échantillon gratuit)",
+        freeDesc: "Lisez et téléchargez l'échantillon gratuit directement depuis la boutique.",freeBtn: "Télécharger l'échantillon gratuit",
+        paidTitle: "Livres et publications numériques de KAHLA SALIM",
+        paidDesc: "Les prix sont indexés sur l'USD et convertis dynamiquement en Pi.",
+        price: "Prix indicatif du livre : 10 $ USD",
+        buyBtn: "Acheter avec Pi"
+      }
+    };
+
+    function setLang(code) {
+      const t = texts[code];
+      document.documentElement.lang = t.lang;
+      document.documentElement.dir = t.dir;
+      document.getElementById("loginBtn").textContent = t.login;
+      document.getElementById("freeTitle").textContent = t.freeTitle;
+      document.getElementById("freeDesc").textContent = t.freeDesc;
+      document.getElementById("freeBtn").textContent = t.freeBtn;
+      document.getElementById("paidTitle").textContent = t.paidTitle;
+      document.getElementById("paidDesc").textContent = t.paidDesc;
+      document.getElementById("priceInfo").textContent = t.price;
+      document.getElementById("buyBtn").textContent = t.buyBtn;
+    }
+
+    async function piLogin() {
+      if (!window.Pi) {
+        alert("يرجى فتح المتجر داخل متصفح Pi Browser لتسجيل الدخول.");
+        return;
+      }
+      try {
+        const scopes = ["username", "payments"];
+        const auth = await Pi.authenticate(scopes, onIncompletePaymentFound);
+        alert("مرحباً " + auth.user.username);
+      } catch (err) {
+        alert("تعذر تسجيل الدخول: " + err.message);
+      }
+    }
+
+    function onIncompletePaymentFound(payment) {
+      fetch(PI_BACKEND_URL + "/api/pi/complete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ paymentId: payment.identifier, txid: payment.transaction?.txid })
+      });
+    }
+
+    async function piPay(amountUsd) {
+      if (!window.Pi) {
+        alert("يرجى فتح المتجر داخل متصفح Pi Browser لإتمام الدفع.");
+        return;
+      }
+      try {
+        await Pi.createPayment({
+          amount: amountUsd,
+          memo: "Asmar 1972 Digital Book — KAHLA SALIM",
+          metadata: { bookUsdPrice: amountUsd, author: "KAHLA SALIM" }
+        }, {
+          onReadyForServerApproval: function(paymentId) {
+            return fetch(PI_BACKEND_URL + "/api/pi/approve", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ paymentId })
+            });
+          },
+          onReadyForServerCompletion: function(paymentId, txid) {
+            return fetch(PI_BACKEND_URL + "/api/pi/complete", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ paymentId, txid })
+            });
+          },
+          onCancel: function() {
+            alert("تم إلغاء عملية الدفع.");
+          },
+          onError: function(error) {
+            alert("حدث خطأ أثناء الدفع: " + error.message);
+          }
+        });
+      } catch (err) {
+        alert("تعذر بدء الدفع: " + err.message);
+      }
+    }
+  </script>
+</body>
+</html>
