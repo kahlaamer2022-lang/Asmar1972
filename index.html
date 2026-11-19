@@ -16,7 +16,7 @@
       line-height: 1.65;
     }
     .wrap {
-      max-width: 840px;
+      max-width: 900px;
       margin: 0 auto;
     }
     .box {
@@ -132,6 +132,18 @@
       font-size: 0.88rem;
       font-weight: bold;
     }
+    .orders-pill {
+      margin-top: 12px;
+      margin-inline-start: 8px;
+      display: inline-block;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: #e0e7ff;
+      color: #3730a3;
+      border: 1px solid #c7d2fe;
+      font-size: 0.88rem;
+      font-weight: bold;
+    }
     .status {
       margin-top: 12px;
       padding: 12px 14px;
@@ -150,12 +162,12 @@
     }
     .books-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(225px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
       gap: 14px;
       margin-top: 12px;
     }
     .book-card {
-      border: 1px solid #e4e4e7;
+border: 1px solid #e4e4e7;
       border-radius: 12px;
       padding: 16px;
       background: #fafafa;
@@ -164,24 +176,44 @@
       justify-content: space-between;
       gap: 12px;
     }
+    .book-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
     .book-tag {
       display: inline-block;
       padding: 3px 10px;
-border-radius: 999px;
+      border-radius: 999px;
       background: #fef3c7;
       color: #92400e;
       font-size: 0.78rem;
       font-weight: bold;
-      margin-bottom: 8px;
+    }
+    .price-tag {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: #ede9fe;
+      color: #5b21b6;
+      font-size: 0.78rem;
+      font-weight: bold;
+    }
+    .price-tag.free {
+      background: #dcfce7;
+      color: #166534;
     }
     .book-title {
       margin: 0 0 6px;
-      font-size: 1.08rem;
+      font-size: 1.05rem;
       color: #18181b;
     }
     .book-desc {
       margin: 0;
-      font-size: 0.9rem;
+      font-size: 0.89rem;
       color: #52525b;
     }
     .card-actions {
@@ -197,12 +229,26 @@ border-radius: 999px;
       border-radius: 8px;
       cursor: pointer;
       font-weight: bold;
-      font-size: 0.88rem;
+      font-size: 0.86rem;
       width: 100%;
     }
     .btn-book:hover {
       background: #6d28d9;
       color: #ffffff;
+    }
+    .btn-order {
+      padding: 8px 12px;
+      border: none;
+      background: #0f766e;
+      color: #ffffff;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 0.86rem;
+      width: 100%;
+    }
+    .btn-order:hover {
+      background: #115e59;
     }
     .btn-save {
       padding: 7px 12px;
@@ -212,7 +258,7 @@ border-radius: 999px;
       border-radius: 8px;
       cursor: pointer;
       font-weight: bold;
-      font-size: 0.85rem;
+      font-size: 0.84rem;
       width: 100%;
     }
     .btn-save.active {
@@ -242,7 +288,7 @@ border-radius: 999px;
       <div id="top-pill" class="top-pill">متجر رقمي متكامل • Pi Ecosystem</div>
       <h1>Asmar 1972</h1>
       <div class="author">KAHLA SALIM</div>
-      <p id="tagline" class="tagline">منصة رقمية للقصص المصورة وأدلة التغذية الطبيعية والإصدارات المعرفية متعددة اللغات.</p>
+      <p id="tagline" class="tagline">منصة رقمية للقصص المصورة وأدلة التغذية الطبيعية وحاسبة المشاريع والإصدارات المعرفية متعددة اللغات.</p>
 
       <div class="row">
         <button type="button" id="lang-ar" class="btn-lang active" onclick="changeLang('ar')">العربية</button>
@@ -256,12 +302,12 @@ border-radius: 999px;
       <div>
         <div id="pi-user-badge" class="user-badge">حالة الحساب: زائر (غير مسجل عبر Pi)</div>
         <div id="saved-count-badge" class="saved-pill">الإصدارات المحفوظة: 0</div>
+        <div id="orders-count-badge" class="orders-pill">الطلبات المسجلة: 0</div>
       </div>
 
       <div id="pi-status" class="status">جاهز — اضغط على «تسجيل الدخول عبر Pi».</div>
     </div>
-
-    <div class="box">
+<div class="box">
       <h2 id="s-title">قصة دودو ودراجته الحمراء (عينة مجانية)</h2>
       <p id="s-desc">اقرأ وحمّل العينة المجانية مباشرة من المتجر واستكشف أسلوب القصة والرسوم.</p>
       <button type="button" id="s-btn" class="btn-pi" onclick="freeSample()">تحميل العينة المجانية</button>
@@ -272,50 +318,14 @@ border-radius: 999px;
 
     <div class="box">
       <h2 id="c-title">إصدارات وكتب KAHLA SALIM الرقمية</h2>
-      <p id="c-desc">مجموعة الكتب والأدلة والقصص الرقمية المتاحة في المتجر.</p>
-
-      <div class="books-grid">
-        <div class="book-card">
-          <div>
-            <span id="tag-1" class="book-tag">قصص الأطفال</span>
-            <h3 id="b1-title" class="book-title">قصة دودو ودراجته الحمراء</h3>
-            <p id="b1-desc" class="book-desc">قصة مصورة ممتعة للأطفال حول المغامرة والاكتشاف وقيمة الدراجة الحمراء.</p>
-          </div>
-          <div class="card-actions">
-            <button type="button" id="b1-btn" class="btn-book" onclick="selectBook('dodo')">معاينة العينة والتفاصيل</button>
-            <button type="button" id="save-dodo" class="btn-save" onclick="toggleSaveBook('dodo')">حفظ في القائمة</button>
-          </div>
-        </div>
-<div class="book-card">
-          <div>
-            <span id="tag-2" class="book-tag">التغذية الطبيعية</span>
-            <h3 id="b2-title" class="book-title">حكمة الأجداد في التغذية</h3>
-            <p id="b2-desc" class="book-desc">دليل عملي مستلهم من التقاليد الغذائية الطبيعية والعادات الصحية المتوازنة.</p>
-          </div>
-          <div class="card-actions">
-            <button type="button" id="b2-btn" class="btn-book" onclick="selectBook('nutrition')">تفاصيل الإصدار</button>
-            <button type="button" id="save-nutrition" class="btn-save" onclick="toggleSaveBook('nutrition')">حفظ في القائمة</button>
-          </div>
-        </div>
-
-        <div class="book-card">
-          <div>
-            <span id="tag-3" class="book-tag">أدب وقصص</span>
-            <h3 id="b3-title" class="book-title">هميمة وبدعة: بريق الذهب وصدى الواجب</h3>
-            <p id="b3-desc" class="book-desc">عمل قصصي مشوّق يمزج بين السرد الأدبي والمعاني التربوية والواجب.</p>
-          </div>
-          <div class="card-actions">
-            <button type="button" id="b3-btn" class="btn-book" onclick="selectBook('hamaima')">تفاصيل الإصدار</button>
-            <button type="button" id="save-hamaima" class="btn-save" onclick="toggleSaveBook('hamaima')">حفظ في القائمة</button>
-          </div>
-        </div>
-      </div>
+      <p id="c-desc">مجموعة القصص والأدلة والملفات الرقمية المتاحة في المتجر.</p>
+      <div id="books-grid" class="books-grid"></div>
     </div>
 
     <div class="box">
       <h2 id="a-title">عن المشروع والكاتب</h2>
       <div id="a-body" class="about-box">
-        يجمع متجر <strong>Asmar 1972</strong> بإشراف <strong>KAHLA SALIM</strong> بين التأليف القصصي للأطفال، وأدلة التغذية الطبيعية المستندة إلى الخبرة العملية، وتجربة استخدام مباشرة داخل متصفح Pi بثلاث لغات (العربية، الإنجليزية، والفرنسية).
+        يجمع متجر <strong>Asmar 1972</strong> بإشراف <strong>KAHLA SALIM</strong> بين قصص الأطفال ومغامرات عامر ودودو، وأدلة التغذية الطبيعية، وحاسبة مشاريع البناء، مع تجربة استخدام مباشرة داخل متصفح Pi بثلاث لغات (العربية، الإنجليزية، والفرنسية).
       </div>
     </div>
 
@@ -327,40 +337,199 @@ border-radius: 999px;
     var piInitialized = false;
     var currentPiUser = null;
     var savedBooks = [];
+    var orderList = [];
     var SESSION_KEY = "asmar1972_pi_user";
     var SAVED_KEY = "asmar1972_saved_books";
+    var ORDERS_KEY = "asmar1972_orders";
     var FREE_SAMPLE_URL = "./dodo-sample.pdf";
+
+    var BOOKS_ORDER = [
+      "dodo",
+      "nutrition_wisdom",
+      "construction_calc",
+      "amer_little_hero",
+      "amer_moto_cup",
+      "amer_star_night",
+      "nutrition_tips",
+      "trio_unforgettable_day",
+      "hamaima_bidaa"
+    ];
 
     var BOOKS_DATA = {
       dodo: {
-        ar: "إصدار «قصة دودو ودراجته الحمراء»: متاح مع عينة مجانية قابلة للتحميل المباشر (PDF) لاختبار المحتوى والرسوم.",
-        en: "Release «Dodo and His Red Bicycle»: includes a direct downloadable free sample (PDF) to preview the story and illustrations.",
-        fr: "Édition « Dodo et son vélo rouge » : comprend un échantillon gratuit téléchargeable (PDF) pour découvrir l'histoire et les illustrations.",
+        isFreeSample: true,
+        pricePi: 0,
+        priceAr: "عينة مجانية",
+        priceEn: "Free Sample",
+        priceFr: "Échantillon gratuit",
+        tagAr: "قصص الأطفال",
+        tagEn: "Children's Stories",
+        tagFr: "Histoires enfants",
         nameAr: "قصة دودو ودراجته الحمراء",
         nameEn: "Dodo and His Red Bicycle",
         nameFr: "Dodo et son vélo rouge",
-        openSample: true
+        descAr: "قصة مصورة ممتعة للأطفال حول المغامرة والاكتشاف وقيمة الدراجة الحمراء مع عينة PDF.",
+        descEn: "An engaging illustrated children's story about adventure, discovery, and the red bicycle with a PDF sample.",
+        descFr: "Une histoire illustrée pour enfants sur l'aventure, la découverte et le vélo rouge avec échantillon PDF.",
+        detailAr: "إصدار «قصة دودو ودراجته الحمراء»: متاح مع عينة مجانية قابلة للتحميل المباشر (PDF).",
+        detailEn: "Release «Dodo and His Red Bicycle»: includes a direct downloadable free PDF sample.",
+        detailFr: "Édition « Dodo et son vélo rouge » : comprend un échantillon PDF gratuit téléchargeable."
       },
-      nutrition: {
-        ar: "إصدار «حكمة الأجداد في التغذية»: دليل معرفي يوثق التغذية الطبيعية والعادات الغذائية الأصيلة ضمن مكتبة المتجر.",
-        en: "Release «Ancestral Wisdom in Nutrition»: a knowledge guide documenting natural nutrition and traditional healthy habits in the store.",
-        fr: "Édition « Sagesse des ancêtres en nutrition » : un guide documentant la nutrition naturelle et les habitudes saines dans la boutique.",
+      nutrition_wisdom: {
+        isFreeSample: false,
+        pricePi: 5,
+        priceAr: "5 Pi",
+        priceEn: "5 Pi",
+        priceFr: "5 Pi",
+        tagAr: "التغذية الطبيعية",
+        tagEn: "Natural Nutrition",
+        tagFr: "Nutrition naturelle",
         nameAr: "حكمة الأجداد في التغذية",
         nameEn: "Ancestral Wisdom in Nutrition",
         nameFr: "Sagesse des ancêtres en nutrition",
-        openSample: false
+        descAr: "دليل عملي مستلهم من التقاليد الغذائية الطبيعية والعادات الصحية المتوازنة.",
+        descEn: "A practical guide inspired by natural food traditions and balanced healthy habits.",
+        descFr: "Un guide pratique inspiré des traditions alimentaires naturelles et de l'équilibre.",
+        detailAr: "إصدار «حكمة الأجداد في التغذية» (5 Pi): دليل معرفي يوثق التغذية الطبيعية والعادات الصحية.",
+        detailEn: "Release «Ancestral Wisdom in Nutrition» (5 Pi): a guide documenting natural nutrition and healthy habits.",
+detailFr: "Édition « Sagesse des ancêtres en nutrition » (5 Pi) : guide sur la nutrition naturelle et l'équilibre."
       },
-      hamaima: {
-        ar: "إصدار «هميمة وبدعة: بريق الذهب وصدى الواجب»: قصة غنية بالشخصيات والأحداث والمواقف التربوية ضمن إصدارات المتجر.",
-        en: "Release «Hamaima and Bid'a: Sparkle of Gold and Echo of Duty»: a rich story with memorable characters and themes in the store catalog.",
-        fr: "Édition « Hamaima et Bid'a : L'éclat de l'or et l'écho du devoir » : une histoire riche en personnages et valeurs dans le catalogue.",
+      construction_calc: {
+        isFreeSample: false,
+        pricePi: 6,
+        priceAr: "6 Pi",
+        priceEn: "6 Pi",
+        priceFr: "6 Pi",
+        tagAr: "مشاريع البناء",
+        tagEn: "Construction Projects",
+        tagFr: "Projets construction",
+        nameAr: "حاسبة مشاريع البناء",
+        nameEn: "Construction Projects Calculator",
+        nameFr: "Calculateur de projets de construction",
+        descAr: "مرجع عملي وتنظيمي لحساب وتقدير عناصر ومتطلبات مشاريع البناء.",
+        descEn: "A practical reference for calculating and organizing construction project estimates and items.",
+        descFr: "Une référence pratique pour estimer et organiser les éléments d'un projet de construction.",
+        detailAr: "إصدار «حاسبة مشاريع البناء» (6 Pi): أداة ومرجع رقمي لمساعدة أصحاب المشاريع في التقدير والحساب.",
+        detailEn: "Release «Construction Projects Calculator» (6 Pi): a digital reference for project estimation and planning.",
+        detailFr: "Édition « Calculateur de projets de construction » (6 Pi) : référence pratique pour l'estimation."
+      },
+      amer_little_hero: {
+        isFreeSample: false,
+        pricePi: 4,
+        priceAr: "4 Pi",
+        priceEn: "4 Pi",
+        priceFr: "4 Pi",
+        tagAr: "مغامرات عامر",
+        tagEn: "Amer Adventures",
+        tagFr: "Aventures d'Amer",
+        nameAr: "عامر البطل الصغير",
+        nameEn: "Amer the Little Hero",
+        nameFr: "Amer le petit héros",
+        descAr: "قصة مشوّقة للأطفال تبرز الشجاعة وحسن التصرف والمواقف الإيجابية لعامر.",
+        descEn: "An engaging children's story highlighting courage, good judgment, and Amer's positive actions.",
+        descFr: "Une histoire captivante pour enfants mettant en valeur le courage et les bonnes initiatives d'Amer.",
+        detailAr: "إصدار «عامر البطل الصغير» (4 Pi): قصة قصصية موجّهة للناشئة ضمن سلسلة مغامرات عامر.",
+        detailEn: "Release «Amer the Little Hero» (4 Pi): a story for young readers in the Amer series.",
+        detailFr: "Édition « Amer le petit héros » (4 Pi) : un récit pour jeunes lecteurs dans la série Amer."
+      },
+      amer_moto_cup: {
+        isFreeSample: false,
+        pricePi: 4,
+        priceAr: "4 Pi",
+        priceEn: "4 Pi",
+        priceFr: "4 Pi",
+        tagAr: "مغامرات عامر",
+        tagEn: "Amer Adventures",
+        tagFr: "Aventures d'Amer",
+        nameAr: "عامر وبطولة الدراجة النارية",
+        nameEn: "Amer and the Motorcycle Championship",
+        nameFr: "Amer et le championnat de moto",
+        descAr: "مغامرة حماسية مليئة بالتحدي والإصرار والروح الرياضية في أجواء البطولة.",
+        descEn: "An action-packed adventure filled with challenge, determination, and sportsmanship.",
+        descFr: "Une aventure dynamique pleine de défi, de persévérance et d'esprit sportif.",
+        detailAr: "إصدار «عامر وبطولة الدراجة النارية» (4 Pi): قصة حماسية حول المثابرة والتحدي.",
+        detailEn: "Release «Amer and the Motorcycle Championship» (4 Pi): an exciting story of perseverance.",
+        detailFr: "Édition « Amer et le championnat de moto » (4 Pi) : une aventure autour de la persévérance."
+      },
+      amer_star_night: {
+        isFreeSample: false,
+        pricePi: 4,
+        priceAr: "4 Pi",
+        priceEn: "4 Pi",
+        priceFr: "4 Pi",
+        tagAr: "مغامرات عامر",
+        tagEn: "Amer Adventures",
+        tagFr: "Aventures d'Amer",
+        nameAr: "عامر وليلة النجوم عند الجدة",
+        nameEn: "Amer and the Starry Night at Grandma's",
+        nameFr: "Amer et la nuit étoilée chez Mamie",
+        descAr: "حكاية دافئة تجمع بين دفء الأسرة وحكايات الجدة وتأمل النجوم في الليل.",
+        descEn: "A warm tale blending family warmth, grandmother's stories, and stargazing at night.",
+descFr: "Un récit chaleureux mêlant chaleur familiale, contes de grand-mère et étoiles.",
+        detailAr: "إصدار «عامر وليلة النجوم عند الجدة» (4 Pi): قصة عائلية هادئة ذات طابع وجداني جميل.",
+        detailEn: "Release «Amer and the Starry Night at Grandma's» (4 Pi): a warm family story.",
+        detailFr: "Édition « Amer et la nuit étoilée chez Mamie » (4 Pi) : une histoire familiale chaleureuse."
+      },
+      nutrition_tips: {
+        isFreeSample: false,
+        pricePi: 5,
+        priceAr: "5 Pi",
+        priceEn: "5 Pi",
+        priceFr: "5 Pi",
+        tagAr: "التغذية الطبيعية",
+        tagEn: "Natural Nutrition",
+        tagFr: "Nutrition naturelle",
+        nameAr: "كتاب نصائح في التغذية",
+        nameEn: "Guide to Nutrition Tips",
+        nameFr: "Guide de conseils en nutrition",
+        descAr: "مجموعة مركّزة من الإرشادات الغذائية اليومية البسيطة لدعم صحة الجسم والنشاط.",
+        descEn: "A focused collection of practical daily nutrition tips to support health and vitality.",
+        descFr: "Un recueil pratique de conseils nutritionnels quotidiens pour la santé et l'énergie.",
+        detailAr: "إصدار «كتاب نصائح في التغذية» (5 Pi): خلاصة نصائح غذائية عملية وسهلة التطبيق.",
+        detailEn: "Release «Guide to Nutrition Tips» (5 Pi): practical and easy-to-follow nutrition advice.",
+        detailFr: "Édition « Guide de conseils en nutrition » (5 Pi) : conseils pratiques au quotidien."
+      },
+      trio_unforgettable_day: {
+        isFreeSample: false,
+        pricePi: 4,
+        priceAr: "4 Pi",
+        priceEn: "4 Pi",
+        priceFr: "4 Pi",
+        tagAr: "قصص ومغامرات",
+        tagEn: "Stories & Adventures",
+        tagFr: "Histoires & aventures",
+        nameAr: "مغامرات الثلاثي المرح: يوم لا ينسى",
+        nameEn: "Adventures of the Fun Trio: An Unforgettable Day",
+        nameFr: "Aventures du trio joyeux : Un jour inoubliable",
+        descAr: "قصة جماعية مرحة تبرز الصداقة والتعاون والمواقف الطريفة في يوم حافل.",
+        descEn: "A lively group story highlighting friendship, teamwork, and memorable moments.",
+        descFr: "Une histoire joyeuse mettant en avant l'amitié, l'entraide et des moments inoubliables.",
+        detailAr: "إصدار «مغامرات الثلاثي المرح: يوم لا ينسى» (4 Pi): قصة ممتعة حول الصداقة والمرح.",
+        detailEn: "Release «Adventures of the Fun Trio: An Unforgettable Day» (4 Pi): a lively friendship story.",
+        detailFr: "Édition « Aventures du trio joyeux : Un jour inoubliable » (4 Pi) : récit d'amitié et de joie."
+      },
+      hamaima_bidaa: {
+        isFreeSample: false,
+        pricePi: 7,
+        priceAr: "7 Pi",
+        priceEn: "7 Pi",
+        priceFr: "7 Pi",
+        tagAr: "أدب وقصص",
+        tagEn: "Literature & Stories",
+        tagFr: "Littérature & récits",
         nameAr: "هميمة وبدعة: بريق الذهب وصدى الواجب",
         nameEn: "Hamaima and Bid'a: Sparkle of Gold and Echo of Duty",
         nameFr: "Hamaima et Bid'a : L'éclat de l'or et l'écho du devoir",
-        openSample: false
+        descAr: "عمل قصصي مشوّق يمزج بين السرد الأدبي والشخصيات والمعاني التربوية والواجب.",
+        descEn: "A compelling narrative blending literary storytelling, characters, educational values, and duty.",
+        descFr: "Un récit riche mêlant narration littéraire, personnages, valeurs et sens du devoir.",
+        detailAr: "إصدار «هميمة وبدعة: بريق الذهب وصدى الواجب» (7 Pi): عمل قصصي متكامل في مكتبة المتجر.",
+        detailEn: "Release «Hamaima and Bid'a: Sparkle of Gold and Echo of Duty» (7 Pi): a full story edition.",
+        detailFr: "Édition « Hamaima et Bid'a : L'éclat de l'or et l'écho du devoir » (7 Pi) : édition complète."
       }
     };
-function loadSavedUser() {
+
+    function loadSavedUser() {
       try {
         var raw = sessionStorage.getItem(SESSION_KEY);
         if (raw) {
@@ -370,8 +539,7 @@ function loadSavedUser() {
         currentPiUser = null;
       }
     }
-
-    function loadSavedBooks() {
+function loadSavedBooks() {
       try {
         var raw = sessionStorage.getItem(SAVED_KEY);
         if (raw) {
@@ -385,11 +553,32 @@ function loadSavedUser() {
       }
     }
 
+    function loadOrders() {
+      try {
+        var raw = sessionStorage.getItem(ORDERS_KEY);
+        if (raw) {
+          var parsed = JSON.parse(raw);
+          if (Array.isArray(parsed)) {
+            orderList = parsed;
+          }
+        }
+      } catch (e) {
+        orderList = [];
+      }
+    }
+
     function persistSavedBooks() {
       try {
         sessionStorage.setItem(SAVED_KEY, JSON.stringify(savedBooks));
       } catch (e) {}
       renderSavedUI();
+    }
+
+    function persistOrders() {
+      try {
+        sessionStorage.setItem(ORDERS_KEY, JSON.stringify(orderList));
+      } catch (e) {}
+      renderOrdersBadge();
     }
 
     function savePiUser(userObj) {
@@ -427,6 +616,69 @@ function loadSavedUser() {
       }
     }
 
+    function renderOrdersBadge() {
+      var badge = document.getElementById("orders-count-badge");
+      if (!badge) return;
+      if (currentLang === "en") {
+        badge.textContent = "Recorded Orders: " + orderList.length;
+      } else if (currentLang === "fr") {
+        badge.textContent = "Commandes enregistrées : " + orderList.length;
+      } else {
+        badge.textContent = "الطلبات المسجلة: " + orderList.length;
+      }
+    }
+
+    function renderBooksGrid() {
+      var grid = document.getElementById("books-grid");
+      if (!grid) return;
+
+      var html = "";
+      for (var i = 0; i < BOOKS_ORDER.length; i++) {
+        var key = BOOKS_ORDER[i];
+        var item = BOOKS_DATA[key];
+        if (!item) continue;
+
+        var tag = currentLang === "en" ? item.tagEn : (currentLang === "fr" ? item.tagFr : item.tagAr);
+        var title = currentLang === "en" ? item.nameEn : (currentLang === "fr" ? item.nameFr : item.nameAr);
+        var desc = currentLang === "en" ? item.descEn : (currentLang === "fr" ? item.descFr : item.descAr);
+        var price = currentLang === "en" ? item.priceEn : (currentLang === "fr" ? item.priceFr : item.priceAr);
+        var isSaved = savedBooks.indexOf(key) !== -1;
+
+        var saveLabel = isSaved
+          ? (currentLang === "en" ? "Saved ✓" : (currentLang === "fr" ? "Enregistré ✓" : "محفوظ في القائمة ✓"))
+          : (currentLang === "en" ? "Save to List" : (currentLang === "fr" ? "Ajouter à la liste" : "حفظ في القائمة"));
+
+        var detailLabel = item.isFreeSample
+          ? (currentLang === "en" ? "Preview Sample & Details" : (currentLang === "fr" ? "Aperçu et détails" : "معاينة العينة والتفاصيل"))
+          : (currentLang === "en" ? "Edition Details" : (currentLang === "fr" ? "Détails de l'édition" : "تفاصيل الإصدار"));
+var orderBtnHtml = "";
+        if (!item.isFreeSample) {
+          var orderLabel = currentLang === "en"
+            ? ("Order Edition (" + item.pricePi + " Pi)")
+            : (currentLang === "fr" ? ("Commander (" + item.pricePi + " Pi)") : ("طلب الإصدار (" + item.pricePi + " Pi)"));
+          orderBtnHtml = '<button type="button" class="btn-order" onclick="orderBook(\'' + key + '\')">' + orderLabel + "</button>";
+        }
+
+        html += '<div class="book-card">' +
+          '<div>' +
+            '<div class="book-meta">' +
+              '<span class="book-tag">' + tag + "</span>" +
+              '<span class="price-tag' + (item.isFreeSample ? " free" : "") + '">' + price + "</span>" +
+            "</div>" +
+            '<h3 class="book-title">' + title + "</h3>" +
+            '<p class="book-desc">' + desc + "</p>" +
+          "</div>" +
+          '<div class="card-actions">' +
+            orderBtnHtml +
+            '<button type="button" class="btn-book" onclick="selectBook(\'' + key + '\')">' + detailLabel + "</button>" +
+            '<button type="button" class="btn-save' + (isSaved ? " active" : "") + '" onclick="toggleSaveBook(\'' + key + '\')">' + saveLabel + "</button>" +
+          "</div>" +
+        "</div>";
+      }
+
+      grid.innerHTML = html;
+    }
+
     function renderSavedUI() {
       var countBadge = document.getElementById("saved-count-badge");
       if (countBadge) {
@@ -438,25 +690,7 @@ function loadSavedUser() {
           countBadge.textContent = "الإصدارات المحفوظة: " + savedBooks.length;
         }
       }
-
-      var keys = ["dodo", "nutrition", "hamaima"];
-      for (var i = 0; i < keys.length; i++) {
-        var key = keys[i];
-        var btn = document.getElementById("save-" + key);
-        if (!btn) continue;
-        var isSaved = savedBooks.indexOf(key) !== -1;
-        if (isSaved) {
-          btn.classList.add("active");
-          if (currentLang === "en") btn.textContent = "Saved ✓";
-          else if (currentLang === "fr") btn.textContent = "Enregistré ✓";
-          else btn.textContent = "محفوظ في القائمة ✓";
-        } else {
-          btn.classList.remove("active");
-          if (currentLang === "en") btn.textContent = "Save to List";
-          else if (currentLang === "fr") btn.textContent = "Ajouter à la liste";
-          else btn.textContent = "حفظ في القائمة";
-        }
-      }
+      renderBooksGrid();
     }
 
     function toggleSaveBook(bookKey) {
@@ -472,10 +706,37 @@ function loadSavedUser() {
         else showMsg("تمت إضافة «" + title + "» إلى قائمة الإصدارات المحفوظة.");
       } else {
         savedBooks.splice(idx, 1);
-persistSavedBooks();
+        persistSavedBooks();
         if (currentLang === "en") showMsg("Removed from saved list: " + title);
         else if (currentLang === "fr") showMsg("Retiré de la liste : " + title);
         else showMsg("تمت إزالة «" + title + "» من قائمة الإصدارات المحفوظة.");
+      }
+    }
+
+    function orderBook(bookKey) {
+      var book = BOOKS_DATA[bookKey];
+      if (!book || book.isFreeSample) return;
+
+      var buyer = (currentPiUser && currentPiUser.username)
+        ? currentPiUser.username
+        : (currentLang === "en" ? "Guest" : (currentLang === "fr" ? "Invité" : "زائر"));
+      var title = currentLang === "en" ? book.nameEn : (currentLang === "fr" ? book.nameFr : book.nameAr);
+      var orderId = "ORD-" + Math.floor(100000 + Math.random() * 900000);
+
+      orderList.push({
+        id: orderId,
+        book: bookKey,
+        pricePi: book.pricePi,
+        buyer: buyer
+      });
+      persistOrders();
+
+      if (currentLang === "en") {
+        showMsg("Order " + orderId + " registered for «" + title + "» (" + book.pricePi + " Pi) — Buyer: " + buyer + ". Digital copy delivery follows Pi payment or direct confirmation with reference " + orderId + ".");
+      } else if (currentLang === "fr") {
+        showMsg("Commande " + orderId + " enregistrée pour « " + title + " » (" + book.pricePi + " Pi) — Acheteur : " + buyer + ". Remise du fichier numérique après paiement Pi ou confirmation avec la référence " + orderId + ".");
+} else {
+        showMsg("تم تسجيل الطلب رقم " + orderId + " لإصدار «" + title + "» بسعر (" + book.pricePi + " Pi) — المشتري: " + buyer + ". يتم تسليم النسخة الرقمية بعد إتمام الدفع عبر Pi أو تأكيد الطلب برقم المرجع " + orderId + ".");
       }
     }
 
@@ -495,9 +756,11 @@ persistSavedBooks();
 
     loadSavedUser();
     loadSavedBooks();
+    loadOrders();
     ensurePiInit();
     renderUserBadge();
     renderSavedUI();
+    renderOrdersBadge();
 
     function showMsg(text) {
       var el = document.getElementById("pi-status");
@@ -518,7 +781,7 @@ persistSavedBooks();
         document.documentElement.dir = "ltr";
         document.getElementById("lang-en").classList.add("active");
         document.getElementById("top-pill").textContent = "Multilingual Digital Store • Pi Ecosystem";
-        document.getElementById("tagline").textContent = "A digital platform for illustrated stories, natural nutrition guides, and knowledge releases in three languages.";
+        document.getElementById("tagline").textContent = "A digital platform for illustrated stories, natural nutrition guides, project calculators, and knowledge releases in three languages.";
         document.getElementById("pi-btn").textContent = "Sign in with Pi";
         document.getElementById("share-btn").textContent = "Share Link";
         document.getElementById("logout-btn").textContent = "Clear Session";
@@ -527,32 +790,21 @@ persistSavedBooks();
         document.getElementById("s-btn").textContent = "Download Free Sample";
         document.getElementById("s-direct").textContent = "Open / Download Sample File (PDF)";
         document.getElementById("c-title").textContent = "KAHLA SALIM Digital Releases & Books";
-        document.getElementById("c-desc").textContent = "Digital books, guides, and stories available in the store.";
-        document.getElementById("tag-1").textContent = "Children's Stories";
-        document.getElementById("b1-title").textContent = "Dodo and His Red Bicycle";
-        document.getElementById("b1-desc").textContent = "An engaging illustrated story for children about adventure, discovery, and the red bicycle.";
-        document.getElementById("b1-btn").textContent = "Preview Sample & Details";
-        document.getElementById("tag-2").textContent = "Natural Nutrition";
-        document.getElementById("b2-title").textContent = "Ancestral Wisdom in Nutrition";
-        document.getElementById("b2-desc").textContent = "A practical guide inspired by natural food traditions and balanced healthy habits.";
-        document.getElementById("b2-btn").textContent = "Edition Details";
-        document.getElementById("tag-3").textContent = "Literature & Stories";
-        document.getElementById("b3-title").textContent = "Hamaima and Bid'a: Sparkle of Gold and Echo of Duty";
-        document.getElementById("b3-desc").textContent = "A compelling narrative blending literary storytelling with educational values and duty.";
-        document.getElementById("b3-btn").textContent = "Edition Details";
+        document.getElementById("c-desc").textContent = "Stories, guides, and digital releases available in the store.";
         document.getElementById("a-title").textContent = "About the Project & Author";
-document.getElementById("a-body").innerHTML = "The <strong>Asmar 1972</strong> store by <strong>KAHLA SALIM</strong> brings together children's illustrated storytelling, natural nutrition guides rooted in practical experience, and direct Pi Browser usability in Arabic, English, and French.";
+        document.getElementById("a-body").innerHTML = "The <strong>Asmar 1972</strong> store by <strong>KAHLA SALIM</strong> brings together children's stories and Amer/Dodo adventures, natural nutrition guides, construction project calculators, and direct Pi Browser usability in Arabic, English, and French.";
         document.getElementById("foot-note").textContent = "Asmar 1972 • KAHLA SALIM — Digital Store Ready for Demo & Growth";
         renderUserBadge();
         renderSavedUI();
+        renderOrdersBadge();
         showMsg(currentPiUser && currentPiUser.username ? ("Welcome back, " + currentPiUser.username) : "Ready — click «Sign in with Pi».");
       } else if (lang === "fr") {
         document.documentElement.lang = "fr";
         document.documentElement.dir = "ltr";
         document.getElementById("lang-fr").classList.add("active");
         document.getElementById("top-pill").textContent = "Boutique numérique multilingue • Pi Ecosystem";
-        document.getElementById("tagline").textContent = "Une plateforme numérique pour histoires illustrées, guides de nutrition naturelle et publications multilingues.";
-        document.getElementById("pi-btn").textContent = "Connexion avec Pi";
+        document.getElementById("tagline").textContent = "Une plateforme numérique pour histoires illustrées, guides de nutrition naturelle, calculateurs de projets et publications multilingues.";
+document.getElementById("pi-btn").textContent = "Connexion avec Pi";
         document.getElementById("share-btn").textContent = "Partager le lien";
         document.getElementById("logout-btn").textContent = "Effacer la session";
         document.getElementById("s-title").textContent = "Dodo et son vélo rouge (Échantillon gratuit)";
@@ -560,31 +812,20 @@ document.getElementById("a-body").innerHTML = "The <strong>Asmar 1972</strong> s
         document.getElementById("s-btn").textContent = "Télécharger l'échantillon gratuit";
         document.getElementById("s-direct").textContent = "Ouvrir / Télécharger l'échantillon (PDF)";
         document.getElementById("c-title").textContent = "Publications et livres numériques KAHLA SALIM";
-        document.getElementById("c-desc").textContent = "Livres numériques, guides et histoires de la boutique.";
-        document.getElementById("tag-1").textContent = "Histoires pour enfants";
-        document.getElementById("b1-title").textContent = "Dodo et son vélo rouge";
-        document.getElementById("b1-desc").textContent = "Une histoire illustrée captivante pour enfants autour de l'aventure et de la découverte.";
-        document.getElementById("b1-btn").textContent = "Aperçu et détails";
-        document.getElementById("tag-2").textContent = "Nutrition naturelle";
-        document.getElementById("b2-title").textContent = "Sagesse des ancêtres en nutrition";
-        document.getElementById("b2-desc").textContent = "Un guide pratique inspiré des traditions alimentaires naturelles et de l'équilibre.";
-        document.getElementById("b2-btn").textContent = "Détails de l'édition";
-        document.getElementById("tag-3").textContent = "Littérature et récits";
-        document.getElementById("b3-title").textContent = "Hamaima et Bid'a : L'éclat de l'or et l'écho du devoir";
-        document.getElementById("b3-desc").textContent = "Un récit riche mêlant narration littéraire, valeurs éducatives et sens du devoir.";
-        document.getElementById("b3-btn").textContent = "Détails de l'édition";
+        document.getElementById("c-desc").textContent = "Histoires, guides et éditions numériques disponibles dans la boutique.";
         document.getElementById("a-title").textContent = "À propos du projet et de l'auteur";
-        document.getElementById("a-body").innerHTML = "La boutique <strong>Asmar 1972</strong> de <strong>KAHLA SALIM</strong> réunit des histoires illustrées pour enfants, des guides de nutrition naturelle issus de l'expérience pratique et une utilisation fluide dans Pi Browser en arabe, anglais et français.";
+        document.getElementById("a-body").innerHTML = "La boutique <strong>Asmar 1972</strong> de <strong>KAHLA SALIM</strong> réunit des histoires pour enfants et aventures d'Amer et Dodo, des guides de nutrition naturelle, des calculateurs de projets de construction et une utilisation directe dans Pi Browser en arabe, anglais et français.";
         document.getElementById("foot-note").textContent = "Asmar 1972 • KAHLA SALIM — Boutique numérique prête pour démonstration et évolution";
         renderUserBadge();
         renderSavedUI();
+        renderOrdersBadge();
         showMsg(currentPiUser && currentPiUser.username ? ("Bon retour, " + currentPiUser.username) : "Prêt — cliquez sur « Connexion avec Pi ».");
-} else {
+      } else {
         document.documentElement.lang = "ar";
         document.documentElement.dir = "rtl";
         document.getElementById("lang-ar").classList.add("active");
         document.getElementById("top-pill").textContent = "متجر رقمي متكامل • Pi Ecosystem";
-        document.getElementById("tagline").textContent = "منصة رقمية للقصص المصورة وأدلة التغذية الطبيعية والإصدارات المعرفية متعددة اللغات.";
+        document.getElementById("tagline").textContent = "منصة رقمية للقصص المصورة وأدلة التغذية الطبيعية وحاسبة المشاريع والإصدارات المعرفية متعددة اللغات.";
         document.getElementById("pi-btn").textContent = "تسجيل الدخول عبر Pi";
         document.getElementById("share-btn").textContent = "مشاركة الرابط";
         document.getElementById("logout-btn").textContent = "مسح الجلسة";
@@ -593,24 +834,13 @@ document.getElementById("a-body").innerHTML = "The <strong>Asmar 1972</strong> s
         document.getElementById("s-btn").textContent = "تحميل العينة المجانية";
         document.getElementById("s-direct").textContent = "فتح / تحميل ملف العينة (PDF)";
         document.getElementById("c-title").textContent = "إصدارات وكتب KAHLA SALIM الرقمية";
-        document.getElementById("c-desc").textContent = "مجموعة الكتب والأدلة والقصص الرقمية المتاحة في المتجر.";
-        document.getElementById("tag-1").textContent = "قصص الأطفال";
-        document.getElementById("b1-title").textContent = "قصة دودو ودراجته الحمراء";
-        document.getElementById("b1-desc").textContent = "قصة مصورة ممتعة للأطفال حول المغامرة والاكتشاف وقيمة الدراجة الحمراء.";
-        document.getElementById("b1-btn").textContent = "معاينة العينة والتفاصيل";
-        document.getElementById("tag-2").textContent = "التغذية الطبيعية";
-        document.getElementById("b2-title").textContent = "حكمة الأجداد في التغذية";
-        document.getElementById("b2-desc").textContent = "دليل عملي مستلهم من التقاليد الغذائية الطبيعية والعادات الصحية المتوازنة.";
-        document.getElementById("b2-btn").textContent = "تفاصيل الإصدار";
-        document.getElementById("tag-3").textContent = "أدب وقصص";
-        document.getElementById("b3-title").textContent = "هميمة وبدعة: بريق الذهب وصدى الواجب";
-        document.getElementById("b3-desc").textContent = "عمل قصصي مشوّق يمزج بين السرد الأدبي والمعاني التربوية والواجب.";
-        document.getElementById("b3-btn").textContent = "تفاصيل الإصدار";
+        document.getElementById("c-desc").textContent = "مجموعة القصص والأدلة والملفات الرقمية المتاحة في المتجر.";
         document.getElementById("a-title").textContent = "عن المشروع والكاتب";
-        document.getElementById("a-body").innerHTML = "يجمع متجر <strong>Asmar 1972</strong> بإشراف <strong>KAHLA SALIM</strong> بين التأليف القصصي للأطفال، وأدلة التغذية الطبيعية المستندة إلى الخبرة العملية، وتجربة استخدام مباشرة داخل متصفح Pi بثلاث لغات (العربية، الإنجليزية، والفرنسية).";
+        document.getElementById("a-body").innerHTML = "يجمع متجر <strong>Asmar 1972</strong> بإشراف <strong>KAHLA SALIM</strong> بين قصص الأطفال ومغامرات عامر ودودو، وأدلة التغذية الطبيعية، وحاسبة مشاريع البناء، مع تجربة استخدام مباشرة داخل متصفح Pi بثلاث لغات (العربية، الإنجليزية، والفرنسية).";
         document.getElementById("foot-note").textContent = "Asmar 1972 • KAHLA SALIM — متجر رقمي جاهز للعرض والتطوير";
         renderUserBadge();
         renderSavedUI();
+        renderOrdersBadge();
         showMsg(currentPiUser && currentPiUser.username ? ("مرحباً بعودتك، " + currentPiUser.username) : "جاهز — اضغط على «تسجيل الدخول عبر Pi».");
       }
     }
@@ -618,7 +848,7 @@ document.getElementById("a-body").innerHTML = "The <strong>Asmar 1972</strong> s
     function shareStore() {
       var url = window.location.href;
       if (navigator.share) {
-        navigator.share({
+navigator.share({
           title: "Asmar 1972 — KAHLA SALIM",
           text: "Asmar 1972 Digital Store",
           url: url
@@ -637,7 +867,7 @@ document.getElementById("a-body").innerHTML = "The <strong>Asmar 1972</strong> s
     function copyFallback(text) {
       if (navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
         navigator.clipboard.writeText(text).then(function () {
-if (currentLang === "en") showMsg("Store link copied: " + text);
+          if (currentLang === "en") showMsg("Store link copied: " + text);
           else if (currentLang === "fr") showMsg("Lien copié : " + text);
           else showMsg("تم نسخ رابط المتجر: " + text);
         }).catch(function () {
@@ -733,16 +963,15 @@ if (currentLang === "en") showMsg("Store link copied: " + text);
       }
       triggerSampleDownload();
     }
-
-    function selectBook(bookKey) {
+function selectBook(bookKey) {
       var item = BOOKS_DATA[bookKey];
       if (!item) return;
-      var msg = item[currentLang] || item.ar;
+      var msg = currentLang === "en" ? item.detailEn : (currentLang === "fr" ? item.detailFr : item.detailAr);
       if (currentPiUser && currentPiUser.username) {
         msg += " — (" + currentPiUser.username + ")";
       }
       showMsg(msg);
-      if (item.openSample) {
+      if (item.isFreeSample) {
         triggerSampleDownload();
       }
     }
