@@ -140,6 +140,7 @@
     var piInitialized = false;
     var currentPiUser = null;
     var SESSION_KEY = "asmar1972_pi_user";
+    var FREE_SAMPLE_URL = "./dodo-sample.pdf";
 
     function loadSavedUser() {
       try {
@@ -311,12 +312,13 @@ document.getElementById("c-desc").textContent = "Livres numériques, guides et h
     function freeSample() {
       var who = (currentPiUser && currentPiUser.username) ? (" (" + currentPiUser.username + ")") : "";
       if (currentLang === "en") {
-        showMsg("Free sample button clicked" + who + ". Attach your sample link here.");
+        showMsg("Opening free sample" + who + "...");
       } else if (currentLang === "fr") {
-        showMsg("Bouton échantillon gratuit cliqué" + who + ". Ajoutez votre lien ici.");
+        showMsg("Ouverture de l'échantillon gratuit" + who + "...");
       } else {
-        showMsg("تم الضغط على زر تحميل العينة المجانية" + who + ". يمكنك ربط رابط العينة هنا.");
+        showMsg("جارٍ فتح العينة المجانية" + who + "...");
       }
+      window.open(FREE_SAMPLE_URL, "_blank", "noopener,noreferrer");
     }
   </script>
 </body>
