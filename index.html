@@ -674,4 +674,420 @@ nameEn: "Amer and the Motorcycle Championship",
 
     function renderSummaryLists() {
       var savedTitleEl = document.getElementById("saved-panel-title");
-      var savedBodyEl = document.get
+      var savedBodyEl = document.getElementById("saved-panel-body");
+      var ordersTitleEl = document.getElementById("orders-panel-title");
+      var ordersBodyEl = document.getElementById("orders-panel-body");
+if (savedTitleEl) {
+        savedTitleEl.textContent = currentLang === "en"
+          ? "Saved Releases List"
+          : (currentLang === "fr" ? "Liste des éditions enregistrées" : "قائمة الإصدارات المحفوظة");
+      }
+
+      if (savedBodyEl) {
+        if (!savedBooks.length) {
+          savedBodyEl.textContent = currentLang === "en"
+            ? "No saved releases yet."
+            : (currentLang === "fr" ? "Aucune édition enregistrée pour le moment." : "لا توجد إصدارات محفوظة حالياً.");
+        } else {
+          var sHtml = '<ul class="mini-list">';
+          for (var i = 0; i < savedBooks.length; i++) {
+            var sTitle = getBookTitleByLang(savedBooks[i]);
+            if (sTitle) {
+              sHtml += "<li>" + sTitle + "</li>";
+            }
+          }
+          sHtml += "</ul>";
+          savedBodyEl.innerHTML = sHtml;
+        }
+      }
+
+      if (ordersTitleEl) {
+        ordersTitleEl.textContent = currentLang === "en"
+          ? "Recorded Orders Log"
+          : (currentLang === "fr" ? "Journal des commandes enregistrées" : "سجل الطلبات المسجلة");
+      }
+
+      if (ordersBodyEl) {
+        if (!orderList.length) {
+          ordersBodyEl.textContent = currentLang === "en"
+            ? "No recorded orders yet."
+            : (currentLang === "fr" ? "Aucune commande enregistrée pour le moment." : "لا توجد طلبات مسجلة حالياً.");
+        } else {
+          var oHtml = '<ul class="mini-list">';
+          for (var j = 0; j < orderList.length; j++) {
+            var ord = orderList[j];
+            var oTitle = getBookTitleByLang(ord.book);
+            oHtml += '<li><span class="ord-code">' + ord.id + "</span> — " + oTitle + " (" + ord.pricePi + " Pi)</li>";
+          }
+          oHtml += "</ul>";
+          ordersBodyEl.innerHTML = oHtml;
+        }
+      }
+    }
+
+    function renderOrdersBadge() {
+      var badge = document.getElementById("orders-count-badge");
+      if (badge) {
+        if (currentLang === "en") {
+          badge.textContent = "Recorded Orders: " + orderList.length;
+        } else if (currentLang === "fr") {
+          badge.textContent = "Commandes enregistrées : " + orderList.length;
+        } else {
+          badge.textContent = "الطلبات المسجلة: " + orderList.length;
+        }
+      }
+      renderSummaryLists();
+    }
+
+    function renderBooksGrid() {
+      var grid = document.getElementById("books-grid");
+      if (!grid) return;
+
+      var html = "";
+      for (var i = 0; i < BOOKS_ORDER.length; i++) {
+        var key = BOOKS_ORDER[i];
+        var item = BOOKS_DATA[key];
+        if (!item) continue;
+
+        var tag = currentLang === "en" ? item.tagEn : (currentLang === "fr" ? item.tagFr : item.tagAr);
+        var title = currentLang === "en" ? item.nameEn : (currentLang === "fr" ? item.nameFr : item.nameAr);
+        var desc = currentLang === "en" ? item.descEn : (currentLang === "fr" ? item.descFr : item.descAr);
+        var price = currentLang === "en" ? item.priceEn : (currentLang === "fr" ? item.priceFr : item.priceAr);
+        var isSaved = savedBooks.indexOf(key) !== -1;
+
+        var saveLabel = isSaved
+          ? (currentLang === "en" ? "Saved ✓" : (currentLang === "fr" ? "Enregistré ✓" : "محفوظ في القائمة ✓"))
+          : (currentLang === "en" ? "Save to List" : (currentLang === "fr" ? "Ajouter à la liste" : "حفظ في القائمة"));
+
+        var detailLabel = item.isFreeSample
+          ? (currentLang === "en" ? "Preview Sample & Details" : (currentLang === "fr" ? "Aperçu et détails" : "معاينة العينة والتفاصيل"))
+          : (currentLang === "en" ? "Edition Details" : (currentLang === "fr" ? "Détails de l'édition" : "تفاصيل الإصدار"));
+
+        var orderBtnHtml = "";
+        if (!item.isFreeSample) {
+          var orderLabel = currentLang === "en"
+            ? ("Order Edition (" + item.pricePi + " Pi)")
+            : (currentLang === "fr" ? ("Commander (" + item.pricePi + " Pi)") : ("طلب الإصدار (" + item.pricePi + " Pi)"));
+          orderBtnHtml = '<button type="button" class="btn-order" onclick="orderBook(\'' + key + '\')">' + orderLabel + "</button>";
+        }
+html += '<div class="book-card">' +
+          '<div>' +
+            '<div class="book-meta">' +
+              '<span class="book-tag">' + tag + "</span>" +
+              '<span class="price-tag' + (item.isFreeSample ? " free" : "") + '">' + price + "</span>" +
+            "</div>" +
+            '<h3 class="book-title">' + title + "</h3>" +
+            '<p class="book-desc">' + desc + "</p>" +
+          "</div>" +
+          '<div class="card-actions">' +
+            orderBtnHtml +
+            '<button type="button" class="btn-book" onclick="selectBook(\'' + key + '\')">' + detailLabel + "</button>" +
+            '<button type="button" class="btn-save' + (isSaved ? " active" : "") + '" onclick="toggleSaveBook(\'' + key + '\')">' + saveLabel + "</button>" +
+          "</div>" +
+        "</div>";
+      }
+
+      grid.innerHTML = html;
+    }
+
+    function renderSavedUI() {
+      var countBadge = document.getElementById("saved-count-badge");
+      if (countBadge) {
+        if (currentLang === "en") {
+          countBadge.textContent = "Saved Releases: " + savedBooks.length;
+        } else if (currentLang === "fr") {
+          countBadge.textContent = "Éditions enregistrées : " + savedBooks.length;
+        } else {
+          countBadge.textContent = "الإصدارات المحفوظة: " + savedBooks.length;
+        }
+      }
+      renderSummaryLists();
+      renderBooksGrid();
+    }
+
+    function toggleSaveBook(bookKey) {
+      if (!BOOKS_DATA[bookKey]) return;
+      var idx = savedBooks.indexOf(bookKey);
+      var title = getBookTitleByLang(bookKey);
+
+      if (idx === -1) {
+        savedBooks.push(bookKey);
+        persistSavedBooks();
+        if (currentLang === "en") showMsg("Added to saved list: " + title);
+        else if (currentLang === "fr") showMsg("Ajouté à la liste : " + title);
+        else showMsg("تمت إضافة «" + title + "» إلى قائمة الإصدارات المحفوظة.");
+      } else {
+        savedBooks.splice(idx, 1);
+        persistSavedBooks();
+        if (currentLang === "en") showMsg("Removed from saved list: " + title);
+        else if (currentLang === "fr") showMsg("Retiré de la liste : " + title);
+        else showMsg("تمت إزالة «" + title + "» من قائمة الإصدارات المحفوظة.");
+      }
+    }
+
+    function orderBook(bookKey) {
+      var book = BOOKS_DATA[bookKey];
+      if (!book || book.isFreeSample) return;
+
+      var buyer = (currentPiUser && currentPiUser.username)
+        ? currentPiUser.username
+        : (currentLang === "en" ? "Guest" : (currentLang === "fr" ? "Invité" : "زائر"));
+      var title = getBookTitleByLang(bookKey);
+      var orderId = "ORD-" + Math.floor(100000 + Math.random() * 900000);
+
+      orderList.push({
+        id: orderId,
+        book: bookKey,
+        pricePi: book.pricePi,
+        buyer: buyer
+      });
+      persistOrders();
+
+      var codeSpan = '<span class="ord-code">' + orderId + "</span>";
+      if (currentLang === "en") {
+        showMsg("Order " + codeSpan + " registered for «" + title + "» (" + book.pricePi + " Pi) — Buyer: " + buyer + ". Digital copy delivery follows Pi payment or confirmation with reference " + codeSpan + ".");
+      } else if (currentLang === "fr") {
+        showMsg("Commande " + codeSpan + " enregistrée pour « " + title + " » (" + book.pricePi + " Pi) — Acheteur : " + buyer + ". Remise du fichier numérique après paiement Pi ou confirmation avec la référence " + codeSpan + ".");
+      } else {
+        showMsg("تم تسجيل الطلب رقم " + codeSpan + " لإصدار «" + title + "» بسعر (" + book.pricePi + " Pi) — المشتري: " + buyer + ". يتم تسليم النسخة الرقمية بعد إتمام الدفع عبر Pi أو تأكيد الطلب برقم المرجع " + codeSpan + ".");
+      }
+    }
+
+    function ensurePiInit() {
+      if (piInitialized) return true;
+      if (window.Pi && typeof window.Pi.init === "function") {
+        try {
+          window.Pi.init({ version: "2.0", sandbox: true });
+          piInitialized = true;
+          return true;
+        } catch (e) {
+          return false;
+        }
+      }
+      return false;
+    }
+loadSavedUser();
+    loadSavedBooks();
+    loadOrders();
+    ensurePiInit();
+    renderUserBadge();
+    renderSavedUI();
+    renderOrdersBadge();
+
+    function showMsg(text) {
+      var el = document.getElementById("pi-status");
+      if (el) {
+        el.innerHTML = text;
+        el.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
+    }
+
+    function changeLang(lang) {
+      currentLang = lang;
+      document.getElementById("lang-ar").classList.remove("active");
+      document.getElementById("lang-en").classList.remove("active");
+      document.getElementById("lang-fr").classList.remove("active");
+
+      if (lang === "en") {
+        document.documentElement.lang = "en";
+        document.documentElement.dir = "ltr";
+        document.getElementById("lang-en").classList.add("active");
+        document.getElementById("top-pill").textContent = "Multilingual Digital Store • Pi Ecosystem";
+        document.getElementById("tagline").textContent = "A digital platform for illustrated stories, natural nutrition guides, project calculators, and knowledge releases in three languages.";
+        document.getElementById("pi-btn").textContent = "Sign in with Pi";
+        document.getElementById("share-btn").textContent = "Share Link";
+        document.getElementById("logout-btn").textContent = "Clear Session";
+        document.getElementById("s-title").textContent = "Dodo and His Red Bicycle (Free Sample)";
+        document.getElementById("s-desc").textContent = "Read and download the free sample directly from the store and explore the story and artwork.";
+        document.getElementById("s-btn").textContent = "Download Free Sample";
+        document.getElementById("s-direct").textContent = "Open / Download Sample File (PDF)";
+        document.getElementById("c-title").textContent = "KAHLA SALIM Digital Releases & Books";
+        document.getElementById("c-desc").textContent = "Stories, guides, and digital releases available in the store.";
+        document.getElementById("a-title").textContent = "About the Project & Author";
+        document.getElementById("a-body").innerHTML = "The <strong>Asmar 1972</strong> store by <strong>KAHLA SALIM</strong> brings together children's stories and Amer/Dodo adventures, natural nutrition guides, construction project calculators, and direct Pi Browser usability in Arabic, English, and French.";
+        document.getElementById("foot-note").textContent = "Asmar 1972 • KAHLA SALIM — Digital Store Ready for Demo & Growth";
+        renderUserBadge();
+        renderSavedUI();
+        renderOrdersBadge();
+        showMsg(currentPiUser && currentPiUser.username ? ("Welcome back, " + currentPiUser.username) : "Ready — click «Sign in with Pi».");
+      } else if (lang === "fr") {
+        document.documentElement.lang = "fr";
+        document.documentElement.dir = "ltr";
+        document.getElementById("lang-fr").classList.add("active");
+        document.getElementById("top-pill").textContent = "Boutique numérique multilingue • Pi Ecosystem";
+        document.getElementById("tagline").textContent = "Une plateforme numérique pour histoires illustrées, guides de nutrition naturelle, calculateurs de projets et publications multilingues.";
+        document.getElementById("pi-btn").textContent = "Connexion avec Pi";
+        document.getElementById("share-btn").textContent = "Partager le lien";
+        document.getElementById("logout-btn").textContent = "Effacer la session";
+        document.getElementById("s-title").textContent = "Dodo et son vélo rouge (Échantillon gratuit)";
+        document.getElementById("s-desc").textContent = "Lisez et téléchargez l'échantillon gratuit directement depuis la boutique.";
+        document.getElementById("s-btn").textContent = "Télécharger l'échantillon gratuit";
+        document.getElementById("s-direct").textContent = "Ouvrir / Télécharger l'échantillon (PDF)";
+document.getElementById("c-title").textContent = "Publications et livres numériques KAHLA SALIM";
+        document.getElementById("c-desc").textContent = "Histoires, guides et éditions numériques disponibles dans la boutique.";
+        document.getElementById("a-title").textContent = "À propos du projet et de l'auteur";
+        document.getElementById("a-body").innerHTML = "La boutique <strong>Asmar 1972</strong> de <strong>KAHLA SALIM</strong> réunit des histoires pour enfants et aventures d'Amer et Dodo, des guides de nutrition naturelle, des calculateurs de projets de construction et une utilisation directe dans Pi Browser en arabe, anglais et français.";
+        document.getElementById("foot-note").textContent = "Asmar 1972 • KAHLA SALIM — Boutique numérique prête pour démonstration et évolution";
+        renderUserBadge();
+        renderSavedUI();
+        renderOrdersBadge();
+        showMsg(currentPiUser && currentPiUser.username ? ("Bon retour, " + currentPiUser.username) : "Prêt — cliquez sur « Connexion avec Pi ».");
+      } else {
+        document.documentElement.lang = "ar";
+        document.documentElement.dir = "rtl";
+        document.getElementById("lang-ar").classList.add("active");
+        document.getElementById("top-pill").textContent = "متجر رقمي متكامل • Pi Ecosystem";
+        document.getElementById("tagline").textContent = "منصة رقمية للقصص المصورة وأدلة التغذية الطبيعية وحاسبة المشاريع والإصدارات المعرفية متعددة اللغات.";
+        document.getElementById("pi-btn").textContent = "تسجيل الدخول عبر Pi";
+        document.getElementById("share-btn").textContent = "مشاركة الرابط";
+        document.getElementById("logout-btn").textContent = "مسح الجلسة";
+        document.getElementById("s-title").textContent = "قصة دودو ودراجته الحمراء (عينة مجانية)";
+        document.getElementById("s-desc").textContent = "اقرأ وحمّل العينة المجانية مباشرة من المتجر واستكشف أسلوب القصة والرسوم.";
+        document.getElementById("s-btn").textContent = "تحميل العينة المجانية";
+        document.getElementById("s-direct").textContent = "فتح / تحميل ملف العينة (PDF)";
+        document.getElementById("c-title").textContent = "إصدارات وكتب KAHLA SALIM الرقمية";
+        document.getElementById("c-desc").textContent = "مجموعة القصص والأدلة والملفات الرقمية المتاحة في المتجر.";
+        document.getElementById("a-title").textContent = "عن المشروع والكاتب";
+        document.getElementById("a-body").innerHTML = "يجمع متجر <strong>Asmar 1972</strong> بإشراف <strong>KAHLA SALIM</strong> بين قصص الأطفال ومغامرات عامر ودودو، وأدلة التغذية الطبيعية، وحاسبة مشاريع البناء، مع تجربة استخدام مباشرة داخل متصفح Pi بثلاث لغات (العربية، الإنجليزية، والفرنسية).";
+        document.getElementById("foot-note").textContent = "Asmar 1972 • KAHLA SALIM — متجر رقمي جاهز للعرض والتطوير";
+        renderUserBadge();
+        renderSavedUI();
+        renderOrdersBadge();
+        showMsg(currentPiUser && currentPiUser.username ? ("مرحباً بعودتك، " + currentPiUser.username) : "جاهز — اضغط على «تسجيل الدخول عبر Pi».");
+      }
+    }
+
+    function shareStore() {
+      var url = window.location.href;
+      if (navigator.share) {
+        navigator.share({
+          title: "Asmar 1972 — KAHLA SALIM",
+          text: "Asmar 1972 Digital Store",
+          url: url
+        }).then(function () {
+          if (currentLang === "en") showMsg("Store link shared successfully.");
+          else if (currentLang === "fr") showMsg("Lien de la boutique partagé avec succès.");
+          else showMsg("تمت مشاركة رابط المتجر بنجاح.");
+        }).catch(function () {
+          copyFallback(url);
+        });
+      } else {
+        copyFallback(url);
+      }
+    }
+
+    function copyFallback(text) {
+      if (navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
+        navigator.clipboard.writeText(text).then(function () {
+if (currentLang === "en") showMsg("Store link copied: " + text);
+          else if (currentLang === "fr") showMsg("Lien copié : " + text);
+          else showMsg("تم نسخ رابط المتجر: " + text);
+        }).catch(function () {
+          showMsg(text);
+        });
+      } else {
+        showMsg(text);
+      }
+    }
+
+    function piLogout() {
+      savePiUser(null);
+      if (currentLang === "en") {
+        showMsg("Session cleared — returned to Guest mode.");
+      } else if (currentLang === "fr") {
+        showMsg("Session effacée — retour au mode Invité.");
+      } else {
+        showMsg("تم مسح الجلسة — عدت إلى وضع الزائر.");
+      }
+    }
+
+    function piLogin() {
+      showMsg("1/3: تم استدعاء piLogin...");
+      ensurePiInit();
+
+      if (!window.Pi) {
+        showMsg("خطأ: window.Pi غير موجود (افتح الرابط داخل Pi Browser).");
+        return;
+      }
+      if (typeof window.Pi.authenticate !== "function") {
+        showMsg("خطأ: Pi.authenticate غير متاحة.");
+        return;
+      }
+
+      showMsg("2/3: جارٍ استدعاء Pi.authenticate...");
+
+      var settled = false;
+      var timer = setTimeout(function () {
+        if (!settled) {
+          showMsg("تنبيه: لم يرد Pi.authenticate بعد (تحقق من نافذة الصلاحيات في Pi Browser أو وضع التطبيق).");
+        }
+      }, 10000);
+
+      try {
+        var req = window.Pi.authenticate(["username"], function (payment) {
+          showMsg("تنبيه دفعة غير مكتملة: " + JSON.stringify(payment));
+        });
+
+        if (req && typeof req.then === "function") {
+          req.then(function (auth) {
+            settled = true;
+            clearTimeout(timer);
+            var username = (auth && auth.user && auth.user.username) ? auth.user.username : "Pi User";
+            var uid = (auth && auth.user && auth.user.uid) ? auth.user.uid : "";
+            savePiUser({ username: username, uid: uid });
+            showMsg("3/3 نجاح: مرحباً " + username);
+          }).catch(function (err) {
+            settled = true;
+            clearTimeout(timer);
+            showMsg("3/3 فشل Promise: " + (err && err.message ? err.message : JSON.stringify(err)));
+          });
+        } else {
+          settled = true;
+          clearTimeout(timer);
+          showMsg("3/3: authenticate لم يُرجع Promise.");
+        }
+      } catch (e) {
+        settled = true;
+        clearTimeout(timer);
+        showMsg("استثناء catch: " + (e && e.message ? e.message : String(e)));
+      }
+    }
+
+    function triggerSampleDownload() {
+      var a = document.createElement("a");
+      a.href = FREE_SAMPLE_URL;
+      a.download = "dodo-sample.pdf";
+      a.target = "_blank";
+      a.rel = "noopener noreferrer";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    function freeSample() {
+      var who = (currentPiUser && currentPiUser.username) ? (" (" + currentPiUser.username + ")") : "";
+      if (currentLang === "en") {
+        showMsg("Opening / downloading free sample" + who + "...");
+      } else if (currentLang === "fr") {
+        showMsg("Ouverture / téléchargement de l'échantillon gratuit" + who + "...");
+      } else {
+        showMsg("جارٍ فتح / تحميل العينة المجانية" + who + "...");
+      }
+      triggerSampleDownload();
+    }
+
+    function selectBook(bookKey) {
+      var item = BOOKS_DATA[bookKey];
+      if (!item) return;
+      var msg = currentLang === "en" ? item.detailEn : (currentLang === "fr" ? item.detailFr : item.detailAr);
+      if (currentPiUser && currentPiUser.username) {
+        msg += " — (" + currentPiUser.username + ")";
+      }
+      showMsg(msg);
+      if (item.isFreeSample) {
+        triggerSampleDownload();
+      }
+    }
+  </script>
+</body>
+</html>
