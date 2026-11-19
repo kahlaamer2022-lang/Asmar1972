@@ -6,198 +6,373 @@
   <title>Asmar 1972 — KAHLA SALIM</title>
   <script src="https://sdk.minepi.com/pi-sdk.js"></script>
   <style>
+    :root {
+      --bg: #f6f4ef;
+      --card: #ffffff;
+      --text: #18181b;
+      --muted: #52525b;
+      --accent: #6d28d9;
+      --accent-hover: #5b21b6;
+      --border: #e4e4e7;
+      --status-bg: #f3e8ff;
+      --status-text: #4c1d95;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: Arial, Tahoma, sans-serif;
       margin: 0;
-      padding: 20px;
-      background: #f7f5f0;
-      color: #222;
-      line-height: 1.7;
+      padding: 24px 16px;
+      font-family: system-ui, -apple-system, "Segoe UI", Tahoma, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
     }
-    .box {
-      max-width: 820px;
+
+    .container {
+      max-width: 780px;
       margin: 0 auto;
-      background: #fff;
-      padding: 24px;
-      border-radius: 12px;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
     }
-    .topbar {
+
+    .header {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+    }
+
+    .brand-row {
       display: flex;
       justify-content: space-between;
-      align-items: center;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .brand-title {
+      margin: 0;
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    .brand-author {
+      margin: 4px 0 0;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--muted);
+    }
+
+    .controls {
+      display: flex;
       flex-wrap: wrap;
       gap: 10px;
-      border-bottom: 1px solid #eee;
-      padding-bottom: 14px;
-      margin-bottom: 20px;
+      align-items: center;
     }
-    button {
-      padding: 8px 14px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      background: #fff;
+
+    .lang-group {
+      display: inline-flex;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      background: #fafafa;
+    }
+
+    .lang-btn {
+      border: none;
+      background: transparent;
+      padding: 9px 14px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .lang-btn.active {
+      background: #18181b;
+      color: #ffffff;
+    }
+
+    .pi-btn {
+      border: none;
+      background: var(--accent);
+      color: #ffffff;
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .pi-btn:hover {
+      background: var(--accent-hover);
+    }
+
+    .status-box {
+      margin-top: 14px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      background: var(--status-bg);
+      color: var(--status-text);
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 18px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+    }
+
+    .card h2 {
+      margin: 0 0 8px;
+      font-size: 1.35rem;
+    }
+
+    .card p {
+      margin: 0 0 16px;
+      color: var(--muted);
+    }
+
+    .action-btn {
+      display: inline-block;
+      text-decoration: none;
+      border: none;
+      background: var(--accent);
+      color: #ffffff;
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 600;
       cursor: pointer;
     }
-    button.primary {
-      background: #6c3ce9;
-      color: #fff;
-      border-color: #6c3ce9;
+
+    .action-btn:hover {
+      background: var(--accent-hover);
     }
-    .card {
-      border: 1px solid #e5e5e5;
-      border-radius: 10px;
-      padding: 16px;
-      margin-bottom: 14px;
+
+    .books-list {
+      margin: 0;
+      padding-inline-start: 20px;
+      color: var(--text);
+    }
+
+    .books-list li {
+      margin-bottom: 8px;
     }
   </style>
 </head>
 <body>
-  <div class="box">
-    <div class="topbar">
-      <div>
-        <h1 id="storeTitle" style="margin:0;">Asmar 1972</h1>
-        <small id="authorName">KAHLA SALIM</small>
+  <div class="container">
+    <header class="header">
+      <div class="brand-row">
+        <div>
+          <h1 class="brand-title">Asmar 1972</h1>
+          <p class="brand-author">KAHLA SALIM</p>
+        </div>
       </div>
-      <div>
-        <button onclick="setLang('ar')">العربية</button>
-        <button onclick="setLang('en')">English</button>
-        <button onclick="setLang('fr')">Français</button>
-        <button class="primary" id="loginBtn" onclick="piLogin()">تسجيل الدخول عبر Pi</button>
+
+      <div class="controls">
+        <div class="lang-group" role="group" aria-label="Language selector">
+<button type="button" class="lang-btn active" data-lang="ar" onclick="setLanguage('ar')">العربية</button>
+          <button type="button" class="lang-btn" data-lang="en" onclick="setLanguage('en')">English</button>
+          <button type="button" class="lang-btn" data-lang="fr" onclick="setLanguage('fr')">Français</button>
+        </div>
+
+        <button type="button" id="pi-login-btn" class="pi-btn" onclick="loginWithPi()">
+          تسجيل الدخول عبر Pi
+        </button>
       </div>
-    </div>
 
-    <div class="card">
-      <h2 id="freeTitle">قصة دودو ودراجته الحمراء (عينة مجانية)</h2>
-      <p id="freeDesc">اقرأ وحمّل العينة المجانية مباشرة من المتجر.</p>
-      <button class="primary" id="freeBtn" onclick="alert('تم تفعيل تحميل العينة المجانية: قصة دودو ودراجته الحمراء')">تحميل العينة المجانية</button>
-    </div>
+      <div id="pi-status" class="status-box" role="status" aria-live="polite">
+        جاهز للعمل — اضغط على «تسجيل الدخول عبر Pi» داخل Pi Browser.
+      </div>
+    </header>
 
-    <div class="card">
-      <h2 id="paidTitle">إصدارات وكتب KAHLA SALIM الرقمية</h2>
-      <p id="paidDesc">الأسعار مرتبطة بالدولار الأمريكي (USD) ويتم احتساب ما يعادلها بعملة Pi.</p>
-      <p id="priceInfo">سعر الكتاب النموذجي: $10 USD</p>
-      <button class="primary" id="buyBtn" onclick="piPay(10)">شراء عبر Pi</button>
-    </div>
+    <section class="card">
+      <h2 id="sample-title">قصة دودو ودراجته الحمراء (عينة مجانية)</h2>
+      <p id="sample-desc">اقرأ وحمّل العينة المجانية مباشرة من المتجر.</p>
+      <button type="button" id="sample-btn" class="action-btn" onclick="openFreeSample()">
+        تحميل العينة المجانية
+      </button>
+    </section>
+
+    <section class="card">
+      <h2 id="catalog-title">إصدارات وكتب KAHLA SALIM الرقمية</h2>
+      <p id="catalog-desc">مجموعة الكتب والأدلة والقصص الرقمية للمتجر.</p>
+      <ul class="books-list" id="books-list">
+        <li>قصة دودو ودراجته الحمراء</li>
+        <li>حكمة الأجداد في التغذية</li>
+        <li>هميمة وبدعة: بريق الذهب وصدى الواجب</li>
+      </ul>
+    </section>
   </div>
 
   <script>
-    const PI_BACKEND_URL = "https://YOUR_BACKEND_URL_HERE";
-
-    if (window.Pi) {
-      Pi.init({ version: "2.0", sandbox: true });
-    }
-
-    const texts = {
+    const translations = {
       ar: {
         dir: "rtl",
         lang: "ar",
-        login: "تسجيل الدخول عبر Pi",
-        freeTitle: "قصة دودو ودراجته الحمراء (عينة مجانية)",
-        freeDesc: "اقرأ وحمّل العينة المجانية مباشرة من المتجر.",
-        freeBtn: "تحميل العينة المجانية",
-        paidTitle: "إصدارات وكتب KAHLA SALIM الرقمية",
-        paidDesc: "الأسعار مرتبطة بالدولار الأمريكي (USD) ويتم احتساب ما يعادلها بعملة Pi.",
-        price: "سعر الكتاب النموذجي: $10 USD",
-        buyBtn: "شراء عبر Pi"
+        piBtn: "تسجيل الدخول عبر Pi",
+        piReady: "جاهز للعمل — اضغط على «تسجيل الدخول عبر Pi» داخل Pi Browser.",
+        piMissingSdk: "لم يتم العثور على Pi SDK. تأكد من فتح الرابط داخل تطبيق Pi Browser.",
+        piConnecting: "جارٍ الاتصال بحساب Pi وطلب المصادقة...",
+        piSuccess: (username) => تم تسجيل الدخول بنجاح! مرحباً بك يا ${username}.,
+        piError: (msg) => تعذّر إتمام تسجيل الدخول عبر Pi: ${msg},
+        sampleTitle: "قصة دودو ودراجته الحمراء (عينة مجانية)",
+        sampleDesc: "اقرأ وحمّل العينة المجانية مباشرة من المتجر.",
+        sampleBtn: "تحميل العينة المجانية",
+        sampleMsg: "يمكنك ربط رابط ملف العينة المجانية هنا داخل دالة openFreeSample().",
+        catalogTitle: "إصدارات وكتب KAHLA SALIM الرقمية",
+        catalogDesc: "مجموعة الكتب والأدلة والقصص الرقمية للمتجر.",
+        books: [
+          "قصة دودو ودراجته الحمراء",
+          "حكمة الأجداد في التغذية",
+          "هميمة وبدعة: بريق الذهب وصدى الواجب"
+        ]
       },
       en: {
         dir: "ltr",
         lang: "en",
-        login: "Sign in with Pi",
-        freeTitle: "Dodo and his Red Bicycle (Free Sample)",
-        freeDesc: "Read and download the free sample directly from the store.",
-        freeBtn: "Download Free Sample",
-        paidTitle: "KAHLA SALIM Digital Books & Releases",
-        paidDesc: "Prices are pegged to USD and converted dynamically to Pi.",
-        price: "Sample Book Price: $10 USD",
-        buyBtn: "Buy with Pi"
+        piBtn: "Sign in with Pi",
+        piReady: "Ready — click «Sign in with Pi» inside Pi Browser.",
+        piMissingSdk: "Pi SDK not detected. Please open this URL inside Pi Browser.",
+        piConnecting: "Connecting to Pi account and requesting authentication...",
+        piSuccess: (username) => Signed in successfully! Welcome, ${username}.,
+        piError: (msg) => Pi sign-in failed: ${msg},
+        sampleTitle: "Dodo and His Red Bicycle (Free Sample)",
+        sampleDesc: "Read and download the free sample directly from the store.",
+        sampleBtn: "Download Free Sample",
+        sampleMsg: "Attach your free sample file URL inside openFreeSample().",
+        catalogTitle: "KAHLA SALIM Digital Releases & Books",
+        catalogDesc: "Digital books, guides, and stories available in the store.",
+        books: [
+          "Dodo and His Red Bicycle",
+          "Ancestral Wisdom in Nutrition",
+          "Hamaima and Bid'a: Sparkle of Gold and Echo of Duty"
+        ]
       },
       fr: {
         dir: "ltr",
         lang: "fr",
-        login: "Connexion avec Pi",
-        freeTitle: "Dodo et son vélo rouge (Échantillon gratuit)",
-        freeDesc: "Lisez et téléchargez l'échantillon gratuit directement depuis la boutique.",freeBtn: "Télécharger l'échantillon gratuit",
-        paidTitle: "Livres et publications numériques de KAHLA SALIM",
-        paidDesc: "Les prix sont indexés sur l'USD et convertis dynamiquement en Pi.",
-        price: "Prix indicatif du livre : 10 $ USD",
-        buyBtn: "Acheter avec Pi"
+        piBtn: "Connexion avec Pi",
+        piReady: "Prêt — cliquez sur « Connexion avec Pi » dans Pi Browser.",
+        piMissingSdk: "Pi SDK introuvable. Veuillez ouvrir ce lien dans Pi Browser.",
+        piConnecting: "Connexion au compte Pi et demande d'authentification...",
+piSuccess: (username) => Connexion réussie ! Bienvenue, ${username}.,
+        piError: (msg) => Échec de la connexion Pi : ${msg},
+        sampleTitle: "Dodo et son vélo rouge (Échantillon gratuit)",
+        sampleDesc: "Lisez et téléchargez l'échantillon gratuit directement depuis la boutique.",
+        sampleBtn: "Télécharger l'échantillon gratuit",
+        sampleMsg: "Ajoutez le lien de votre fichier d'échantillon dans openFreeSample().",
+        catalogTitle: "Publications et livres numériques KAHLA SALIM",
+        catalogDesc: "Livres numériques, guides et histoires de la boutique.",
+        books: [
+          "Dodo et son vélo rouge",
+          "Sagesse des ancêtres en nutrition",
+          "Hamaima et Bid'a : L'éclat de l'or et l'écho du devoir"
+        ]
       }
     };
 
-    function setLang(code) {
-      const t = texts[code];
-      document.documentElement.lang = t.lang;
-      document.documentElement.dir = t.dir;
-      document.getElementById("loginBtn").textContent = t.login;
-      document.getElementById("freeTitle").textContent = t.freeTitle;
-      document.getElementById("freeDesc").textContent = t.freeDesc;
-      document.getElementById("freeBtn").textContent = t.freeBtn;
-      document.getElementById("paidTitle").textContent = t.paidTitle;
-      document.getElementById("paidDesc").textContent = t.paidDesc;
-      document.getElementById("priceInfo").textContent = t.price;
-      document.getElementById("buyBtn").textContent = t.buyBtn;
+    let currentLang = "ar";
+    let isPiInitialized = false;
+
+    function setStatus(text) {
+      const el = document.getElementById("pi-status");
+      if (el) {
+        el.textContent = text;
+      }
     }
 
-    async function piLogin() {
-      if (!window.Pi) {
-        alert("يرجى فتح المتجر داخل متصفح Pi Browser لتسجيل الدخول.");
-        return;
+    function initPiSdk() {
+      if (window.Pi && typeof window.Pi.init === "function") {
+        try {
+          // غيّر sandbox إلى true فقط أثناء الاختبار التجريبي إن رغبت
+          window.Pi.init({ version: "2.0", sandbox: false });
+          isPiInitialized = true;
+        } catch (err) {
+          console.error("Pi.init error:", err);
+        }
       }
-      try {
-        const scopes = ["username", "payments"];
-        const auth = await Pi.authenticate(scopes, onIncompletePaymentFound);
-        alert("مرحباً " + auth.user.username);
-      } catch (err) {
-        alert("تعذر تسجيل الدخول: " + err.message);
-      }
+    }
+
+    function setLanguage(lang) {
+      const t = translations[lang] || translations.ar;
+      currentLang = lang;
+      document.documentElement.lang = t.lang;
+      document.documentElement.dir = t.dir;
+
+      document.querySelectorAll(".lang-btn").forEach((btn) => {
+        btn.classList.toggle("active", btn.dataset.lang === lang);
+      });
+
+      document.getElementById("pi-login-btn").textContent = t.piBtn;
+      document.getElementById("sample-title").textContent = t.sampleTitle;
+      document.getElementById("sample-desc").textContent = t.sampleDesc;
+      document.getElementById("sample-btn").textContent = t.sampleBtn;
+      document.getElementById("catalog-title").textContent = t.catalogTitle;
+      document.getElementById("catalog-desc").textContent = t.catalogDesc;
+
+      const listEl = document.getElementById("books-list");
+      listEl.innerHTML = "";
+      t.books.forEach((bookTitle) => {
+        const li = document.createElement("li");
+        li.textContent = bookTitle;
+        listEl.appendChild(li);
+      });
+
+      setStatus(t.piReady);
     }
 
     function onIncompletePaymentFound(payment) {
-      fetch(PI_BACKEND_URL + "/api/pi/complete", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ paymentId: payment.identifier, txid: payment.transaction?.txid })
-      });
+      console.log("Incomplete payment found:", payment);
     }
 
-    async function piPay(amountUsd) {
-      if (!window.Pi) {
-        alert("يرجى فتح المتجر داخل متصفح Pi Browser لإتمام الدفع.");
+    async function loginWithPi() {
+      const t = translations[currentLang] || translations.ar;
+
+      if (!window.Pi || typeof window.Pi.authenticate !== "function") {
+        setStatus(t.piMissingSdk);
         return;
       }
+
+      if (!isPiInitialized) {
+        initPiSdk();
+      }
+
       try {
-        await Pi.createPayment({
-          amount: amountUsd,
-          memo: "Asmar 1972 Digital Book — KAHLA SALIM",
-          metadata: { bookUsdPrice: amountUsd, author: "KAHLA SALIM" }
-        }, {
-          onReadyForServerApproval: function(paymentId) {
-            return fetch(PI_BACKEND_URL + "/api/pi/approve", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ paymentId })
-            });
-          },
-          onReadyForServerCompletion: function(paymentId, txid) {
-            return fetch(PI_BACKEND_URL + "/api/pi/complete", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ paymentId, txid })
-            });
-          },
-          onCancel: function() {
-            alert("تم إلغاء عملية الدفع.");
-          },
-          onError: function(error) {
-            alert("حدث خطأ أثناء الدفع: " + error.message);
-          }
-        });
+        setStatus(t.piConnecting);
+        const scopes = ["username"];
+        const authResult = await window.Pi.authenticate(scopes, onIncompletePaymentFound);
+        const username = authResult?.user?.username || "Pi User";
+        setStatus(t.piSuccess(username));
       } catch (err) {
-        alert("تعذر بدء الدفع: " + err.message);
+        const message = err?.message || "تحقق من إعدادات التطبيق في Pi Developer Portal.";
+        setStatus(t.piError(message));
       }
     }
+
+    function openFreeSample() {
+      const t = translations[currentLang] || translations.ar;
+      // إذا أضفت رابط ملف أو صفحة عينة، يمكنك فتحه عبر:
+      // window.open("https://example.com/sample.pdf", "_blank");
+      setStatus(t.sampleMsg);
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      initPiSdk();
+      setLanguage("ar");
+    });
   </script>
 </body>
 </html>
