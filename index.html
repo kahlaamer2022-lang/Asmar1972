@@ -65,6 +65,17 @@
       font-weight: bold;
       font-size: 0.95rem;
     }
+    .user-badge {
+      margin-top: 10px;
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: #ecfdf5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+      font-size: 0.9rem;
+      font-weight: bold;
+    }
     .status {
       margin-top: 12px;
       padding: 10px 14px;
@@ -103,6 +114,7 @@
         <button type="button" id="pi-btn" class="btn-pi" onclick="piLogin()">تسجيل الدخول عبر Pi</button>
       </div>
 
+      <div id="pi-user-badge" class="user-badge">حالة الحساب: زائر (غير مسجل عبر Pi)</div>
       <div id="pi-status" class="status">جاهز — اضغط على «تسجيل الدخول عبر Pi».</div>
     </div>
 
@@ -126,6 +138,49 @@
   <script>
     var currentLang = "ar";
     var piInitialized = false;
+    var currentPiUser = null;
+    var SESSION_KEY = "asmar1972_pi_user";
+
+    function loadSavedUser() {
+      try {
+        var raw = sessionStorage.getItem(SESSION_KEY);
+        if (raw) {
+          currentPiUser = JSON.parse(raw);
+        }
+      } catch (e) {
+        currentPiUser = null;
+      }
+    }
+function savePiUser(userObj) {
+      currentPiUser = userObj;
+      try {
+        sessionStorage.setItem(SESSION_KEY, JSON.stringify(userObj));
+      } catch (e) {}
+      renderUserBadge();
+    }
+
+    function renderUserBadge() {
+      var badge = document.getElementById("pi-user-badge");
+      if (!badge) return;
+
+      if (currentPiUser && currentPiUser.username) {
+        if (currentLang === "en") {
+          badge.textContent = "Pi Account Connected: " + currentPiUser.username;
+        } else if (currentLang === "fr") {
+          badge.textContent = "Compte Pi connecté : " + currentPiUser.username;
+        } else {
+          badge.textContent = "حساب Pi متصل: " + currentPiUser.username;
+        }
+      } else {
+        if (currentLang === "en") {
+          badge.textContent = "Account Status: Guest (Not signed in with Pi)";
+        } else if (currentLang === "fr") {
+          badge.textContent = "Statut du compte : Invité (Non connecté avec Pi)";
+        } else {
+          badge.textContent = "حالة الحساب: زائر (غير مسجل عبر Pi)";
+        }
+      }
+    }
 
     function ensurePiInit() {
       if (piInitialized) return true;
@@ -141,7 +196,9 @@
       return false;
     }
 
+    loadSavedUser();
     ensurePiInit();
+    renderUserBadge();
 
     function showMsg(text) {
       var el = document.getElementById("pi-status");
@@ -150,7 +207,8 @@
         el.scrollIntoView({ behavior: "smooth", block: "nearest" });
       }
     }
-function changeLang(lang) {
+
+    function changeLang(lang) {
       currentLang = lang;
       document.getElementById("lang-ar").classList.remove("active");
       document.getElementById("lang-en").classList.remove("active");
@@ -167,7 +225,8 @@ function changeLang(lang) {
         document.getElementById("c-title").textContent = "KAHLA SALIM Digital Releases & Books";
         document.getElementById("c-desc").textContent = "Digital books, guides, and stories available in the store.";
         document.getElementById("c-list").innerHTML = "<li>Dodo and His Red Bicycle</li><li>Ancestral Wisdom in Nutrition</li><li>Hamaima and Bid'a: Sparkle of Gold and Echo of Duty</li>";
-        showMsg("Ready — click «Sign in with Pi».");
+        renderUserBadge();
+        showMsg(currentPiUser && currentPiUser.username ? ("Welcome back, " + currentPiUser.username) : "Ready — click «Sign in with Pi».");
       } else if (lang === "fr") {
         document.documentElement.lang = "fr";
         document.documentElement.dir = "ltr";
@@ -177,9 +236,10 @@ function changeLang(lang) {
         document.getElementById("s-desc").textContent = "Lisez et téléchargez l'échantillon gratuit directement depuis la boutique.";
         document.getElementById("s-btn").textContent = "Télécharger l'échantillon gratuit";
         document.getElementById("c-title").textContent = "Publications et livres numériques KAHLA SALIM";
-        document.getElementById("c-desc").textContent = "Livres numériques, guides et histoires de la boutique.";
+document.getElementById("c-desc").textContent = "Livres numériques, guides et histoires de la boutique.";
         document.getElementById("c-list").innerHTML = "<li>Dodo et son vélo rouge</li><li>Sagesse des ancêtres en nutrition</li><li>Hamaima et Bid'a : L'éclat de l'or et l'écho du devoir</li>";
-        showMsg("Prêt — cliquez sur « Connexion avec Pi ».");
+        renderUserBadge();
+        showMsg(currentPiUser && currentPiUser.username ? ("Bon retour, " + currentPiUser.username) : "Prêt — cliquez sur « Connexion avec Pi ».");
       } else {
         document.documentElement.lang = "ar";
         document.documentElement.dir = "rtl";
@@ -191,7 +251,8 @@ function changeLang(lang) {
         document.getElementById("c-title").textContent = "إصدارات وكتب KAHLA SALIM الرقمية";
         document.getElementById("c-desc").textContent = "مجموعة الكتب والأدلة والقصص الرقمية للمتجر.";
         document.getElementById("c-list").innerHTML = "<li>قصة دودو ودراجته الحمراء</li><li>حكمة الأجداد في التغذية</li><li>هميمة وبدعة: بريق الذهب وصدى الواجب</li>";
-        showMsg("جاهز — اضغط على «تسجيل الدخول عبر Pi».");
+        renderUserBadge();
+        showMsg(currentPiUser && currentPiUser.username ? ("مرحباً بعودتك، " + currentPiUser.username) : "جاهز — اضغط على «تسجيل الدخول عبر Pi».");
       }
     }
 
@@ -216,7 +277,8 @@ function changeLang(lang) {
           showMsg("تنبيه: لم يرد Pi.authenticate بعد (تحقق من نافذة الصلاحيات في Pi Browser أو وضع التطبيق).");
         }
       }, 10000);
-try {
+
+      try {
         var req = window.Pi.authenticate(["username"], function (payment) {
           showMsg("تنبيه دفعة غير مكتملة: " + JSON.stringify(payment));
         });
@@ -226,6 +288,8 @@ try {
             settled = true;
             clearTimeout(timer);
             var username = (auth && auth.user && auth.user.username) ? auth.user.username : "Pi User";
+            var uid = (auth && auth.user && auth.user.uid) ? auth.user.uid : "";
+            savePiUser({ username: username, uid: uid });
             showMsg("3/3 نجاح: مرحباً " + username);
           }).catch(function (err) {
             settled = true;
@@ -245,12 +309,13 @@ try {
     }
 
     function freeSample() {
+      var who = (currentPiUser && currentPiUser.username) ? (" (" + currentPiUser.username + ")") : "";
       if (currentLang === "en") {
-        showMsg("Free sample button clicked. Attach your sample link here.");
+        showMsg("Free sample button clicked" + who + ". Attach your sample link here.");
       } else if (currentLang === "fr") {
-        showMsg("Bouton échantillon gratuit cliqué. Ajoutez votre lien ici.");
+        showMsg("Bouton échantillon gratuit cliqué" + who + ". Ajoutez votre lien ici.");
       } else {
-        showMsg("تم الضغط على زر تحميل العينة المجانية. يمكنك ربط رابط العينة هنا.");
+        showMsg("تم الضغط على زر تحميل العينة المجانية" + who + ". يمكنك ربط رابط العينة هنا.");
       }
     }
   </script>
