@@ -125,26 +125,38 @@
 
   <script>
     var currentLang = "ar";
+    var piInitialized = false;
 
-    if (window.Pi && typeof window.Pi.init === "function") {
-      try {
-        window.Pi.init({ version: "2.0", sandbox: false });
-      } catch (e) {}
+    function ensurePiInit() {
+      if (piInitialized) return true;
+      if (window.Pi && typeof window.Pi.init === "function") {
+        try {
+          window.Pi.init({ version: "2.0", sandbox: false });
+          piInitialized = true;
+          return true;
+        } catch (e) {
+          return false;
+        }
+      }
+      return false;
     }
+
+    ensurePiInit();
 
     function showMsg(text) {
       var el = document.getElementById("pi-status");
       if (el) {
         el.textContent = text;
+        el.scrollIntoView({ behavior: "smooth", block: "nearest" });
       }
     }
-
-    function changeLang(lang) {
+function changeLang(lang) {
       currentLang = lang;
       document.getElementById("lang-ar").classList.remove("active");
       document.getElementById("lang-en").classList.remove("active");
       document.getElementById("lang-fr").classList.remove("active");
-if (lang === "en") {
+
+      if (lang === "en") {
         document.documentElement.lang = "en";
         document.documentElement.dir = "ltr";
         document.getElementById("lang-en").classList.add("active");
@@ -185,6 +197,8 @@ if (lang === "en") {
 
     function piLogin() {
       showMsg("1/3: تم استدعاء piLogin...");
+      ensurePiInit();
+
       if (!window.Pi) {
         showMsg("خطأ: window.Pi غير موجود (افتح الرابط داخل Pi Browser).");
         return;
@@ -193,22 +207,39 @@ if (lang === "en") {
         showMsg("خطأ: Pi.authenticate غير متاحة.");
         return;
       }
+
       showMsg("2/3: جارٍ استدعاء Pi.authenticate...");
-      try {
+
+      var settled = false;
+      var timer = setTimeout(function () {
+        if (!settled) {
+          showMsg("تنبيه: لم يرد Pi.authenticate بعد (تحقق من نافذة الصلاحيات في Pi Browser أو وضع التطبيق).");
+        }
+      }, 10000);
+try {
         var req = window.Pi.authenticate(["username"], function (payment) {
           showMsg("تنبيه دفعة غير مكتملة: " + JSON.stringify(payment));
         });
+
         if (req && typeof req.then === "function") {
           req.then(function (auth) {
+            settled = true;
+            clearTimeout(timer);
             var username = (auth && auth.user && auth.user.username) ? auth.user.username : "Pi User";
-showMsg("3/3 نجاح: مرحباً " + username);
+            showMsg("3/3 نجاح: مرحباً " + username);
           }).catch(function (err) {
+            settled = true;
+            clearTimeout(timer);
             showMsg("3/3 فشل Promise: " + (err && err.message ? err.message : JSON.stringify(err)));
           });
         } else {
+          settled = true;
+          clearTimeout(timer);
           showMsg("3/3: authenticate لم يُرجع Promise.");
         }
       } catch (e) {
+        settled = true;
+        clearTimeout(timer);
         showMsg("استثناء catch: " + (e && e.message ? e.message : String(e)));
       }
     }
