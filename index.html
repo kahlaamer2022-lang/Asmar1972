@@ -65,6 +65,17 @@
       font-weight: bold;
       font-size: 0.95rem;
     }
+    .direct-link {
+      display: inline-block;
+      margin-top: 12px;
+      padding: 8px 14px;
+      border-radius: 8px;
+      background: #eef2ff;
+      color: #3730a3;
+      font-weight: bold;
+      text-decoration: none;
+      border: 1px solid #c7d2fe;
+    }
     .user-badge {
       margin-top: 10px;
       display: inline-block;
@@ -122,6 +133,9 @@
       <h2 id="s-title">قصة دودو ودراجته الحمراء (عينة مجانية)</h2>
       <p id="s-desc">اقرأ وحمّل العينة المجانية مباشرة من المتجر.</p>
       <button type="button" id="s-btn" class="btn-pi" onclick="freeSample()">تحميل العينة المجانية</button>
+      <div>
+        <a id="s-direct" class="direct-link" href="./dodo-sample.pdf" target="_blank" rel="noopener noreferrer" download="dodo-sample.pdf">فتح / تحميل ملف العينة (PDF)</a>
+      </div>
     </div>
 
     <div class="box">
@@ -134,8 +148,7 @@
       </ul>
     </div>
   </div>
-
-  <script>
+<script>
     var currentLang = "ar";
     var piInitialized = false;
     var currentPiUser = null;
@@ -152,7 +165,8 @@
         currentPiUser = null;
       }
     }
-function savePiUser(userObj) {
+
+    function savePiUser(userObj) {
       currentPiUser = userObj;
       try {
         sessionStorage.setItem(SESSION_KEY, JSON.stringify(userObj));
@@ -223,6 +237,7 @@ function savePiUser(userObj) {
         document.getElementById("s-title").textContent = "Dodo and His Red Bicycle (Free Sample)";
         document.getElementById("s-desc").textContent = "Read and download the free sample directly from the store.";
         document.getElementById("s-btn").textContent = "Download Free Sample";
+        document.getElementById("s-direct").textContent = "Open / Download Sample File (PDF)";
         document.getElementById("c-title").textContent = "KAHLA SALIM Digital Releases & Books";
         document.getElementById("c-desc").textContent = "Digital books, guides, and stories available in the store.";
         document.getElementById("c-list").innerHTML = "<li>Dodo and His Red Bicycle</li><li>Ancestral Wisdom in Nutrition</li><li>Hamaima and Bid'a: Sparkle of Gold and Echo of Duty</li>";
@@ -232,12 +247,13 @@ function savePiUser(userObj) {
         document.documentElement.lang = "fr";
         document.documentElement.dir = "ltr";
         document.getElementById("lang-fr").classList.add("active");
-        document.getElementById("pi-btn").textContent = "Connexion avec Pi";
+document.getElementById("pi-btn").textContent = "Connexion avec Pi";
         document.getElementById("s-title").textContent = "Dodo et son vélo rouge (Échantillon gratuit)";
         document.getElementById("s-desc").textContent = "Lisez et téléchargez l'échantillon gratuit directement depuis la boutique.";
         document.getElementById("s-btn").textContent = "Télécharger l'échantillon gratuit";
+        document.getElementById("s-direct").textContent = "Ouvrir / Télécharger l'échantillon (PDF)";
         document.getElementById("c-title").textContent = "Publications et livres numériques KAHLA SALIM";
-document.getElementById("c-desc").textContent = "Livres numériques, guides et histoires de la boutique.";
+        document.getElementById("c-desc").textContent = "Livres numériques, guides et histoires de la boutique.";
         document.getElementById("c-list").innerHTML = "<li>Dodo et son vélo rouge</li><li>Sagesse des ancêtres en nutrition</li><li>Hamaima et Bid'a : L'éclat de l'or et l'écho du devoir</li>";
         renderUserBadge();
         showMsg(currentPiUser && currentPiUser.username ? ("Bon retour, " + currentPiUser.username) : "Prêt — cliquez sur « Connexion avec Pi ».");
@@ -249,6 +265,7 @@ document.getElementById("c-desc").textContent = "Livres numériques, guides et h
         document.getElementById("s-title").textContent = "قصة دودو ودراجته الحمراء (عينة مجانية)";
         document.getElementById("s-desc").textContent = "اقرأ وحمّل العينة المجانية مباشرة من المتجر.";
         document.getElementById("s-btn").textContent = "تحميل العينة المجانية";
+        document.getElementById("s-direct").textContent = "فتح / تحميل ملف العينة (PDF)";
         document.getElementById("c-title").textContent = "إصدارات وكتب KAHLA SALIM الرقمية";
         document.getElementById("c-desc").textContent = "مجموعة الكتب والأدلة والقصص الرقمية للمتجر.";
         document.getElementById("c-list").innerHTML = "<li>قصة دودو ودراجته الحمراء</li><li>حكمة الأجداد في التغذية</li><li>هميمة وبدعة: بريق الذهب وصدى الواجب</li>";
@@ -308,17 +325,27 @@ document.getElementById("c-desc").textContent = "Livres numériques, guides et h
         showMsg("استثناء catch: " + (e && e.message ? e.message : String(e)));
       }
     }
+function triggerSampleDownload() {
+      var a = document.createElement("a");
+      a.href = FREE_SAMPLE_URL;
+      a.download = "dodo-sample.pdf";
+      a.target = "_blank";
+      a.rel = "noopener noreferrer";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
 
     function freeSample() {
       var who = (currentPiUser && currentPiUser.username) ? (" (" + currentPiUser.username + ")") : "";
       if (currentLang === "en") {
-        showMsg("Opening free sample" + who + "...");
+        showMsg("Opening / downloading free sample" + who + "...");
       } else if (currentLang === "fr") {
-        showMsg("Ouverture de l'échantillon gratuit" + who + "...");
+        showMsg("Ouverture / téléchargement de l'échantillon gratuit" + who + "...");
       } else {
-        showMsg("جارٍ فتح العينة المجانية" + who + "...");
+        showMsg("جارٍ فتح / تحميل العينة المجانية" + who + "...");
       }
-      window.open(FREE_SAMPLE_URL, "_blank", "noopener,noreferrer");
+      triggerSampleDownload();
     }
   </script>
 </body>
