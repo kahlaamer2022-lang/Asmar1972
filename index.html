@@ -131,7 +131,7 @@
       if (piInitialized) return true;
       if (window.Pi && typeof window.Pi.init === "function") {
         try {
-          window.Pi.init({ version: "2.0", sandbox: false });
+          window.Pi.init({ version: "2.0", sandbox: true });
           piInitialized = true;
           return true;
         } catch (e) {
