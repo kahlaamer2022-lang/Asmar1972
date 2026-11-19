@@ -184,25 +184,38 @@ if (lang === "en") {
     }
 
     function piLogin() {
-      showMsg("جارٍ التحقق من Pi SDK...");
-      if (!window.Pi || typeof window.Pi.authenticate !== "function") {
-        showMsg("تنبيه: Pi SDK غير متوفر هنا. افتح الرابط داخل Pi Browser.");
+      showMsg("1/3: تم استدعاء piLogin...");
+      if (!window.Pi) {
+        showMsg("خطأ: window.Pi غير موجود (لست داخل Pi SDK).");
         return;
       }
-      window.Pi.authenticate(["username"], function (payment) {
-        console.log(payment);
-      }).then(function (auth) {
-        var username = (auth && auth.user && auth.user.username) ? auth.user.username : "Pi User";
-        showMsg("تم تسجيل الدخول بنجاح: " + username);
-      }).catch(function (err) {
-        var msg = (err && err.message) ? err.message : "تعذرت المصادقة.";
-        showMsg("خطأ: " + msg);
-      });
+      if (typeof window.Pi.authenticate !== "function") {
+        showMsg("خطأ: Pi.authenticate غير متاحة.");
+        return;
+      }
+      showMsg("2/3: جارٍ استدعاء Pi.authenticate...");
+      try {
+        var req = window.Pi.authenticate(["username"], function (payment) {
+          showMsg("تنبيه دفعة غير مكتملة: " + JSON.stringify(payment));
+        });
+        if (req && typeof req.then === "function") {
+          req.then(function (auth) {
+            var username = (auth && auth.user && auth.user.username) ? auth.user.username : "Pi User";
+showMsg("3/3 نجاح: مرحباً " + username);
+          }).catch(function (err) {
+            showMsg("3/3 فشل Promise: " + (err && err.message ? err.message : JSON.stringify(err)));
+          });
+        } else {
+          showMsg("3/3: authenticate لم يُرجع Promise.");
+        }
+      } catch (e) {
+        showMsg("استثناء catch: " + (e && e.message ? e.message : String(e)));
+      }
     }
 
     function freeSample() {
       if (currentLang === "en") {
-showMsg("Free sample button clicked. Attach your sample link here.");
+        showMsg("Free sample button clicked. Attach your sample link here.");
       } else if (currentLang === "fr") {
         showMsg("Bouton échantillon gratuit cliqué. Ajoutez votre lien ici.");
       } else {
