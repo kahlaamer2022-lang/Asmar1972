@@ -825,7 +825,7 @@ html += '<div class="book-card">' +
       }
     }
 
-     function orderBook(bookKey) {
+    function orderBook(bookKey) {
       var book = BOOKS_DATA[bookKey];
       if (!book || book.isFreeSample) return;
 
@@ -835,6 +835,7 @@ html += '<div class="book-card">' +
       var buyerUid = (currentPiUser && currentPiUser.uid) ? currentPiUser.uid : "";
       var title = getBookTitleByLang(bookKey);
       var orderId = "ORD-" + Math.floor(100000 + Math.random() * 900000);
+      var workerUrl = "https://asmar1972-pay.kahlaamer2022.workers.dev";
 
       orderList.push({
         id: orderId,
@@ -846,17 +847,18 @@ html += '<div class="book-card">' +
 
       var codeSpan = '<span class="ord-code">' + orderId + "</span>";
       var baseMsg = currentLang === "en"
-        ? ("Order " + codeSpan + " registered for «" + title + "» (" + book.pricePi + " Pi) — Buyer: " + buyer + ". Digital copy delivery follows Pi payment or confirmation with reference " + codeSpan + ".")
+        ? ("Order " + codeSpan + " registered for «" + title + "» (" + book.pricePi + " Pi) — Buyer: " + buyer + ". Reference: " + codeSpan + ".")
         : (currentLang === "fr"
-          ? ("Commande " + codeSpan + " enregistrée pour « " + title + " » (" + book.pricePi + " Pi) — Acheteur : " + buyer + ". Remise du fichier numérique après paiement Pi ou confirmation avec la référence " + codeSpan + ".")
-          : ("تم تسجيل الطلب رقم " + codeSpan + " لإصدار «" + title + "» بسعر (" + book.pricePi + " Pi) — المشتري: " + buyer + ". يتم تسليم النسخة الرقمية بعد إتمام الدفع عبر Pi أو تأكيد الطلب برقم المرجع " + codeSpan + "."));
+          ? ("Commande " + codeSpan + " enregistrée pour « " + title + " » (" + book.pricePi + " Pi) — Acheteur : " + buyer + ". Référence : " + codeSpan + ".")
+          : ("تم تسجيل الطلب رقم " + codeSpan + " لإصدار «" + title + "» بسعر (" + book.pricePi + " Pi) — المشتري: " + buyer + ". المرجع: " + codeSpan + "."));
 
       showMsg(baseMsg);
 
-      fetch("https://asmar1972-pay.kahlaamer2022.workers.dev", {
+      fetch(workerUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          action: "create_order",
           orderId: orderId,
           bookKey: bookKey,
           title: title,
@@ -878,7 +880,43 @@ html += '<div class="book-card">' +
             : (currentLang === "fr" ? " [Échec synchro Worker]" : " [تعذر إرسال البيانات إلى Worker]");
           showMsg(baseMsg + failNote);
         });
-    }    function ensurePiInit() {
+
+      ensurePiInit();
+      if (window.Pi && typeof window.Pi.createPayment === "function") {
+        try {
+          window.Pi.createPayment(
+            {
+              amount: Number(book.pricePi),
+              memo: title + " (" + orderId + ")",
+              metadata: {
+                orderId: orderId,
+                bookKey: bookKey,
+                buyer: buyer,
+                uid: buyerUid
+              }
+            },
+            {
+              onReadyForServerApproval: function (paymentId) {
+                showMsg(baseMsg + " [Pi Approval: " + paymentId + "]");
+                fetch(workerUrl, {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    action: "approve",
+                    paymentId: paymentId,
+                    orderId: orderId,
+                    bookKey: bookKey,
+                    pricePi: book.pricePi,
+                    buyer: buyer,
+                    uid: buyerUid
+                  })
+                }).catch(function () {});
+              },
+              onReadyForServerCompletion: function (paymentId, txid) {
+                showMsg(baseMsg + " [Pi Paid ✔️ TX: " + txid + "]");
+                fetch(workerUrl, {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },    }    function ensurePiInit() {
       if (piInitialized) return true;
       if (window.Pi && typeof window.Pi.init === "function") {
         try {
