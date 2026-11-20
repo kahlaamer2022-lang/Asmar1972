@@ -825,7 +825,7 @@ html += '<div class="book-card">' +
       }
     }
 
-     function orderBook(bookKey) {
+ function orderBook(bookKey) {
       var book = BOOKS_DATA[bookKey];
       if (!book || book.isFreeSample) return;
 
@@ -835,6 +835,7 @@ html += '<div class="book-card">' +
       var buyerUid = (currentPiUser && currentPiUser.uid) ? currentPiUser.uid : "";
       var title = getBookTitleByLang(bookKey);
       var orderId = "ORD-" + Math.floor(100000 + Math.random() * 900000);
+      var workerUrl = "https://asmar1972-pay.kahlaamer2022.workers.dev";
 
       orderList.push({
         id: orderId,
@@ -853,10 +854,11 @@ html += '<div class="book-card">' +
 
       showMsg(baseMsg);
 
-      fetch("https://asmar1972-pay.kahlaamer2022.workers.dev", {
+      fetch(workerUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          action: "create_order",
           orderId: orderId,
           bookKey: bookKey,
           title: title,
@@ -878,7 +880,18 @@ html += '<div class="book-card">' +
             : (currentLang === "fr" ? " [Échec synchro Worker]" : " [تعذر إرسال البيانات إلى Worker]");
           showMsg(baseMsg + failNote);
         });
-    }    function ensurePiInit() {
+
+      startPiPaymentForOrder({
+        orderId: orderId,
+        bookKey: bookKey,
+        title: title,
+        pricePi: book.pricePi,
+        buyer: buyer,
+        uid: buyerUid,
+        workerUrl: workerUrl,
+        baseMsg: baseMsg
+      });
+    }    }    function ensurePiInit() {
       if (piInitialized) return true;
       if (window.Pi && typeof window.Pi.init === "function") {
         try {
