@@ -1089,5 +1089,64 @@ if (currentLang === "en") showMsg("Store link copied: " + text);
       }
     }
   </script>
+  <script>
+  const WORKER_URL = "https://asmar1972-pay.kahlaamer2022.workers.dev";
+  Pi.init({ version: "2.0", sandbox: false });
+
+  async function buyDigitalItem(title, amountPi, productId) {
+    try {
+      const scopes = ["username", "payments"];
+      const auth = await Pi.authenticate(scopes, onIncompletePaymentFound);
+
+      const paymentData = {
+        amount: amountPi,
+        memo: title,
+        metadata: { productId: productId, buyer: auth.user.username },
+      };
+
+      const callbacks = {
+        onReadyForServerApproval: async function (paymentId) {
+          await fetch(${WORKER_URL}/approve, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ paymentId }),
+          });
+        },
+        onReadyForServerCompletion: async function (paymentId, txid) {
+          await fetch(${WORKER_URL}/complete, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ paymentId, txid }),
+          });
+          alert("تم إتمام الدفع بنجاح!");
+        },
+        onCancel: function () {
+          alert("تم إلغاء عملية الدفع.");
+        },
+        onError: function (error) {
+          console.error(error);
+          alert("حدث خطأ أثناء الدفع.");
+        },
+      };
+
+      Pi.createPayment(paymentData, callbacks);
+    } catch (err) {
+      console.error(err);
+      alert("تعذر بدء الدفع.");
+    }
+  }
+
+  async function onIncompletePaymentFound(payment) {
+    const paymentId = payment.identifier;
+    const txid = payment.transaction && payment.transaction.txid;
+    if (paymentId && txid) {
+      await fetch(${WORKER_URL}/complete, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ paymentId, txid }),
+      });
+    }
+  }
+</script>
 </body>
 </html>
