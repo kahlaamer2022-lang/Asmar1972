@@ -1091,63 +1091,72 @@ if (currentLang === "en") showMsg("Store link copied: " + text);
     }
   </script>
   <script>
-  const WORKER_URL = "https://asmar1972-pay.kahlaamer2022.workers.dev";
-  Pi.init({ version: "2.0", sandbox: false });
+const WORKER_URL = "https://asmar1972-pay.kahlaamer2022.workers.dev";
+if (window.Pi && typeof window.Pi.init === "function") {
+  window.Pi.init({ version: "2.0", sandbox: false });
+}
 
-  async function buyDigitalItem(title, amountPi, productId) {
-    try {
-      const scopes = ["username", "payments"];
-      const auth = await Pi.authenticate(scopes, onIncompletePaymentFound);
-
-      const paymentData = {
-        amount: amountPi,
-        memo: title,
-        metadata: { productId: productId, buyer: auth.user.username },
-      };
-
-      const callbacks = {
-        onReadyForServerApproval: async function (paymentId) {
-          await fetch(${WORKER_URL}/approve, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ paymentId }),
-          });
-        },
-        onReadyForServerCompletion: async function (paymentId, txid) {
-          await fetch(${WORKER_URL}/complete, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ paymentId, txid }),
-          });
-          alert("تم إتمام الدفع بنجاح!");
-        },
-        onCancel: function () {
-          alert("تم إلغاء عملية الدفع.");
-        },
-        onError: function (error) {
-          console.error(error);
-          alert("حدث خطأ أثناء الدفع.");
-        },
-      };
-
-      Pi.createPayment(paymentData, callbacks);
-    } catch (err) {
-      console.error(err);
-      alert("تعذر بدء الدفع.");
+window.buyDigitalItem = async function(title, amountPi, productId) {
+  try {
+    if (!window.Pi || typeof window.Pi.authenticate !== "function") {
+      alert("افتح المتجر داخل Pi Browser لإتمام الدفع");
+      return;
     }
-  }
 
-  async function onIncompletePaymentFound(payment) {
-    const paymentId = payment.identifier;
-    const txid = payment.transaction && payment.transaction.txid;
-    if (paymentId && txid) {
-      await fetch(${WORKER_URL}/complete, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ paymentId, txid }),
-      });
-    }
+    const scopes = ["username", "payments"];
+    const auth = await window.Pi.authenticate(scopes, window.onIncompletePaymentFound);
+
+    const paymentData = {
+      amount: Number(amountPi),
+      memo: title,
+      metadata: {
+        productId: String(productId),
+        buyer: auth && auth.user ? auth.user.username : ""
+      }
+    };
+
+    const callbacks = {
+      onReadyForServerApproval: async function(paymentId) {
+        await fetch(WORKER_URL + "/approve", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ paymentId: paymentId })
+        });
+      },
+      onReadyForServerCompletion: async function(paymentId, txid) {
+        await fetch(WORKER_URL + "/complete", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ paymentId: paymentId, txid: txid })
+        });
+        alert("تم إتمام الدفع بنجاح");
+      },
+      onCancel: function() {
+        alert("تم إلغاء عملية الدفع");
+      },
+      onError: function(error) {
+        console.error(error);
+        alert("حدث خطأ أثناء الدفع");
+      }
+    };
+
+    window.Pi.createPayment(paymentData, callbacks);
+  } catch (err) {
+    console.error(err);
+    alert("تعذر بدء الدفع");
   }
-</script>
+};
+
+window.onIncompletePaymentFound = async function(payment) {
+  const paymentId = payment && payment.identifier ? payment.identifier : null;
+  const txid = payment && payment.transaction ? payment.transaction.txid : null;
+  if (paymentId && txid) {
+    await fetch(WORKER_URL + "/complete", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ paymentId: paymentId, txid: txid })
+    });
+  }
+};</script>
 </body>
 </html>
