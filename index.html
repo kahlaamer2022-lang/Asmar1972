@@ -849,6 +849,7 @@ html += '<div class="book-card">' +
       } else if (currentLang === "fr") {
         showMsg("Commande " + codeSpan + " enregistrée pour « " + title + " » (" + book.pricePi + " Pi) — Acheteur : " + buyer + ". Remise du fichier numérique après paiement Pi ou confirmation avec la référence " + codeSpan + ".");
       } else {
+     if (typeof buyDigitalItem === "function") { buyDigitalItem(title, Number(book.pricePi), codeSpan); }
         showMsg("تم تسجيل الطلب رقم " + codeSpan + " لإصدار «" + title + "» بسعر (" + book.pricePi + " Pi) — المشتري: " + buyer + ". يتم تسليم النسخة الرقمية بعد إتمام الدفع عبر Pi أو تأكيد الطلب برقم المرجع " + codeSpan + ".");
       }
     }
