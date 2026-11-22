@@ -761,10 +761,11 @@ function persistSavedBooks() {
           for (var j = 0; j < orderList.length; j++) {
             var ord = orderList[j];
             var oTitle = getBookTitleByLang(ord.book);
-            var dlUrl = getProductDownloadUrl(ord.book);
-            var dlLinkHtml = dlUrl
+            var isPaid = Boolean(ord && (ord.paid === true  ord.status === "paid"  ord.status === "completed"));
+            var dlUrl = isPaid ? getProductDownloadUrl(ord.book) : "";
+            var dlLinkHtml = (isPaid && dlUrl)
               ? ' — <a href="' + dlUrl + '" target="_blank" rel="noopener noreferrer" style="color:#065f46;font-weight:bold;">' + getDownloadButtonText(dlUrl) + "</a>"
-              : "";
+: ' — <span style="color:#b45309;font-weight:bold;">' + (currentLang === "en" ? "(Pending Pi Payment)" : (currentLang === "fr" ? "(En attente du paiement Pi)" : "(بانتظار إتمام الدفع عبر Pi)")) + "</span>";
             oHtml += '<li><span class="ord-code">' + ord.id + "</span> — " + oTitle + " (" + ord.pricePi + " Pi)" + dlLinkHtml + "</li>";
           }
           oHtml += "</ul>";
@@ -772,7 +773,8 @@ function persistSavedBooks() {
         }
       }
     }
-function renderOrdersBadge() {
+
+    function renderOrdersBadge() {
       var badge = document.getElementById("orders-count-badge");
       if (badge) {
         if (currentLang === "en") {
@@ -843,7 +845,7 @@ function renderOrdersBadge() {
       if (countBadge) {
         if (currentLang === "en") {
           countBadge.textContent = "Saved Releases: " + savedBooks.length;
-        } else if (currentLang === "fr") {
+} else if (currentLang === "fr") {
           countBadge.textContent = "Éditions enregistrées : " + savedBooks.length;
         } else {
           countBadge.textContent = "الإصدارات المحفوظة: " + savedBooks.length;
@@ -857,7 +859,8 @@ function renderOrdersBadge() {
       if (!BOOKS_DATA[bookKey]) return;
       var idx = savedBooks.indexOf(bookKey);
       var title = getBookTitleByLang(bookKey);
-if (idx === -1) {
+
+      if (idx === -1) {
         savedBooks.push(bookKey);
         persistSavedBooks();
         if (currentLang === "en") showMsg("Added to saved list: " + title);
@@ -881,27 +884,25 @@ if (idx === -1) {
         : (currentLang === "en" ? "Guest" : (currentLang === "fr" ? "Invité" : "زائر"));
       var title = getBookTitleByLang(bookKey);
       var orderId = "ORD-" + Math.floor(100000 + Math.random() * 900000);
-      var downloadUrl = getProductDownloadUrl(bookKey);
 
       orderList.push({
         id: orderId,
         book: bookKey,
         pricePi: book.pricePi,
-        buyer: buyer
+        buyer: buyer,
+        paid: false,
+        status: "pending"
       });
       persistOrders();
 
       var codeSpan = '<span class="ord-code">' + orderId + "</span>";
-      var linkHtml = downloadUrl
-        ? '<div><a class="download-action-link" href="' + downloadUrl + '" target="_blank" rel="noopener noreferrer">' + getDownloadButtonText(downloadUrl) + "</a></div>"
-        : "";
 
       if (currentLang === "en") {
-        showMsg("Order " + codeSpan + " registered for «" + title + "» (" + book.pricePi + " Pi) — Buyer: " + buyer + ". Direct download link ready below:" + linkHtml);
+        showMsg("Order " + codeSpan + " registered for «" + title + "» (" + book.pricePi + " Pi) — Buyer: " + buyer + ". Download unlocks after completing Pi payment.");
       } else if (currentLang === "fr") {
-        showMsg("Commande " + codeSpan + " enregistrée pour « " + title + " » (" + book.pricePi + " Pi) — Acheteur : " + buyer + ". Lien de téléchargement direct disponible ci-dessous :" + linkHtml);
+        showMsg("Commande " + codeSpan + " enregistrée pour « " + title + " » (" + book.pricePi + " Pi) — Acheteur : " + buyer + ". Le téléchargement s'activera après le paiement Pi.");
       } else {
-        showMsg("تم تسجيل الطلب رقم " + codeSpan + " لإصدار «" + title + "» بسعر (" + book.pricePi + " Pi) — المشتري: " + buyer + ". رابط التحميل المباشر جاهز أدناه:" + linkHtml);
+        showMsg("تم تسجيل الطلب رقم " + codeSpan + " لإصدار «" + title + "» بسعر (" + book.pricePi + " Pi) — المشتري: " + buyer + ". سيتم إتاحة التحميل بعد إتمام الدفع عبر Pi.");
       }
     }
 
@@ -947,9 +948,9 @@ if (idx === -1) {
         document.getElementById("lang-en").classList.add("active");
         document.getElementById("top-pill").textContent = "Multilingual Digital Store • Pi Ecosystem";
         document.getElementById("tagline").textContent = "A digital platform for illustrated stories, natural nutrition guides, project calculators, and knowledge releases in three languages.";
-        document.getElementById("pi-btn").textContent = "Sign in with Pi";
+document.getElementById("pi-btn").textContent = "Sign in with Pi";
         document.getElementById("share-btn").textContent = "Share Link";
-document.getElementById("logout-btn").textContent = "Clear Session";
+        document.getElementById("logout-btn").textContent = "Clear Session";
         document.getElementById("s-title").textContent = "Dodo and His Red Bicycle (Free Sample)";
         document.getElementById("s-desc").textContent = "Read and download the free sample directly from the store and explore the story and artwork.";
         document.getElementById("s-btn").textContent = "Download Free Sample";
@@ -985,11 +986,11 @@ document.getElementById("logout-btn").textContent = "Clear Session";
         renderSavedUI();
         renderOrdersBadge();
         showMsg(currentPiUser && currentPiUser.username ? ("Bon retour, " + currentPiUser.username) : "Prêt — cliquez sur « Connexion avec Pi ».");
-      } else {
+} else {
         document.documentElement.lang = "ar";
         document.documentElement.dir = "rtl";
         document.getElementById("lang-ar").classList.add("active");
-document.getElementById("top-pill").textContent = "متجر رقمي متكامل • Pi Ecosystem";
+        document.getElementById("top-pill").textContent = "متجر رقمي متكامل • Pi Ecosystem";
         document.getElementById("tagline").textContent = "منصة رقمية للقصص المصورة وأدلة التغذية الطبيعية وحاسبة المشاريع والإصدارات المعرفية متعددة اللغات.";
         document.getElementById("pi-btn").textContent = "تسجيل الدخول عبر Pi";
         document.getElementById("share-btn").textContent = "مشاركة الرابط";
@@ -1068,14 +1069,14 @@ document.getElementById("top-pill").textContent = "متجر رقمي متكام�
       }
 
       showMsg("2/3: جارٍ استدعاء Pi.authenticate...");
-
-      var settled = false;
+var settled = false;
       var timer = setTimeout(function () {
         if (!settled) {
           showMsg("تنبيه: لم يرد Pi.authenticate بعد (تحقق من نافذة الصلاحيات في Pi Browser أو وضع التطبيق).");
         }
       }, 10000);
-try {
+
+      try {
         var req = window.Pi.authenticate(["username"], function (payment) {
           showMsg("تنبيه دفعة غير مكتملة: " + JSON.stringify(payment));
         });
@@ -1134,10 +1135,6 @@ try {
       var msg = currentLang === "en" ? item.detailEn : (currentLang === "fr" ? item.detailFr : item.detailAr);
       if (currentPiUser && currentPiUser.username) {
         msg += " — (" + currentPiUser.username + ")";
-      }
-      var dlUrl = getProductDownloadUrl(bookKey);
-      if (!item.isFreeSample && dlUrl) {
-        msg += '<div><a class="download-action-link" href="' + dlUrl + '" target="_blank" rel="noopener noreferrer">' + getDownloadButtonText(dlUrl) + "</a></div>";
       }
       showMsg(msg);
       if (item.isFreeSample) {
