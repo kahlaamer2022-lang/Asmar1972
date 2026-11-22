@@ -918,8 +918,7 @@ function persistSavedBooks() {
         : "الدفع عبر Pi غير متاح حالياً. تأكد من الفتح داخل متصفح Pi."));
     return;
   }
-
-  var paymentData = {
+var paymentData = {
     amount: Number(ord.pricePi),
     memo: title + " (" + ord.id + ")",
     metadata: {
@@ -947,6 +946,37 @@ function persistSavedBooks() {
           : "تم إتمام الدفع للطلب رقم " + ord.id + " بنجاح، وتم تفعيل رابط التحميل تلقائياً."));
     },
     onCancel: function (paymentId) {
+      orderList[idx].paid = false;
+      orderList[idx].status = "pending";
+      if (typeof persistOrders === "function") persistOrders();
+      if (typeof renderOrdersList === "function") renderOrdersList();
+      if (typeof renderOrdersBadge === "function") renderOrdersBadge();
+
+      showMsg(currentLang === "en"
+        ? "Payment cancelled for order " + ord.id + "."
+        : (currentLang === "fr"
+          ? "Paiement annulé pour la commande " + ord.id + "."
+          : "تم إلغاء عملية الدفع للطلب رقم " + ord.id + "."));
+    },
+    onError: function (error, payment) {
+      showMsg(currentLang === "en"
+        ? "Pi payment error for order " + ord.id + "."
+        : (currentLang === "fr"
+          ? "Erreur de paiement Pi pour la commande " + ord.id + "."
+          : "حدث خطأ أثناء الدفع عبر Pi للطلب رقم " + ord.id + "."));
+    }
+  };
+
+  try {
+    window.Pi.createPayment(paymentData, callbacks);
+  } catch (e) {
+    showMsg(currentLang === "en"
+      ? "Could not start Pi payment."
+      : (currentLang === "fr"
+        ? "Impossible de démarrer le paiement Pi."
+        : "تعذر بدء عملية الدفع عبر Pi."));
+  }
+}    onCancel: function (paymentId) {
       orderList[idx].paid = false;
       orderList[idx].status = "pending";
       if (typeof persistOrders === "function") persistOrders();
