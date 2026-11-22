@@ -910,7 +910,7 @@ function persistSavedBooks() {
     return;
   }
 
-  if (!ensurePiInit()  !window.Pi  typeof window.Pi.createPayment !== "function") {
+ if (!ensurePiInit() || !window.Pi || typeof window.Pi.createPayment !== "function") {
     showMsg(currentLang === "en"
       ? "Pi payment is unavailable right now. Please open inside Pi Browser."
       : (currentLang === "fr"
