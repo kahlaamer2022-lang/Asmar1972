@@ -109,6 +109,18 @@
       text-decoration: none;
       border: 1px solid #c7d2fe;
     }
+    .download-action-link {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 7px 12px;
+      border-radius: 8px;
+      background: #ecfdf5;
+      color: #065f46;
+      font-weight: bold;
+      text-decoration: none;
+      border: 1px solid #6ee7b7;
+      font-size: 0.88rem;
+    }
     .user-badge {
       margin-top: 12px;
       display: inline-block;
@@ -151,7 +163,7 @@
       gap: 10px;
     }
     .mini-panel {
-      background: #fafafa;
+background: #fafafa;
       border: 1px solid #e4e4e7;
       border-radius: 10px;
       padding: 10px 12px;
@@ -165,10 +177,10 @@
     }
     .mini-list {
       margin: 0;
-padding-inline-start: 18px;
+      padding-inline-start: 18px;
     }
     .mini-list li {
-      margin-bottom: 3px;
+      margin-bottom: 5px;
     }
     .status {
       margin-top: 12px;
@@ -324,11 +336,10 @@ padding-inline-start: 18px;
       <h1>Asmar 1972</h1>
       <div class="author">KAHLA SALIM</div>
       <p id="tagline" class="tagline">منصة رقمية للقصص المصورة وأدلة التغذية الطبيعية وحاسبة المشاريع والإصدارات المعرفية متعددة اللغات.</p>
-
-      <div class="row">
+<div class="row">
         <button type="button" id="lang-ar" class="btn-lang active" onclick="changeLang('ar')">العربية</button>
         <button type="button" id="lang-en" class="btn-lang" onclick="changeLang('en')">English</button>
-<button type="button" id="lang-fr" class="btn-lang" onclick="changeLang('fr')">Français</button>
+        <button type="button" id="lang-fr" class="btn-lang" onclick="changeLang('fr')">Français</button>
         <button type="button" id="pi-btn" class="btn-pi" onclick="piLogin()">تسجيل الدخول عبر Pi</button>
         <button type="button" id="share-btn" class="btn-ghost" onclick="shareStore()">مشاركة الرابط</button>
         <button type="button" id="logout-btn" class="btn-ghost" onclick="piLogout()">مسح الجلسة</button>
@@ -390,7 +401,17 @@ padding-inline-start: 18px;
     var ORDERS_KEY = "asmar1972_orders";
     var FREE_SAMPLE_URL = "./dodo-sample.pdf";
 
-    var BOOKS_ORDER = [
+    var PRODUCT_DOWNLOAD_URLS = {
+      "construction_calc": "https://drive.google.com/uc?export=download&id=1xB3k4GUaylYS2ihKxV972vpJbi9PxsAp",
+      "nutrition_wisdom": "https://drive.google.com/uc?export=download&id=1M6fimIWIGkDThkOxoTwKmOiFLFMLhgTQ",
+      "amer_little_hero": "https://drive.google.com/uc?export=download&id=172GZoRoWQjbHHx1OkCAxKPj3n701WfHP",
+      "amer_moto_cup": "https://drive.google.com/uc?export=download&id=1l96i7HCL-Rp2TebE56Kgpd3730hmrvtt",
+      "nutrition_tips": "https://drive.google.com/uc?export=download&id=176PwosTJpyp6MgDyskjuxGbt5B_ckhNI",
+      "amer_star_night": "https://drive.google.com/uc?export=download&id=1heKtMMDgCJaf0kQLWyEs97Nn76L5HYe3",
+      "trio_unforgettable_day": "https://drive.google.com/uc?export=download&id=1yagYTeMQIN7ps3hY_AHixmsetx0X3L-4",
+      "hamaima_bidaa": "https://drive.google.com/uc?export=download&id=1m-PEmBbwFD-0gnWvPkwPLgfWxAilm27Q"
+    };
+var BOOKS_ORDER = [
       "dodo",
       "nutrition_wisdom",
       "construction_calc",
@@ -418,7 +439,7 @@ padding-inline-start: 18px;
         descAr: "قصة مصورة ممتعة للأطفال حول المغامرة والاكتشاف وقيمة الدراجة الحمراء مع عينة PDF.",
         descEn: "An engaging illustrated children's story about adventure, discovery, and the red bicycle with a PDF sample.",
         descFr: "Une histoire illustrée pour enfants sur l'aventure, la découverte et le vélo rouge avec échantillon PDF.",
-detailAr: "إصدار «قصة دودو ودراجته الحمراء»: متاح مع عينة مجانية قابلة للتحميل المباشر (PDF).",
+        detailAr: "إصدار «قصة دودو ودراجته الحمراء»: متاح مع عينة مجانية قابلة للتحميل المباشر (PDF).",
         detailEn: "Release «Dodo and His Red Bicycle»: includes a direct downloadable free PDF sample.",
         detailFr: "Édition « Dodo et son vélo rouge » : comprend un échantillon PDF gratuit téléchargeable."
       },
@@ -470,7 +491,7 @@ detailAr: "إصدار «قصة دودو ودراجته الحمراء»: متا�
         tagEn: "Amer Adventures",
         tagFr: "Aventures d'Amer",
         nameAr: "عامر البطل الصغير",
-        nameEn: "Amer the Little Hero",
+nameEn: "Amer the Little Hero",
         nameFr: "Amer le petit héros",
         descAr: "قصة مشوّقة للأطفال تبرز الشجاعة وحسن التصرف والمواقف الإيجابية لعامر.",
         descEn: "An engaging children's story highlighting courage, good judgment, and Amer's positive actions.",
@@ -489,7 +510,7 @@ detailAr: "إصدار «قصة دودو ودراجته الحمراء»: متا�
         tagEn: "Amer Adventures",
         tagFr: "Aventures d'Amer",
         nameAr: "عامر وبطولة الدراجة النارية",
-nameEn: "Amer and the Motorcycle Championship",
+        nameEn: "Amer and the Motorcycle Championship",
         nameFr: "Amer et le championnat de moto",
         descAr: "مغامرة حماسية مليئة بالتحدي والإصرار والروح الرياضية في أجواء البطولة.",
         descEn: "An action-packed adventure filled with challenge, determination, and sportsmanship.",
@@ -537,7 +558,7 @@ nameEn: "Amer and the Motorcycle Championship",
         detailFr: "Édition « Guide de conseils en nutrition » (5 Pi) : conseils pratiques au quotidien."
       },
       trio_unforgettable_day: {
-        isFreeSample: false,
+isFreeSample: false,
         pricePi: 4,
         priceAr: "4 Pi",
         priceEn: "4 Pi",
@@ -554,7 +575,7 @@ nameEn: "Amer and the Motorcycle Championship",
         detailAr: "إصدار «مغامرات الثلاثي المرح: يوم لا ينسى» (4 Pi): قصة ممتعة حول الصداقة والمرح.",
         detailEn: "Release «Adventures of the Fun Trio: An Unforgettable Day» (4 Pi): a lively friendship story.",
         detailFr: "Édition « Aventures du trio joyeux : Un jour inoubliable » (4 Pi) : récit d'amitié et de joie."
-},
+      },
       hamaima_bidaa: {
         isFreeSample: false,
         pricePi: 7,
@@ -582,6 +603,29 @@ nameEn: "Amer and the Motorcycle Championship",
       if (currentLang === "en") return item.nameEn;
       if (currentLang === "fr") return item.nameFr;
       return item.nameAr;
+    }
+
+    function getProductDownloadUrl(bookKey) {
+      if (bookKey === "dodo") return FREE_SAMPLE_URL;
+      return PRODUCT_DOWNLOAD_URLS[bookKey] || "";
+    }
+
+    function triggerDirectDownload(url) {
+      if (!url) return;
+      var a = document.createElement("a");
+      a.href = url;
+      a.target = "_blank";
+      a.rel = "noopener noreferrer";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    function getDownloadButtonText(url) {
+      if (!url) return "";
+      if (currentLang === "en") return "Download Digital File";
+      if (currentLang === "fr") return "Télécharger le fichier numérique";
+      return "تحميل الملف الرقمي مباشرة";
     }
 
     function loadSavedUser() {
@@ -622,8 +666,7 @@ nameEn: "Amer and the Motorcycle Championship",
         orderList = [];
       }
     }
-
-    function persistSavedBooks() {
+function persistSavedBooks() {
       try {
         sessionStorage.setItem(SAVED_KEY, JSON.stringify(savedBooks));
       } catch (e) {}
@@ -677,7 +720,8 @@ nameEn: "Amer and the Motorcycle Championship",
       var savedBodyEl = document.getElementById("saved-panel-body");
       var ordersTitleEl = document.getElementById("orders-panel-title");
       var ordersBodyEl = document.getElementById("orders-panel-body");
-if (savedTitleEl) {
+
+      if (savedTitleEl) {
         savedTitleEl.textContent = currentLang === "en"
           ? "Saved Releases List"
           : (currentLang === "fr" ? "Liste des éditions enregistrées" : "قائمة الإصدارات المحفوظة");
@@ -717,15 +761,18 @@ if (savedTitleEl) {
           for (var j = 0; j < orderList.length; j++) {
             var ord = orderList[j];
             var oTitle = getBookTitleByLang(ord.book);
-            oHtml += '<li><span class="ord-code">' + ord.id + "</span> — " + oTitle + " (" + ord.pricePi + " Pi)</li>";
+            var dlUrl = getProductDownloadUrl(ord.book);
+            var dlLinkHtml = dlUrl
+              ? ' — <a href="' + dlUrl + '" target="_blank" rel="noopener noreferrer" style="color:#065f46;font-weight:bold;">' + getDownloadButtonText(dlUrl) + "</a>"
+              : "";
+            oHtml += '<li><span class="ord-code">' + ord.id + "</span> — " + oTitle + " (" + ord.pricePi + " Pi)" + dlLinkHtml + "</li>";
           }
           oHtml += "</ul>";
           ordersBodyEl.innerHTML = oHtml;
         }
       }
     }
-
-    function renderOrdersBadge() {
+function renderOrdersBadge() {
       var badge = document.getElementById("orders-count-badge");
       if (badge) {
         if (currentLang === "en") {
@@ -770,7 +817,8 @@ if (savedTitleEl) {
             : (currentLang === "fr" ? ("Commander (" + item.pricePi + " Pi)") : ("طلب الإصدار (" + item.pricePi + " Pi)"));
           orderBtnHtml = '<button type="button" class="btn-order" onclick="orderBook(\'' + key + '\')">' + orderLabel + "</button>";
         }
-html += '<div class="book-card">' +
+
+        html += '<div class="book-card">' +
           '<div>' +
             '<div class="book-meta">' +
               '<span class="book-tag">' + tag + "</span>" +
@@ -809,8 +857,7 @@ html += '<div class="book-card">' +
       if (!BOOKS_DATA[bookKey]) return;
       var idx = savedBooks.indexOf(bookKey);
       var title = getBookTitleByLang(bookKey);
-
-      if (idx === -1) {
+if (idx === -1) {
         savedBooks.push(bookKey);
         persistSavedBooks();
         if (currentLang === "en") showMsg("Added to saved list: " + title);
@@ -834,6 +881,7 @@ html += '<div class="book-card">' +
         : (currentLang === "en" ? "Guest" : (currentLang === "fr" ? "Invité" : "زائر"));
       var title = getBookTitleByLang(bookKey);
       var orderId = "ORD-" + Math.floor(100000 + Math.random() * 900000);
+      var downloadUrl = getProductDownloadUrl(bookKey);
 
       orderList.push({
         id: orderId,
@@ -844,12 +892,16 @@ html += '<div class="book-card">' +
       persistOrders();
 
       var codeSpan = '<span class="ord-code">' + orderId + "</span>";
+      var linkHtml = downloadUrl
+        ? '<div><a class="download-action-link" href="' + downloadUrl + '" target="_blank" rel="noopener noreferrer">' + getDownloadButtonText(downloadUrl) + "</a></div>"
+        : "";
+
       if (currentLang === "en") {
-        showMsg("Order " + codeSpan + " registered for «" + title + "» (" + book.pricePi + " Pi) — Buyer: " + buyer + ". Digital copy delivery follows Pi payment or confirmation with reference " + codeSpan + ".");
+        showMsg("Order " + codeSpan + " registered for «" + title + "» (" + book.pricePi + " Pi) — Buyer: " + buyer + ". Direct download link ready below:" + linkHtml);
       } else if (currentLang === "fr") {
-        showMsg("Commande " + codeSpan + " enregistrée pour « " + title + " » (" + book.pricePi + " Pi) — Acheteur : " + buyer + ". Remise du fichier numérique après paiement Pi ou confirmation avec la référence " + codeSpan + ".");
+        showMsg("Commande " + codeSpan + " enregistrée pour « " + title + " » (" + book.pricePi + " Pi) — Acheteur : " + buyer + ". Lien de téléchargement direct disponible ci-dessous :" + linkHtml);
       } else {
-        showMsg("تم تسجيل الطلب رقم " + codeSpan + " لإصدار «" + title + "» بسعر (" + book.pricePi + " Pi) — المشتري: " + buyer + ". يتم تسليم النسخة الرقمية بعد إتمام الدفع عبر Pi أو تأكيد الطلب برقم المرجع " + codeSpan + ".");
+        showMsg("تم تسجيل الطلب رقم " + codeSpan + " لإصدار «" + title + "» بسعر (" + book.pricePi + " Pi) — المشتري: " + buyer + ". رابط التحميل المباشر جاهز أدناه:" + linkHtml);
       }
     }
 
@@ -866,7 +918,8 @@ html += '<div class="book-card">' +
       }
       return false;
     }
-loadSavedUser();
+
+    loadSavedUser();
     loadSavedBooks();
     loadOrders();
     ensurePiInit();
@@ -896,7 +949,7 @@ loadSavedUser();
         document.getElementById("tagline").textContent = "A digital platform for illustrated stories, natural nutrition guides, project calculators, and knowledge releases in three languages.";
         document.getElementById("pi-btn").textContent = "Sign in with Pi";
         document.getElementById("share-btn").textContent = "Share Link";
-        document.getElementById("logout-btn").textContent = "Clear Session";
+document.getElementById("logout-btn").textContent = "Clear Session";
         document.getElementById("s-title").textContent = "Dodo and His Red Bicycle (Free Sample)";
         document.getElementById("s-desc").textContent = "Read and download the free sample directly from the store and explore the story and artwork.";
         document.getElementById("s-btn").textContent = "Download Free Sample";
@@ -923,7 +976,7 @@ loadSavedUser();
         document.getElementById("s-desc").textContent = "Lisez et téléchargez l'échantillon gratuit directement depuis la boutique.";
         document.getElementById("s-btn").textContent = "Télécharger l'échantillon gratuit";
         document.getElementById("s-direct").textContent = "Ouvrir / Télécharger l'échantillon (PDF)";
-document.getElementById("c-title").textContent = "Publications et livres numériques KAHLA SALIM";
+        document.getElementById("c-title").textContent = "Publications et livres numériques KAHLA SALIM";
         document.getElementById("c-desc").textContent = "Histoires, guides et éditions numériques disponibles dans la boutique.";
         document.getElementById("a-title").textContent = "À propos du projet et de l'auteur";
         document.getElementById("a-body").innerHTML = "La boutique <strong>Asmar 1972</strong> de <strong>KAHLA SALIM</strong> réunit des histoires pour enfants et aventures d'Amer et Dodo, des guides de nutrition naturelle, des calculateurs de projets de construction et une utilisation directe dans Pi Browser en arabe, anglais et français.";
@@ -936,7 +989,7 @@ document.getElementById("c-title").textContent = "Publications et livres numéri
         document.documentElement.lang = "ar";
         document.documentElement.dir = "rtl";
         document.getElementById("lang-ar").classList.add("active");
-        document.getElementById("top-pill").textContent = "متجر رقمي متكامل • Pi Ecosystem";
+document.getElementById("top-pill").textContent = "متجر رقمي متكامل • Pi Ecosystem";
         document.getElementById("tagline").textContent = "منصة رقمية للقصص المصورة وأدلة التغذية الطبيعية وحاسبة المشاريع والإصدارات المعرفية متعددة اللغات.";
         document.getElementById("pi-btn").textContent = "تسجيل الدخول عبر Pi";
         document.getElementById("share-btn").textContent = "مشاركة الرابط";
@@ -979,7 +1032,7 @@ document.getElementById("c-title").textContent = "Publications et livres numéri
     function copyFallback(text) {
       if (navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
         navigator.clipboard.writeText(text).then(function () {
-if (currentLang === "en") showMsg("Store link copied: " + text);
+          if (currentLang === "en") showMsg("Store link copied: " + text);
           else if (currentLang === "fr") showMsg("Lien copié : " + text);
           else showMsg("تم نسخ رابط المتجر: " + text);
         }).catch(function () {
@@ -1022,8 +1075,7 @@ if (currentLang === "en") showMsg("Store link copied: " + text);
           showMsg("تنبيه: لم يرد Pi.authenticate بعد (تحقق من نافذة الصلاحيات في Pi Browser أو وضع التطبيق).");
         }
       }, 10000);
-
-      try {
+try {
         var req = window.Pi.authenticate(["username"], function (payment) {
           showMsg("تنبيه دفعة غير مكتملة: " + JSON.stringify(payment));
         });
@@ -1083,16 +1135,20 @@ if (currentLang === "en") showMsg("Store link copied: " + text);
       if (currentPiUser && currentPiUser.username) {
         msg += " — (" + currentPiUser.username + ")";
       }
+      var dlUrl = getProductDownloadUrl(bookKey);
+      if (!item.isFreeSample && dlUrl) {
+        msg += '<div><a class="download-action-link" href="' + dlUrl + '" target="_blank" rel="noopener noreferrer">' + getDownloadButtonText(dlUrl) + "</a></div>";
+      }
       showMsg(msg);
       if (item.isFreeSample) {
         triggerSampleDownload();
       }
     }
   </script>
-<footer style="margin-top: 40px; padding: 20px 10px; border-top: 1px solid #e5e7eb; text-align: center; font-size: 14px;">
-  <a href="/privacy" style="margin: 0 12px; color: #5b21b6; text-decoration: none; font-weight: bold;">سياسة الخصوصية</a>
-  <span>|</span>
-  <a href="/terms" style="margin: 0 12px; color: #5b21b6; text-decoration: none; font-weight: bold;">شروط الاستخدام</a>
-</footer>
+  <footer style="margin-top: 40px; padding: 20px 10px; border-top: 1px solid #e5e7eb; text-align: center; font-size: 14px;">
+    <a href="/privacy" style="margin: 0 12px; color: #5b21b6; text-decoration: none; font-weight: bold;">سياسة الخصوصية</a>
+    <span>|</span>
+    <a href="/terms" style="margin: 0 12px; color: #5b21b6; text-decoration: none; font-weight: bold;">شروط الاستخدام</a>
+  </footer>
 </body>
 </html>
