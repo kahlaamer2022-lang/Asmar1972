@@ -757,19 +757,15 @@ function persistSavedBooks() {
             ? "No recorded orders yet."
             : (currentLang === "fr" ? "Aucune commande enregistrée pour le moment." : "لا توجد طلبات مسجلة حالياً.");
         } else {
-          var oHtml = '<ul class="mini-list">';
-          for (var j = 0; j < orderList.length; j++) {
-            var ord = orderList[j];
-            var oTitle = getBookTitleByLang(ord.book);
-            var isPaid = Boolean(ord && (ord.paid === true  ord.status === "paid"  ord.status === "completed"));
-            var dlUrl = isPaid ? getProductDownloadUrl(ord.book) : "";
-            var dlLinkHtml = (isPaid && dlUrl)
-              ? ' — <a href="' + dlUrl + '" target="_blank" rel="noopener noreferrer" style="color:#065f46;font-weight:bold;">' + getDownloadButtonText(dlUrl) + "</a>"
-: ' — <span style="color:#b45309;font-weight:bold;">' + (currentLang === "en" ? "(Pending Pi Payment)" : (currentLang === "fr" ? "(En attente du paiement Pi)" : "(بانتظار إتمام الدفع عبر Pi)")) + "</span>";
-            oHtml += '<li><span class="ord-code">' + ord.id + "</span> — " + oTitle + " (" + ord.pricePi + " Pi)" + dlLinkHtml + "</li>";
-          }
-          oHtml += "</ul>";
-          ordersBodyEl.innerHTML = oHtml;
+          var codeSpan = '<span class="ord-code">' + orderId + "</span>";
+
+      if (currentLang === "en") {
+        showMsg("Order " + codeSpan + " registered for «" + title + "» (" + book.pricePi + " Pi) — Buyer: " + buyer + ". Download unlocks after completing Pi payment.");
+      } else if (currentLang === "fr") {
+        showMsg("Commande " + codeSpan + " enregistrée pour « " + title + " » (" + book.pricePi + " Pi) — Acheteur : " + buyer + ". Le téléchargement s'activera après le paiement Pi.");
+      } else {
+        showMsg("تم تسجيل الطلب رقم " + codeSpan + " لإصدار «" + title + "» بسعر (" + book.pricePi + " Pi) — المشتري: " + buyer + ". سيتم إتاحة التحميل بعد إتمام الدفع عبر Pi.");
+   
         }
       }
     }
@@ -885,16 +881,6 @@ function persistSavedBooks() {
       var title = getBookTitleByLang(bookKey);
       var orderId = "ORD-" + Math.floor(100000 + Math.random() * 900000);
 
-      orderList.push({
-        id: orderId,
-        book: bookKey,
-        pricePi: book.pricePi,
-        buyer: buyer,
-        paid: false,
-        status: "pending"
-      });
-      persistOrders();
-
       var codeSpan = '<span class="ord-code">' + orderId + "</span>";
 
       if (currentLang === "en") {
@@ -903,9 +889,7 @@ function persistSavedBooks() {
         showMsg("Commande " + codeSpan + " enregistrée pour « " + title + " » (" + book.pricePi + " Pi) — Acheteur : " + buyer + ". Le téléchargement s'activera après le paiement Pi.");
       } else {
         showMsg("تم تسجيل الطلب رقم " + codeSpan + " لإصدار «" + title + "» بسعر (" + book.pricePi + " Pi) — المشتري: " + buyer + ". سيتم إتاحة التحميل بعد إتمام الدفع عبر Pi.");
-      }
-    }
-
+   
     function ensurePiInit() {
       if (piInitialized) return true;
       if (window.Pi && typeof window.Pi.init === "function") {
