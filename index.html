@@ -889,7 +889,125 @@ function persistSavedBooks() {
         showMsg("Commande " + codeSpan + " enregistrée pour « " + title + " » (" + book.pricePi + " Pi) — Acheteur : " + buyer + ". Le téléchargement s'activera après le paiement Pi.");
       } else {
         showMsg("تم تسجيل الطلب رقم " + codeSpan + " لإصدار «" + title + "» بسعر (" + book.pricePi + " Pi) — المشتري: " + buyer + ". سيتم إتاحة التحميل بعد إتمام الدفع عبر Pi.");
-   
+  startPiPaymentForOrder(orderId);
+}
+ function startPiPaymentForOrder(orderId) {
+  var idx = -1;
+  for (var i = 0; i < orderList.length; i++) {
+    if (orderList[i].id === orderId) {
+      idx = i;
+      break;
+    }
+  }
+  if (idx === -1) return;
+
+  var ord = orderList[idx];
+  var title = getBookTitleByLang(ord.book);
+
+  if (ord.paid === true && (ord.status === "paid" || ord.status === "completed")) {
+    if (typeof renderOrdersList === "function") renderOrdersList();
+    if (typeof renderOrdersBadge === "function") renderOrdersBadge();
+    return;
+  }
+
+  if (!ensurePiInit()  !window.Pi  typeof window.Pi.createPayment !== "function") {
+    showMsg(currentLang === "en"
+      ? "Pi payment is unavailable right now. Please open inside Pi Browser."
+      : (currentLang === "fr"
+        ? "Le paiement Pi est indisponible. Ouvrez dans Pi Browser."
+        : "الدفع عبر Pi غير متاح حالياً. تأكد من الفتح داخل متصفح Pi."));
+    return;
+  }
+
+  var paymentData = {
+    amount: Number(ord.pricePi),
+    memo: title + " (" + ord.id + ")",
+    metadata: {
+      orderId: ord.id,
+      bookKey: ord.book,
+      buyer: ord.buyer
+    }
+  };
+
+  var callbacks = {
+    onReadyForServerApproval: function (paymentId) {},
+    onReadyForServerCompletion: function (paymentId, txid) {
+      orderList[idx].paid = true;
+      orderList[idx].status = "paid";
+      orderList[idx].paymentId = paymentId || "";
+      orderList[idx].txid = txid || "";
+      if (typeof persistOrders === "function") persistOrders();
+      if (typeof renderOrdersList === "function") renderOrdersList();
+      if (typeof renderOrdersBadge === "function") renderOrdersBadge();
+
+      showMsg(currentLang === "en"
+        ? "Payment completed for order " + ord.id + ". Download link is now unlocked."
+        : (currentLang === "fr"
+          ? "Paiement terminé pour la commande " + ord.id + ". Le lien de téléchargement est débloqué."
+          : "تم إتمام الدفع للطلب رقم " + ord.id + " بنجاح، وتم تفعيل رابط التحميل تلقائياً."));
+    },
+    onCancel: function (paymentId) {
+      orderList[idx].paid = false;
+      orderList[idx].status = "pending";
+      if (typeof persistOrders === "function") persistOrders();
+      if (typeof renderOrdersList === "function") renderOrdersList();
+      if (typeof renderOrdersBadge === "function") renderOrdersBadge();
+
+      showMsg(currentLang === "en"
+        ? "Payment cancelled for order " + ord.id + "."
+        : (currentLang === "fr" ? "Paiement annulé pour la commande " + ord.id + "." : "تم إلغاء عملية الدفع للطلب رقم " + ord.id + "."));
+    },
+    onError: function (error, payment) {
+      showMsg(currentLang === "en"
+        ? "Pi payment error for order " + ord.id + "."
+        : (currentLang === "fr" ? "Erreur de paiement Pi pour la commande " + ord.id + "." : "حدث خطأ أثناء الدفع عبر Pi للطلب رقم " + ord.id + "."));
+    }
+  };
+
+  try {
+    window.Pi.createPayment(paymentData, callbacks);
+  } catch (e) {
+    showMsg(currentLang === "en"
+      ? "Could not start Pi payment."
+      : (currentLang === "fr" ? "Impossible de démarrer le paiement Pi." : "تعذر بدء عملية الدفع عبر Pi."));
+  }
+}
+
+function createOrderAndPay(bookKey, buyer) {
+  var book = BOOKS_DATA[bookKey];
+  if (!book) return;
+
+  var resolvedBuyer = (buyer && String(buyer).trim())
+    ? String(buyer).trim()
+    : ((typeof buyerInput !== "undefined" && buyerInput && buyerInput.value.trim())
+      ? buyerInput.value.trim()
+      : ((typeof piUser !== "undefined" && piUser && piUser.username) ? piUser.username : "Guest"));
+
+  var title = getBookTitleByLang(bookKey);
+  var orderId = "ORD-" + Math.floor(100000 + Math.random() * 900000);
+
+  orderList.push({
+    id: orderId,
+    book: bookKey,
+    pricePi: book.pricePi,
+    buyer: resolvedBuyer,
+    paid: false,
+    status: "pending"
+  });
+  if (typeof persistOrders === "function") persistOrders();
+  if (typeof renderOrdersList === "function") renderOrdersList();
+  if (typeof renderOrdersBadge === "function") renderOrdersBadge();
+var codeSpan = '<span class="ord-code">' + orderId + "</span>";
+  if (currentLang === "en") {
+    showMsg("Order " + codeSpan + " registered for «" + title + "» (" + book.pricePi + " Pi) — Buyer: " + resolvedBuyer + ". Complete Pi payment to unlock download.");
+  } else if (currentLang === "fr") {
+    showMsg("Commande " + codeSpan + " enregistrée pour « " + title + " » (" + book.pricePi + " Pi) — Acheteur : " + resolvedBuyer + ". Finalisez le paiement Pi pour débloquer le téléchargement.");
+  } else {
+    showMsg("تم تسجيل الطلب رقم " + codeSpan + " لإصدار «" + title + "» بسعر (" + book.pricePi + " Pi) — المشتري: " + resolvedBuyer + ". أتمم الدفع عبر Pi لتفعيل رابط التحميل.");
+  }
+
+  startPiPaymentForOrder(orderId);
+}
     function ensurePiInit() {
       if (piInitialized) return true;
       if (window.Pi && typeof window.Pi.init === "function") {
