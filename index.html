@@ -401,7 +401,26 @@ background: #fafafa;
     var ORDERS_KEY = "asmar1972_orders";
     var FREE_SAMPLE_URL = "./dodo-sample.pdf";
 
-    var PRODUCT_DOWNLOAD_URLS = {
+   
+function changeLang(lang) {
+      if (lang !== "ar" && lang !== "en" && lang !== "fr") return;
+      currentLang = lang;
+      document.documentElement.lang = lang;
+      document.documentElement.dir = (lang === "ar") ? "rtl" : "ltr";
+
+      var btnAr = document.getElementById("lang-ar");
+      var btnEn = document.getElementById("lang-en");
+      var btnFr = document.getElementById("lang-fr");
+      if (btnAr) btnAr.classList.toggle("active", lang === "ar");
+      if (btnEn) btnEn.classList.toggle("active", lang === "en");
+      if (btnFr) btnFr.classList.toggle("active", lang === "fr");
+
+      if (typeof applyTranslations === "function") {
+        applyTranslations(lang);
+      } else if (typeof renderStore === "function") {
+        renderStore();
+      }
+    } var PRODUCT_DOWNLOAD_URLS = {
       "construction_calc": "https://drive.google.com/uc?export=download&id=1xB3k4GUaylYS2ihKxV972vpJbi9PxsAp",
       "nutrition_wisdom": "https://drive.google.com/uc?export=download&id=1M6fimIWIGkDThkOxoTwKmOiFLFMLhgTQ",
       "amer_little_hero": "https://drive.google.com/uc?export=download&id=172GZoRoWQjbHHx1OkCAxKPj3n701WfHP",
