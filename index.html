@@ -979,7 +979,7 @@ var paymentData = {
 }    onError: function (error, payment) {
       showMsg(currentLang === "en"
         ? "Pi payment error for order " + ord.id + "."
-        : (currentLang === "fr" ? "Erreur de paiement Pi pour la commande " + ord.id + "." : "حدث خطأ أثناء الدفع عبر Pi للطلب رقم " + ord.id + "."));
+        : (currentLang === "fr" ? "Erreur de paiement Pi pour la commande " + ord.id + "." : "حدث خطأ أثناء الدفع عبر Pi للطلب رقم " + ord.id + ".");
     }
   };
 
@@ -988,7 +988,7 @@ var paymentData = {
   } catch (e) {
     showMsg(currentLang === "en"
       ? "Could not start Pi payment."
-      : (currentLang === "fr" ? "Impossible de démarrer le paiement Pi." : "تعذر بدء عملية الدفع عبر Pi."));
+      : (currentLang === "fr" ? "Impossible de démarrer le paiement Pi." : "تعذر بدء عملية الدفع عبر Pi.");
   }
 }
 
