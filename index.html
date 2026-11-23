@@ -1215,14 +1215,15 @@ var settled = false;
           clearTimeout(timer);
           showMsg("3/3: authenticate لم يُرجع Promise.");
         }
-      } catch (e) {
-        settled = true;
-        clearTimeout(timer);
-        showMsg("استثناء catch: " + (e && e.message ? e.message : String(e)));
-      }
+    } catch (e) {
+      settled = true;
+      clearTimeout(timer);
+      showMsg("استثناء catch: " + (e && e.message ? e.message : String(e)));
     }
+  }
+}
 
-    function triggerSampleDownload() {
+function triggerSampleDownload() {
       var a = document.createElement("a");
       a.href = FREE_SAMPLE_URL;
       a.download = "dodo-sample.pdf";
