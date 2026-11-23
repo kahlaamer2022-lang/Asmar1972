@@ -982,7 +982,9 @@ var paymentData = {
   } catch (e) {
     showMsg(currentLang === "en"
       ? "Could not start Pi payment."
-      : (currentLang === "fr" ? "Impossible de démarrer le paiement Pi." : "تعذر بدء عملية الدفع عبر Pi.");
+      : (currentLang === "fr"
+        ? "Impossible de démarrer le paiement Pi."
+        : "تعذر بدء عملية الدفع عبر Pi."));
   }
 }
 
@@ -991,8 +993,7 @@ function createOrderAndPay(bookKey, buyer) {
   if (!book) return;
 
   var resolvedBuyer = (buyer && String(buyer).trim())
-    ? String(buyer).trim()
-    : ((typeof buyerInput !== "undefined" && buyerInput && buyerInput.value.trim())
+    ? String(buyer).trim()    : ((typeof buyerInput !== "undefined" && buyerInput && buyerInput.value.trim())
       ? buyerInput.value.trim()
       : ((typeof piUser !== "undefined" && piUser && piUser.username) ? piUser.username : "Guest"));
 
