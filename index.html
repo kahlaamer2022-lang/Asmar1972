@@ -112,6 +112,7 @@
     .download-action-link {
       display: inline-block;
       margin-top: 8px;
+      margin-inline-end: 8px;
       padding: 7px 12px;
       border-radius: 8px;
       background: #ecfdf5;
@@ -120,6 +121,9 @@
       text-decoration: none;
       border: 1px solid #6ee7b7;
       font-size: 0.88rem;
+    }
+    .download-action-link:hover {
+      background: #d1fae5;
     }
     .user-badge {
       margin-top: 12px;
@@ -159,11 +163,11 @@
     .summary-lists {
       margin-top: 12px;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
       gap: 10px;
     }
     .mini-panel {
-background: #fafafa;
+      background: #fafafa;
       border: 1px solid #e4e4e7;
       border-radius: 10px;
       padding: 10px 12px;
@@ -180,7 +184,7 @@ background: #fafafa;
       padding-inline-start: 18px;
     }
     .mini-list li {
-      margin-bottom: 5px;
+      margin-bottom: 7px;
     }
     .status {
       margin-top: 12px;
@@ -334,9 +338,9 @@ background: #fafafa;
     <div class="box">
       <div id="top-pill" class="top-pill">متجر رقمي متكامل • Pi Ecosystem</div>
       <h1>Asmar 1972</h1>
-      <div class="author">KAHLA SALIM</div>
+<div class="author">KAHLA SALIM</div>
       <p id="tagline" class="tagline">منصة رقمية للقصص المصورة وأدلة التغذية الطبيعية وحاسبة المشاريع والإصدارات المعرفية متعددة اللغات.</p>
-<div class="row">
+      <div class="row">
         <button type="button" id="lang-ar" class="btn-lang active" onclick="changeLang('ar')">العربية</button>
         <button type="button" id="lang-en" class="btn-lang" onclick="changeLang('en')">English</button>
         <button type="button" id="lang-fr" class="btn-lang" onclick="changeLang('fr')">Français</button>
@@ -401,36 +405,18 @@ background: #fafafa;
     var ORDERS_KEY = "asmar1972_orders";
     var FREE_SAMPLE_URL = "./dodo-sample.pdf";
 
-   
-function changeLang(lang) {
-      if (lang !== "ar" && lang !== "en" && lang !== "fr") return;
-      currentLang = lang;
-      document.documentElement.lang = lang;
-      document.documentElement.dir = (lang === "ar") ? "rtl" : "ltr";
-
-      var btnAr = document.getElementById("lang-ar");
-      var btnEn = document.getElementById("lang-en");
-      var btnFr = document.getElementById("lang-fr");
-      if (btnAr) btnAr.classList.toggle("active", lang === "ar");
-      if (btnEn) btnEn.classList.toggle("active", lang === "en");
-      if (btnFr) btnFr.classList.toggle("active", lang === "fr");
-
-      if (typeof applyTranslations === "function") {
-        applyTranslations(lang);
-      } else if (typeof renderStore === "function") {
-        renderStore();
-      }
-    } var PRODUCT_DOWNLOAD_URLS = {
+    var PRODUCT_DOWNLOAD_URLS = {
       "construction_calc": "https://drive.google.com/uc?export=download&id=1xB3k4GUaylYS2ihKxV972vpJbi9PxsAp",
       "nutrition_wisdom": "https://drive.google.com/uc?export=download&id=1M6fimIWIGkDThkOxoTwKmOiFLFMLhgTQ",
       "amer_little_hero": "https://drive.google.com/uc?export=download&id=172GZoRoWQjbHHx1OkCAxKPj3n701WfHP",
       "amer_moto_cup": "https://drive.google.com/uc?export=download&id=1l96i7HCL-Rp2TebE56Kgpd3730hmrvtt",
       "nutrition_tips": "https://drive.google.com/uc?export=download&id=176PwosTJpyp6MgDyskjuxGbt5B_ckhNI",
-      "amer_star_night": "https://drive.google.com/uc?export=download&id=1heKtMMDgCJaf0kQLWyEs97Nn76L5HYe3",
+"amer_star_night": "https://drive.google.com/uc?export=download&id=1heKtMMDgCJaf0kQLWyEs97Nn76L5HYe3",
       "trio_unforgettable_day": "https://drive.google.com/uc?export=download&id=1yagYTeMQIN7ps3hY_AHixmsetx0X3L-4",
       "hamaima_bidaa": "https://drive.google.com/uc?export=download&id=1m-PEmBbwFD-0gnWvPkwPLgfWxAilm27Q"
     };
-var BOOKS_ORDER = [
+
+    var BOOKS_ORDER = [
       "dodo",
       "nutrition_wisdom",
       "construction_calc",
@@ -499,7 +485,7 @@ var BOOKS_ORDER = [
         detailAr: "إصدار «حاسبة مشاريع البناء» (6 Pi): أداة ومرجع رقمي لمساعدة أصحاب المشاريع في التقدير والحساب.",
         detailEn: "Release «Construction Projects Calculator» (6 Pi): a digital reference for project estimation and planning.",
         detailFr: "Édition « Calculateur de projets de construction » (6 Pi) : référence pratique pour l'estimation."
-      },
+},
       amer_little_hero: {
         isFreeSample: false,
         pricePi: 4,
@@ -510,7 +496,7 @@ var BOOKS_ORDER = [
         tagEn: "Amer Adventures",
         tagFr: "Aventures d'Amer",
         nameAr: "عامر البطل الصغير",
-nameEn: "Amer the Little Hero",
+        nameEn: "Amer the Little Hero",
         nameFr: "Amer le petit héros",
         descAr: "قصة مشوّقة للأطفال تبرز الشجاعة وحسن التصرف والمواقف الإيجابية لعامر.",
         descEn: "An engaging children's story highlighting courage, good judgment, and Amer's positive actions.",
@@ -573,11 +559,11 @@ nameEn: "Amer the Little Hero",
         descEn: "A focused collection of practical daily nutrition tips to support health and vitality.",
         descFr: "Un recueil pratique de conseils nutritionnels quotidiens pour la santé et l'énergie.",
         detailAr: "إصدار «كتاب نصائح في التغذية» (5 Pi): خلاصة نصائح غذائية عملية وسهلة التطبيق.",
-        detailEn: "Release «Guide to Nutrition Tips» (5 Pi): practical and easy-to-follow nutrition advice.",
+detailEn: "Release «Guide to Nutrition Tips» (5 Pi): practical and easy-to-follow nutrition advice.",
         detailFr: "Édition « Guide de conseils en nutrition » (5 Pi) : conseils pratiques au quotidien."
       },
       trio_unforgettable_day: {
-isFreeSample: false,
+        isFreeSample: false,
         pricePi: 4,
         priceAr: "4 Pi",
         priceEn: "4 Pi",
@@ -629,22 +615,16 @@ isFreeSample: false,
       return PRODUCT_DOWNLOAD_URLS[bookKey] || "";
     }
 
-    function triggerDirectDownload(url) {
-      if (!url) return;
-      var a = document.createElement("a");
-      a.href = url;
-      a.target = "_blank";
-      a.rel = "noopener noreferrer";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
+    function getDownloadButtonText() {
+      if (currentLang === "en") return "Download / Open Product";
+      if (currentLang === "fr") return "Télécharger / Ouvrir le produit";
+      return "تحميل / فتح المنتج الآن";
     }
 
-    function getDownloadButtonText(url) {
+    function buildDownloadButtonHtml(bookKey) {
+      var url = getProductDownloadUrl(bookKey);
       if (!url) return "";
-      if (currentLang === "en") return "Download Digital File";
-      if (currentLang === "fr") return "Télécharger le fichier numérique";
-      return "تحميل الملف الرقمي مباشرة";
+      return ' <a class="download-action-link" href="' + url + '" target="_blank" rel="noopener noreferrer">' + getDownloadButtonText() + '</a>';
     }
 
     function loadSavedUser() {
@@ -671,8 +651,7 @@ isFreeSample: false,
         savedBooks = [];
       }
     }
-
-    function loadOrders() {
+function loadOrders() {
       try {
         var raw = sessionStorage.getItem(ORDERS_KEY);
         if (raw) {
@@ -685,7 +664,8 @@ isFreeSample: false,
         orderList = [];
       }
     }
-function persistSavedBooks() {
+
+    function persistSavedBooks() {
       try {
         sessionStorage.setItem(SAVED_KEY, JSON.stringify(savedBooks));
       } catch (e) {}
@@ -734,11 +714,40 @@ function persistSavedBooks() {
       }
     }
 
+    function renderOrdersList() {
+      var ordersBodyEl = document.getElementById("orders-panel-body");
+      if (!ordersBodyEl) return;
+
+      if (!orderList.length) {
+        ordersBodyEl.textContent = currentLang === "en"
+          ? "No recorded orders yet."
+          : (currentLang === "fr" ? "Aucune commande enregistrée pour le moment." : "لا توجد طلبات مسجلة حالياً.");
+        return;
+      }
+
+      var html = '<ul class="mini-list">';
+      for (var i = 0; i < orderList.length; i++) {
+        var ord = orderList[i];
+        var title = getBookTitleByLang(ord.book);
+        var isPaid = ord.paid === true  ord.status === "paid"  ord.status === "completed";
+        var statusLabel = isPaid
+          ? (currentLang === "en" ? "Paid" : (currentLang === "fr" ? "Payée" : "مدفوع"))
+          : (currentLang === "en" ? "Pending" : (currentLang === "fr" ? "En attente" : "بانتظار الدفع"));
+
+        html += '<li><span class="ord-code">' + ord.id + '</span> — ' + title + ' (' + ord.pricePi + ' Pi) • ' + statusLabel;
+        if (isPaid) {
+          html += '<div>' + buildDownloadButtonHtml(ord.book) + '</div>';
+        }
+        html += '</li>';
+      }
+      html += '</ul>';
+      ordersBodyEl.innerHTML = html;
+    }
+
     function renderSummaryLists() {
       var savedTitleEl = document.getElementById("saved-panel-title");
       var savedBodyEl = document.getElementById("saved-panel-body");
       var ordersTitleEl = document.getElementById("orders-panel-title");
-      var ordersBodyEl = document.getElementById("orders-panel-body");
 
       if (savedTitleEl) {
         savedTitleEl.textContent = currentLang === "en"
@@ -751,7 +760,7 @@ function persistSavedBooks() {
           savedBodyEl.textContent = currentLang === "en"
             ? "No saved releases yet."
             : (currentLang === "fr" ? "Aucune édition enregistrée pour le moment." : "لا توجد إصدارات محفوظة حالياً.");
-        } else {
+} else {
           var sHtml = '<ul class="mini-list">';
           for (var i = 0; i < savedBooks.length; i++) {
             var sTitle = getBookTitleByLang(savedBooks[i]);
@@ -770,23 +779,7 @@ function persistSavedBooks() {
           : (currentLang === "fr" ? "Journal des commandes enregistrées" : "سجل الطلبات المسجلة");
       }
 
-      if (ordersBodyEl) {
-        if (!orderList.length) {
-          ordersBodyEl.textContent = currentLang === "en"
-            ? "No recorded orders yet."
-            : (currentLang === "fr" ? "Aucune commande enregistrée pour le moment." : "لا توجد طلبات مسجلة حالياً.");
-        } else {
-          var codeSpan = '<span class="ord-code">' + orderId + "</span>";
-
-      if (currentLang === "en") {
-        showMsg("Order " + codeSpan + " registered for «" + title + "» (" + book.pricePi + " Pi) — Buyer: " + buyer + ". Download unlocks after completing Pi payment.");
-      } else if (currentLang === "fr") {
-        showMsg("Commande " + codeSpan + " enregistrée pour « " + title + " » (" + book.pricePi + " Pi) — Acheteur : " + buyer + ". Le téléchargement s'activera après le paiement Pi.");
-      } else {
-        showMsg("تم تسجيل الطلب رقم " + codeSpan + " لإصدار «" + title + "» بسعر (" + book.pricePi + " Pi) — المشتري: " + buyer + ". سيتم إتاحة التحميل بعد إتمام الدفع عبر Pi.");
-   
-        }
-      }
+      renderOrdersList();
     }
 
     function renderOrdersBadge() {
@@ -832,24 +825,24 @@ function persistSavedBooks() {
           var orderLabel = currentLang === "en"
             ? ("Order Edition (" + item.pricePi + " Pi)")
             : (currentLang === "fr" ? ("Commander (" + item.pricePi + " Pi)") : ("طلب الإصدار (" + item.pricePi + " Pi)"));
-          orderBtnHtml = '<button type="button" class="btn-order" onclick="orderBook(\'' + key + '\')">' + orderLabel + "</button>";
+          orderBtnHtml = '<button type="button" class="btn-order" onclick="createOrderAndPay(\'' + key + '\')">' + orderLabel + "</button>";
         }
 
         html += '<div class="book-card">' +
-          '<div>' +
-            '<div class="book-meta">' +
-              '<span class="book-tag">' + tag + "</span>" +
-              '<span class="price-tag' + (item.isFreeSample ? " free" : "") + '">' + price + "</span>" +
-            "</div>" +
-            '<h3 class="book-title">' + title + "</h3>" +
-            '<p class="book-desc">' + desc + "</p>" +
+          "<div>" +
+          '<div class="book-meta">' +
+          '<span class="book-tag">' + tag + "</span>" +
+          '<span class="price-tag' + (item.isFreeSample ? " free" : "") + '">' + price + "</span>" +
+          "</div>" +
+          '<h3 class="book-title">' + title + "</h3>" +
+          '<p class="book-desc">' + desc + "</p>" +
           "</div>" +
           '<div class="card-actions">' +
-            orderBtnHtml +
-            '<button type="button" class="btn-book" onclick="selectBook(\'' + key + '\')">' + detailLabel + "</button>" +
-            '<button type="button" class="btn-save' + (isSaved ? " active" : "") + '" onclick="toggleSaveBook(\'' + key + '\')">' + saveLabel + "</button>" +
+          orderBtnHtml +
+          '<button type="button" class="btn-book" onclick="selectBook(\'' + key + '\')">' + detailLabel + "</button>" +
+          '<button type="button" class="btn-save' + (isSaved ? " active" : "") + '" onclick="toggleSaveBook(\'' + key + '\')">' + saveLabel + "</button>" +
           "</div>" +
-        "</div>";
+          "</div>";
       }
 
       grid.innerHTML = html;
@@ -857,10 +850,10 @@ function persistSavedBooks() {
 
     function renderSavedUI() {
       var countBadge = document.getElementById("saved-count-badge");
-      if (countBadge) {
+if (countBadge) {
         if (currentLang === "en") {
           countBadge.textContent = "Saved Releases: " + savedBooks.length;
-} else if (currentLang === "fr") {
+        } else if (currentLang === "fr") {
           countBadge.textContent = "Éditions enregistrées : " + savedBooks.length;
         } else {
           countBadge.textContent = "الإصدارات المحفوظة: " + savedBooks.length;
@@ -890,157 +883,138 @@ function persistSavedBooks() {
       }
     }
 
-    function orderBook(bookKey) {
+    function startPiPaymentForOrder(orderId) {
+      var idx = -1;
+      for (var i = 0; i < orderList.length; i++) {
+        if (orderList[i].id === orderId) {
+          idx = i;
+          break;
+        }
+      }
+      if (idx === -1) return;
+
+      var ord = orderList[idx];
+      var title = getBookTitleByLang(ord.book);
+      var downloadBtnHtml = buildDownloadButtonHtml(ord.book);
+
+      if (ord.paid === true && (ord.status === "paid" || ord.status === "completed")) {
+        renderOrdersList();
+        renderOrdersBadge();
+        showMsg(currentLang === "en"
+          ? ("Order " + ord.id + " is already paid." + (downloadBtnHtml ? "<div>" + downloadBtnHtml + "</div>" : ""))
+          : (currentLang === "fr"
+            ? ("La commande " + ord.id + " est déjà payée." + (downloadBtnHtml ? "<div>" + downloadBtnHtml + "</div>" : ""))
+            : ("الطلب رقم " + ord.id + " مدفوع بالفعل." + (downloadBtnHtml ? "<div>" + downloadBtnHtml + "</div>" : ""))));
+        return;
+      }
+
+      if (!(ensurePiInit() && window.Pi && typeof window.Pi.createPayment === "function")) {
+        showMsg(currentLang === "en"
+          ? "Pi payment is unavailable right now. Please open inside Pi Browser."
+          : (currentLang === "fr"
+            ? "Le paiement Pi est indisponible. Ouvrez dans Pi Browser."
+            : "الدفع عبر Pi غير متاح حالياً. تأكد من الفتح داخل متصفح Pi."));
+        return;
+      }
+
+      var paymentData = {
+        amount: Number(ord.pricePi),
+        memo: "Asmar 1972 — " + title + " (" + ord.id + ")",
+        metadata: {
+          orderId: ord.id,
+          bookKey: ord.book,
+          buyer: ord.buyer
+        }
+      };
+
+      var callbacks = {
+        onReadyForServerApproval: function (paymentId) {},
+        onReadyForServerCompletion: function (paymentId, txid) {
+          orderList[idx].paid = true;
+          orderList[idx].status = "paid";
+          orderList[idx].paymentId = paymentId || "";
+          orderList[idx].txid = txid || "";
+          persistOrders();
+          renderOrdersList();
+          renderOrdersBadge();
+
+          var unlockedBtn = buildDownloadButtonHtml(ord.book);
+          showMsg(currentLang === "en"
+            ? ("Payment completed for order " + ord.id + ". Direct access is unlocked:" + (unlockedBtn ? "<div>" + unlockedBtn + "</div>" : ""))
+            : (currentLang === "fr"
+              ? ("Paiement terminé pour la commande " + ord.id + ". Accès direct débloqué :" + (unlockedBtn ? "<div>" + unlockedBtn + "</div>" : ""))
+              : ("تم إتمام الدفع للطلب رقم " + ord.id + " بنجاح، وتم تفعيل زر التحميل / الفتح المباشر:" + (unlockedBtn ? "<div>" + unlockedBtn + "</div>" : ""))));
+},
+        onCancel: function (paymentId) {
+          orderList[idx].paid = false;
+          orderList[idx].status = "pending";
+          persistOrders();
+          renderOrdersList();
+          renderOrdersBadge();
+
+          showMsg(currentLang === "en"
+            ? "Payment cancelled for order " + ord.id + "."
+            : (currentLang === "fr"
+              ? "Paiement annulé pour la commande " + ord.id + "."
+              : "تم إلغاء عملية الدفع للطلب رقم " + ord.id + "."));
+        },
+        onError: function (error, payment) {
+          showMsg(currentLang === "en"
+            ? "Pi payment error for order " + ord.id + "."
+            : (currentLang === "fr"
+              ? "Erreur de paiement Pi pour la commande " + ord.id + "."
+              : "حدث خطأ أثناء الدفع عبر Pi للطلب رقم " + ord.id + "."));
+        }
+      };
+
+      try {
+        window.Pi.createPayment(paymentData, callbacks);
+      } catch (e) {
+        showMsg(currentLang === "en"
+          ? "Could not start Pi payment."
+          : (currentLang === "fr"
+            ? "Impossible de démarrer le paiement Pi."
+            : "تعذر بدء عملية الدفع عبر Pi."));
+      }
+    }
+
+    function createOrderAndPay(bookKey, buyer) {
       var book = BOOKS_DATA[bookKey];
       if (!book || book.isFreeSample) return;
 
-      var buyer = (currentPiUser && currentPiUser.username)
-        ? currentPiUser.username
-        : (currentLang === "en" ? "Guest" : (currentLang === "fr" ? "Invité" : "زائر"));
+      var resolvedBuyer = (buyer && String(buyer).trim())
+        ? String(buyer).trim()
+        : ((currentPiUser && currentPiUser.username)
+          ? currentPiUser.username
+          : (currentLang === "en" ? "Guest" : (currentLang === "fr" ? "Invité" : "زائر")));
+
       var title = getBookTitleByLang(bookKey);
       var orderId = "ORD-" + Math.floor(100000 + Math.random() * 900000);
 
+      orderList.push({
+        id: orderId,
+        book: bookKey,
+        pricePi: book.pricePi,
+        buyer: resolvedBuyer,
+        paid: false,
+        status: "pending"
+      });
+      persistOrders();
+      renderOrdersList();
+      renderOrdersBadge();
+
       var codeSpan = '<span class="ord-code">' + orderId + "</span>";
-
       if (currentLang === "en") {
-        showMsg("Order " + codeSpan + " registered for «" + title + "» (" + book.pricePi + " Pi) — Buyer: " + buyer + ". Download unlocks after completing Pi payment.");
+        showMsg("Order " + codeSpan + " registered for «" + title + "» (" + book.pricePi + " Pi) — Buyer: " + resolvedBuyer + ". Complete Pi payment to unlock download.");
       } else if (currentLang === "fr") {
-        showMsg("Commande " + codeSpan + " enregistrée pour « " + title + " » (" + book.pricePi + " Pi) — Acheteur : " + buyer + ". Le téléchargement s'activera après le paiement Pi.");
+        showMsg("Commande " + codeSpan + " enregistrée pour « " + title + " » (" + book.pricePi + " Pi) — Acheteur : " + resolvedBuyer + ". Finalisez le paiement Pi pour débloquer le téléchargement.");
       } else {
-        showMsg("تم تسجيل الطلب رقم " + codeSpan + " لإصدار «" + title + "» بسعر (" + book.pricePi + " Pi) — المشتري: " + buyer + ". سيتم إتاحة التحميل بعد إتمام الدفع عبر Pi.");
-  startPiPaymentForOrder(orderId);
-}
- function startPiPaymentForOrder(orderId) {
-  var idx = -1;
-  for (var i = 0; i < orderList.length; i++) {
-    if (orderList[i].id === orderId) {
-      idx = i;
-      break;
+        showMsg("تم تسجيل الطلب رقم " + codeSpan + " لإصدار «" + title + "» بسعر (" + book.pricePi + " Pi) — المشتري: " + resolvedBuyer + ". أتمم الدفع عبر Pi لتفعيل زر التحميل / الفتح.");
+      }
+
+      startPiPaymentForOrder(orderId);
     }
-  }
-  if (idx === -1) return;
 
-  var ord = orderList[idx];
-  var title = getBookTitleByLang(ord.book);
-
-  if (ord.paid === true && (ord.status === "paid" || ord.status === "completed")) {
-    if (typeof renderOrdersList === "function") renderOrdersList();
-    if (typeof renderOrdersBadge === "function") renderOrdersBadge();
-    return;
-  }
-
-if (!(ensurePiInit() && window.Pi && typeof window.Pi.createPayment === "function")) {
-    showMsg(currentLang === "en"
-      ? "Pi payment is unavailable right now. Please open inside Pi Browser."
-      : (currentLang === "fr"
-        ? "Le paiement Pi est indisponible. Ouvrez dans Pi Browser."
-        : "الدفع عبر Pi غير متاح حالياً. تأكد من الفتح داخل متصفح Pi."));
-    return;
-  }
-var paymentData = {
-    amount: Number(ord.pricePi),
-    memo: title + " (" + ord.id + ")",
-    metadata: {
-      orderId: ord.id,
-      bookKey: ord.book,
-      buyer: ord.buyer
-    }
-  };
-
-  var callbacks = {
-    onReadyForServerApproval: function (paymentId) {},
-    onReadyForServerCompletion: function (paymentId, txid) {
-      orderList[idx].paid = true;
-      orderList[idx].status = "paid";
-      orderList[idx].paymentId = paymentId || "";
-      orderList[idx].txid = txid || "";
-      if (typeof persistOrders === "function") persistOrders();
-      if (typeof renderOrdersList === "function") renderOrdersList();
-      if (typeof renderOrdersBadge === "function") renderOrdersBadge();
-
-      showMsg(currentLang === "en"
-        ? "Payment completed for order " + ord.id + ". Download link is now unlocked."
-        : (currentLang === "fr"
-          ? "Paiement terminé pour la commande " + ord.id + ". Le lien de téléchargement est débloqué."
-          : "تم إتمام الدفع للطلب رقم " + ord.id + " بنجاح، وتم تفعيل رابط التحميل تلقائياً."));
-    },
-    onCancel: function (paymentId) {
-      orderList[idx].paid = false;
-      orderList[idx].status = "pending";
-      if (typeof persistOrders === "function") persistOrders();
-      if (typeof renderOrdersList === "function") renderOrdersList();
-      if (typeof renderOrdersBadge === "function") renderOrdersBadge();
-
-   showMsg(currentLang === "en"
-        ? "Payment cancelled for order " + ord.id + "."
-        : (currentLang === "fr"
-          ? "Paiement annulé pour la commande " + ord.id + "."
-          : "تم إلغاء عملية الدفع للطلب رقم " + ord.id + "."));
-    },
-    onError: function (error, payment) {
-      showMsg(currentLang === "en"
-        ? "Pi payment error for order " + ord.id + "."
-        : (currentLang === "fr"
-          ? "Erreur de paiement Pi pour la commande " + ord.id + "."
-          : "حدث خطأ أثناء الدفع عبر Pi للطلب رقم " + ord.id + "."));
-    }
-  };
-
-  try {
-    window.Pi.createPayment(paymentData, callbacks);
-  } catch (e) {
-    showMsg(currentLang === "en"
-      ? "Could not start Pi payment."
-      : (currentLang === "fr"
-        ? "Impossible de démarrer le paiement Pi."
-        : "تعذر بدء عملية الدفع عبر Pi."));
-  }
-}
-  try {
-    window.Pi.createPayment(paymentData, callbacks);
-  } catch (e) {
-    showMsg(currentLang === "en"
-      ? "Could not start Pi payment."
-      : (currentLang === "fr"
-        ? "Impossible de démarrer le paiement Pi."
-        : "تعذر بدء عملية الدفع عبر Pi."));
-  }
-}
-
-function createOrderAndPay(bookKey, buyer) {
-  var book = BOOKS_DATA[bookKey];
-  if (!book) return;
-
-  var resolvedBuyer = (buyer && String(buyer).trim())
-    ? String(buyer).trim()    : ((typeof buyerInput !== "undefined" && buyerInput && buyerInput.value.trim())
-      ? buyerInput.value.trim()
-      : ((typeof piUser !== "undefined" && piUser && piUser.username) ? piUser.username : "Guest"));
-
-  var title = getBookTitleByLang(bookKey);
-  var orderId = "ORD-" + Math.floor(100000 + Math.random() * 900000);
-
-  orderList.push({
-    id: orderId,
-    book: bookKey,
-    pricePi: book.pricePi,
-    buyer: resolvedBuyer,
-    paid: false,
-    status: "pending"
-  });
-  if (typeof persistOrders === "function") persistOrders();
-  if (typeof renderOrdersList === "function") renderOrdersList();
-  if (typeof renderOrdersBadge === "function") renderOrdersBadge();
-var codeSpan = '<span class="ord-code">' + orderId + "</span>";
-  if (currentLang === "en") {
-    showMsg("Order " + codeSpan + " registered for «" + title + "» (" + book.pricePi + " Pi) — Buyer: " + resolvedBuyer + ". Complete Pi payment to unlock download.");
-  } else if (currentLang === "fr") {
-    showMsg("Commande " + codeSpan + " enregistrée pour « " + title + " » (" + book.pricePi + " Pi) — Acheteur : " + resolvedBuyer + ". Finalisez le paiement Pi pour débloquer le téléchargement.");
-  } else {
-    showMsg("تم تسجيل الطلب رقم " + codeSpan + " لإصدار «" + title + "» بسعر (" + book.pricePi + " Pi) — المشتري: " + resolvedBuyer + ". أتمم الدفع عبر Pi لتفعيل رابط التحميل.");
-  }
-
-  startPiPaymentForOrder(orderId);
-}
     function ensurePiInit() {
       if (piInitialized) return true;
       if (window.Pi && typeof window.Pi.init === "function") {
@@ -1080,10 +1054,10 @@ var codeSpan = '<span class="ord-code">' + orderId + "</span>";
       if (lang === "en") {
         document.documentElement.lang = "en";
         document.documentElement.dir = "ltr";
-        document.getElementById("lang-en").classList.add("active");
+document.getElementById("lang-en").classList.add("active");
         document.getElementById("top-pill").textContent = "Multilingual Digital Store • Pi Ecosystem";
         document.getElementById("tagline").textContent = "A digital platform for illustrated stories, natural nutrition guides, project calculators, and knowledge releases in three languages.";
-document.getElementById("pi-btn").textContent = "Sign in with Pi";
+        document.getElementById("pi-btn").textContent = "Sign in with Pi";
         document.getElementById("share-btn").textContent = "Share Link";
         document.getElementById("logout-btn").textContent = "Clear Session";
         document.getElementById("s-title").textContent = "Dodo and His Red Bicycle (Free Sample)";
@@ -1116,12 +1090,12 @@ document.getElementById("pi-btn").textContent = "Sign in with Pi";
         document.getElementById("c-desc").textContent = "Histoires, guides et éditions numériques disponibles dans la boutique.";
         document.getElementById("a-title").textContent = "À propos du projet et de l'auteur";
         document.getElementById("a-body").innerHTML = "La boutique <strong>Asmar 1972</strong> de <strong>KAHLA SALIM</strong> réunit des histoires pour enfants et aventures d'Amer et Dodo, des guides de nutrition naturelle, des calculateurs de projets de construction et une utilisation directe dans Pi Browser en arabe, anglais et français.";
-        document.getElementById("foot-note").textContent = "Asmar 1972 • KAHLA SALIM — Boutique numérique prête pour démonstration et évolution";
+document.getElementById("foot-note").textContent = "Asmar 1972 • KAHLA SALIM — Boutique numérique prête pour démonstration et évolution";
         renderUserBadge();
         renderSavedUI();
         renderOrdersBadge();
         showMsg(currentPiUser && currentPiUser.username ? ("Bon retour, " + currentPiUser.username) : "Prêt — cliquez sur « Connexion avec Pi ».");
-} else {
+      } else {
         document.documentElement.lang = "ar";
         document.documentElement.dir = "rtl";
         document.getElementById("lang-ar").classList.add("active");
@@ -1193,8 +1167,7 @@ document.getElementById("pi-btn").textContent = "Sign in with Pi";
     function piLogin() {
       showMsg("1/3: تم استدعاء piLogin...");
       ensurePiInit();
-
-      if (!window.Pi) {
+if (!window.Pi) {
         showMsg("خطأ: window.Pi غير موجود (افتح الرابط داخل Pi Browser).");
         return;
       }
@@ -1204,7 +1177,7 @@ document.getElementById("pi-btn").textContent = "Sign in with Pi";
       }
 
       showMsg("2/3: جارٍ استدعاء Pi.authenticate...");
-var settled = false;
+      var settled = false;
       var timer = setTimeout(function () {
         if (!settled) {
           showMsg("تنبيه: لم يرد Pi.authenticate بعد (تحقق من نافذة الصلاحيات في Pi Browser أو وضع التطبيق).");
@@ -1234,15 +1207,14 @@ var settled = false;
           clearTimeout(timer);
           showMsg("3/3: authenticate لم يُرجع Promise.");
         }
-    } catch (e) {
-      settled = true;
-      clearTimeout(timer);
-      showMsg("استثناء catch: " + (e && e.message ? e.message : String(e)));
+      } catch (e) {
+        settled = true;
+        clearTimeout(timer);
+        showMsg("استثناء catch: " + (e && e.message ? e.message : String(e)));
+      }
     }
-  }
-}
 
-function triggerSampleDownload() {
+    function triggerSampleDownload() {
       var a = document.createElement("a");
       a.href = FREE_SAMPLE_URL;
       a.download = "dodo-sample.pdf";
