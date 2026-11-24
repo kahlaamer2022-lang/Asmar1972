@@ -969,7 +969,11 @@ if (countBadge) {
 
       try {
         window.Pi.createPayment(paymentData, callbacks);
-      } catch (e) {
+     
+     
+     } cat
+      ch (e) {
+      console.error("Pi payment error:", e);
         showMsg(currentLang === "en"
           ? "Could not start Pi payment."
           : (currentLang === "fr"
