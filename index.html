@@ -967,21 +967,19 @@ if (countBadge) {
         }
       };
 
-      try {
-        window.Pi.createPayment(paymentData, callbacks);
-     
-     
-     } catch (e) {
-      
-      console.error("Pi payment error:", e);
-        showMsg(currentLang === "en"
-          ? "Could not start Pi payment."
-          : (currentLang === "fr"
-            ? "Impossible de démarrer le paiement Pi."
-            : "تعذر بدء عملية الدفع عبر Pi."));
-      }
-    }
-
+   try {
+     window.Pi.createPayment(paymentData, callbacks);
+   } catch (e) {
+     console.error("Pi payment error:", e);
+     showMsg(
+       currentLang === "en"
+         ? "Could not start Pi payment."
+         : (currentLang === "fr"
+           ? "Impossible de démarrer le paiement Pi."
+           : "تعذر بدء عملية الدفع عبر Pi.")
+     );
+   }
+ }
     function createOrderAndPay(bookKey, buyer) {
       var book = BOOKS_DATA[bookKey];
       if (!book || book.isFreeSample) return;
