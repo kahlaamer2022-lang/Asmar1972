@@ -729,7 +729,7 @@ function loadOrders() {
       for (var i = 0; i < orderList.length; i++) {
         var ord = orderList[i];
         var title = getBookTitleByLang(ord.book);
-        var isPaid = ord.paid === true  ord.status === "paid"  ord.status === "completed";
+       var isPaid = (ord.paid === true) || (ord.status === 'paid');
         var statusLabel = isPaid
           ? (currentLang === "en" ? "Paid" : (currentLang === "fr" ? "Payée" : "مدفوع"))
           : (currentLang === "en" ? "Pending" : (currentLang === "fr" ? "En attente" : "بانتظار الدفع"));
