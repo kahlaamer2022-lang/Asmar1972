@@ -428,9 +428,10 @@ priceEn: "Free Sample",
         detailEn: "Release «Dodo and His Red Bicycle»: includes a direct downloadable free PDF sample.",
         detailFr: "Édition « Dodo et son vélo rouge » : comprend un échantillon PDF gratuit téléchargeable."
       },
-      nutrition_wisdom: {
-        isFreeSample: false,
-        pricePi: 5,
+     nutrition_wisdom: {
+      isFreeSample: false,
+      pricePi: 5,
+      downloadUrl: "https://example.com/nutrition-wisdom.pdf",
         priceAr: "5 Pi",
         priceEn: "5 Pi",
         priceFr: "5 Pi",
@@ -731,7 +732,17 @@ function savePiUser(userObj) {
       html += '</ul>';
       ordersBodyEl.innerHTML = html;
     }
+function buildDownloadButtonHtml(bookKey) {
+  var book = (typeof BOOKS_DATA !== "undefined" && BOOKS_DATA[bookKey]) ? BOOKS_DATA[bookKey] : null;
+  var url = (book && book.downloadUrl) ? String(book.downloadUrl).trim() : "";
+  if (!url) return "";
 
+  var label = currentLang === "en"
+    ? "Download / Open Book"
+    : (currentLang === "fr" ? "Télécharger / Ouvrir le livre" : "تحميل / فتح الكتاب");
+
+  return '<a class="btn-download" href="' + url.replace(/"/g, "&quot;") + '" target="_blank" rel="noopener noreferrer">' + label + '</a>';
+}
     function renderSummaryLists() {
       var savedTitleEl = document.getElementById("saved-panel-title");
       var savedBodyEl = document.getElementById("saved-panel-body");
