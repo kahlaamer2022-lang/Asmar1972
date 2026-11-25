@@ -729,18 +729,24 @@ function savePiUser(userObj) {
         }
         html += '</li>';
  function buildDownloadButtonHtml(bookKey) {
-  var book = (typeof BOOKS_DATA !== "undefined" && BOOKS_DATA[bookKey]) ? BOOKS_DATA[bookKey] : null;
-  var url = (book && book.downloadUrl) ? String(book.downloadUrl).trim() : "";
-  if (!url) return "";
+  var hasData = (typeof BOOKS_DATA !== "undefined");
+  var book = (hasData && BOOKS_DATA[bookKey]) ? BOOKS_DATA[bookKey] : null;
+  var rawUrl = (book && book.downloadUrl) ? String(book.downloadUrl) : "";
+  var url = rawUrl.trim();
 
-  var label = currentLang === "en"
-    ? "Download / Open Book"
-    : (currentLang === "fr" ? "Télécharger / Ouvrir le livre" : "تحميل / فتح الكتاب");
+  if (url === "") {
+    return "";
+  }
 
-  var safeUrl = url.replace(/"/g, "&quot;");
-  return '<a class="btn-download" href="' + safeUrl + '" target="_blank" rel="noopener noreferrer">' + label + '</a>';
-}
-      if (savedTitleEl) {
+  var label = "Open Link";
+  if (currentLang === "en") {
+    label = "Download / Open Book";
+  } else if (currentLang === "fr") {
+    label = "Telecharger / Ouvrir le livre";
+  }
+
+  return "<a class='btn-download' href='" + url + "' target='_blank' rel='noopener noreferrer'>" + label + "</a>";
+}      if (savedTitleEl) {
         savedTitleEl.textContent = currentLang === "en"
           ? "Saved Releases List"
           : (currentLang === "fr" ? "Liste des éditions enregistrées" : "قائمة الإصدارات المحفوظة");
