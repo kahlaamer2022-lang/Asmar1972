@@ -1003,6 +1003,7 @@ if (idx === -1) {
     }
 
     function createOrderAndPay(bookKey, buyer) {
+alert("bookKey = " + bookkey);
       var book = BOOKS_DATA[bookKey];
       if (!book || book.isFreeSample) return;
 
