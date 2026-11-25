@@ -980,13 +980,18 @@ if (idx === -1) {
         }
       };
 
-      try {
+ try {
         window.Pi.createPayment(paymentData, callbacks);
       } catch (e) {
         console.error("Pi payment error:", e);
-        var errDetail = (e && (e.message  e.error_message  e.code))
-          ? (e.message  e.error_message  e.code)
-          : String(e);
+        var errDetail = String(e);
+        if (e && e.message) {
+          errDetail = e.message;
+        } else if (e && e.error_message) {
+          errDetail = e.error_message;
+        } else if (e && e.code) {
+          errDetail = e.code;
+        }
         showMsg(
           (currentLang === "en"
             ? "Could not start Pi payment."
