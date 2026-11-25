@@ -2,7 +2,13 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
-    if (url.pathname === "/api/pi/approve" && request.method === "POST") {
+    if (url.pathname === "/api/pi/approve") {
+      if (request.method !== "POST") {
+        return new Response(JSON.stringify({ error: "Method not allowed" }), {
+          status: 405,
+          headers: { "Content-Type": "application/json" }
+        });
+      }
       try {
         const { paymentId } = await request.json();
         if (!env.PI_API_KEY) {
@@ -40,7 +46,13 @@ export default {
       }
     }
 
-    if (url.pathname === "/api/pi/complete" && request.method === "POST") {
+    if (url.pathname === "/api/pi/complete") {
+      if (request.method !== "POST") {
+        return new Response(JSON.stringify({ error: "Method not allowed" }), {
+          status: 405,
+          headers: { "Content-Type": "application/json" }
+        });
+      }
       try {
         const { paymentId, txid } = await request.json();
         if (!env.PI_API_KEY) {
