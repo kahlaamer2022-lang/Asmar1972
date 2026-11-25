@@ -728,11 +728,7 @@ function savePiUser(userObj) {
           html += '<div><button type="button" class="btn-pay-inline" onclick="startPiPaymentForOrder(\'' + ord.id + '\')">' + getPayNowButtonText() + '</button></div>';
         }
         html += '</li>';
-      }
-      html += '</ul>';
-      ordersBodyEl.innerHTML = html;
-    }
-function buildDownloadButtonHtml(bookKey) {
+ function buildDownloadButtonHtml(bookKey) {
   var book = (typeof BOOKS_DATA !== "undefined" && BOOKS_DATA[bookKey]) ? BOOKS_DATA[bookKey] : null;
   var url = (book && book.downloadUrl) ? String(book.downloadUrl).trim() : "";
   if (!url) return "";
@@ -741,13 +737,9 @@ function buildDownloadButtonHtml(bookKey) {
     ? "Download / Open Book"
     : (currentLang === "fr" ? "Télécharger / Ouvrir le livre" : "تحميل / فتح الكتاب");
 
-  return '<a class="btn-download" href="' + url.replace(/"/g, "&quot;") + '" target="_blank" rel="noopener noreferrer">' + label + '</a>';
+  var safeUrl = url.replace(/"/g, "&quot;");
+  return '<a class="btn-download" href="' + safeUrl + '" target="_blank" rel="noopener noreferrer">' + label + '</a>';
 }
-    function renderSummaryLists() {
-      var savedTitleEl = document.getElementById("saved-panel-title");
-      var savedBodyEl = document.getElementById("saved-panel-body");
-      var ordersTitleEl = document.getElementById("orders-panel-title");
-
       if (savedTitleEl) {
         savedTitleEl.textContent = currentLang === "en"
           ? "Saved Releases List"
