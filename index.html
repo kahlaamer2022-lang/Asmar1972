@@ -1,1291 +1,454 @@
-  <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Asmar 1972 — KAHLA SALIM</title>
+  <title>Asmar 1972 - متجر الكتب الإلكترونية وقصص الأطفال</title>
   <script src="https://sdk.minepi.com/pi-sdk.js"></script>
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
     body {
       margin: 0;
-      padding: 20px 14px 40px;
       font-family: Tahoma, Arial, sans-serif;
-      background: #f4f4f5;
-      color: #18181b;
+      background: #f4f6f9;
+      color: #1f2937;
       line-height: 1.6;
     }
-    .wrap {
-      max-width: 960px;
-      margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-    .box {
-      background: #ffffff;
-      border: 1px solid #e4e4e7;
-      border-radius: 14px;
-      padding: 20px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
-    }
-    .top-pill {
-      display: inline-block;
-      padding: 4px 12px;
-      border-radius: 999px;
-      background: #ede9fe;
-      color: #5b21b6;
-      font-size: 0.82rem;
-      font-weight: bold;
-      margin-bottom: 10px;
-    }
-    h1 {
-      margin: 0 0 4px;
-      font-size: 1.7rem;
-      color: #18181b;
-    }
-    .author {
-      font-weight: bold;
-      color: #6d28d9;
-      margin-bottom: 8px;
-      font-size: 0.98rem;
-    }
-    .tagline {
-      margin: 0 0 14px;
-      color: #52525b;
-      font-size: 0.96rem;
-    }
-    .row {
+    header {
+      background: #111827;
+      color: #ffffff;
+      padding: 16px 20px;
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 14px;
-    }
-    .btn-lang,
-    .btn-pi,
-    .btn-ghost {
-      padding: 8px 14px;
-      border-radius: 9px;
-      cursor: pointer;
-      font-weight: bold;
-      font-size: 0.88rem;
-      border: 1px solid #d4d4d8;
-      background: #ffffff;
-      color: #27272a;
-    }
-    .btn-lang.active {
-      background: #5b21b6;
-      border-color: #5b21b6;
-      color: #ffffff;
-    }
-    .btn-pi {
-      background: #6d28d9;
-      border-color: #6d28d9;
-      color: #ffffff;
-    }
-    .btn-pi:hover {
-      background: #5b21b6;
-    }
-    .btn-ghost:hover {
-      background: #f4f4f5;
-    }
-    .user-badge,
-    .saved-pill,
-    .orders-pill {
-      display: inline-block;
-      padding: 5px 11px;
-      border-radius: 8px;
-      font-size: 0.84rem;
-      font-weight: bold;
-      margin-inline-end: 6px;
-      margin-bottom: 6px;
-      background: #f4f4f5;
-      color: #27272a;
-      border: 1px solid #e4e4e7;
-    }
-    .summary-lists {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 12px;
-      margin-top: 10px;
-    }
-    .mini-panel {
-      border: 1px solid #e4e4e7;
-      border-radius: 10px;
-      padding: 12px 14px;
-      background: #fafafa;
-    }
-    .mini-title {
-      font-weight: bold;
-      color: #18181b;
-      margin-bottom: 6px;
-      font-size: 0.95rem;
-    }
-    .mini-list {
-      margin: 0;
-      padding-inline-start: 18px;
-    }
-    .mini-list li {
-      margin-bottom: 8px;
-    }
-    .status {
-      margin-top: 12px;
-      padding: 12px 14px;
-      border-radius: 10px;
-      background: #f3e8ff;
-      color: #4c1d95;
-      font-weight: bold;
-    }
-    .ord-code {
-      display: inline-block;
-      direction: ltr;
-      unicode-bidi: isolate;
-      font-family: monospace, Tahoma, sans-serif;
-      background: rgba(255, 255, 255, 0.85);
-      padding: 1px 6px;
-      border-radius: 5px;
-      color: #18181b;
-    }
-    .direct-link,
-    .download-action-link {
-      display: inline-block;
-      margin-top: 8px;
-      padding: 7px 12px;
-      border-radius: 8px;
-      background: #0f766e;
-      color: #ffffff;
-      text-decoration: none;
-      font-weight: bold;
-      font-size: 0.85rem;
-    }
-    .direct-link:hover,
-    .download-action-link:hover {
-      background: #115e59;
-    }
-    .btn-pay-inline {
-      margin-top: 6px;
-      margin-inline-start: 4px;
-      padding: 5px 10px;
-      border: none;
-border-radius: 7px;
-      background: #6d28d9;
-      color: #ffffff;
-      font-weight: bold;
-      font-size: 0.8rem;
-      cursor: pointer;
-    }
-    .btn-pay-inline:hover {
-      background: #5b21b6;
-    }
-    h2 {
-      margin: 0 0 8px;
-      font-size: 1.32rem;
-    }
-    p {
-      margin: 0 0 14px;
-      color: #52525b;
-    }
-    .books-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 14px;
-      margin-top: 12px;
-    }
-    .book-card {
-      border: 1px solid #e4e4e7;
-      border-radius: 12px;
-      padding: 16px;
-      background: #fafafa;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      gap: 12px;
-    }
-    .book-meta {
-      display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 8px;
-      margin-bottom: 8px;
-      flex-wrap: wrap;
+      gap: 12px;
     }
-    .book-tag {
-      display: inline-block;
-      padding: 3px 10px;
-      border-radius: 999px;
-      background: #fef3c7;
-      color: #92400e;
-      font-size: 0.78rem;
+    .brand-title { font-size: 20px; font-weight: bold; }
+    .brand-sub { font-size: 13px; color: #d1d5db; }
+    .lang-bar button {
+      background: #374151;
+      color: #ffffff;
+      border: none;
+      padding: 7px 12px;
+      border-radius: 6px;
+      cursor: pointer;
       font-weight: bold;
     }
-    .price-tag {
-      display: inline-block;
-      padding: 3px 10px;
-      border-radius: 999px;
-      background: #ede9fe;
-      color: #5b21b6;
-      font-size: 0.78rem;
-      font-weight: bold;
+    .lang-bar button.active { background: #059669; }
+    .container { max-width: 1100px; margin: 22px auto; padding: 0 16px; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      gap: 16px;
     }
-    .price-tag.free {
-      background: #dcfce7;
-      color: #166534;
-    }
-    .book-title {
-      margin: 0 0 6px;
-      font-size: 1.05rem;
-      color: #18181b;
-    }
-    .book-desc {
-      margin: 0;
-      font-size: 0.89rem;
-      color: #52525b;
-    }
-    .card-actions {
+    .card {
+      background: #ffffff;
+      border-radius: 10px;
+      padding: 16px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      justify-content: space-between;
+      gap: 12px;
     }
-    .btn-book {
-      padding: 8px 12px;
-      border: 1px solid #6d28d9;
-      background: #ffffff;
-      color: #6d28d9;
-      border-radius: 8px;
-      cursor: pointer;
+    .badge {
+      display: inline-block;
+      background: #ecfdf5;
+      color: #065f46;
+      padding: 3px 9px;
+      border-radius: 999px;
+      font-size: 12px;
       font-weight: bold;
-      font-size: 0.86rem;
-      width: 100%;
     }
-    .btn-book:hover {
-      background: #6d28d9;
-      color: #ffffff;
-    }
-    .btn-order {
-      padding: 8px 12px;
+    .price { font-size: 17px; font-weight: bold; color: #047857; }
+    .btn {
       border: none;
-      background: #0f766e;
-      color: #ffffff;
-      border-radius: 8px;
+      border-radius: 7px;
+      padding: 9px 13px;
       cursor: pointer;
       font-weight: bold;
-      font-size: 0.86rem;
-      width: 100%;
-    }
-    .btn-order:hover {
-      background: #115e59;
-    }
-    .btn-save {
-      padding: 7px 12px;
-      border: 1px solid #d4d4d8;
-      background: #ffffff;
-      color: #27272a;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: bold;
-      font-size: 0.84rem;
-      width: 100%;
-    }
-    .btn-save.active {
-      background: #fef3c7;
-      border-color: #f59e0b;
-      color: #92400e;
-    }
-    .about-box {
-      background: #fafafa;
-      border: 1px dashed #d4d4d8;
-      border-radius: 12px;
-      padding: 14px 16px;
-      color: #3f3f46;
-      font-size: 0.94rem;
-    }
-    .foot-note {
+      font-size: 14px;
+      text-decoration: none;
+      display: inline-block;
       text-align: center;
-      color: #71717a;
-      font-size: 0.85rem;
-      margin-top: 8px;
     }
+    .btn-pay { background: #059669; color: #ffffff; width: 100%; }
+    .btn-download {
+      background: #d97706;
+      color: #ffffff;
+      margin-top: 8px;
+      width: 100%;
+    }
+    .orders-box {
+      margin-top: 28px;
+      background: #ffffff;
+      border-radius: 10px;
+      padding: 18px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    }
+    .order-item {
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 12px;
+      margin-top: 10px;
+      background: #fafafa;
+    }
+    .status-paid { color: #047857; font-weight: bold; }
+    .status-pending { color: #b45309; font-weight: bold; }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="box">
-      <div id="top-pill" class="top-pill">متجر رقمي متكامل • Pi Ecosystem</div>
-      <h1>Asmar 1972</h1>
-      <div class="author">KAHLA SALIM</div>
-      <p id="tagline" class="tagline">منصة رقمية للقصص المصورة وأدلة التغذية الطبيعية وحاسبة المشاريع والإصدارات المعرفية متعددة اللغات.</p>
-      <div class="row">
-        <button type="button" id="lang-ar" class="btn-lang active" onclick="changeLang('ar')">العربية</button>
-        <button type="button" id="lang-en" class="btn-lang" onclick="changeLang('en')">English</button>
-        <button type="button" id="lang-fr" class="btn-lang" onclick="changeLang('fr')">Français</button>
-        <button type="button" id="pi-btn" class="btn-pi" onclick="piLogin()">تسجيل الدخول عبر Pi</button>
-        <button type="button" id="share-btn" class="btn-ghost" onclick="shareStore()">مشاركة الرابط</button>
-        <button type="button" id="logout-btn" class="btn-ghost" onclick="piLogout()">مسح الجلسة</button>
-      </div>
-<div>
-        <div id="pi-user-badge" class="user-badge">حالة الحساب: زائر (غير مسجل عبر Pi)</div>
-        <div id="saved-count-badge" class="saved-pill">الإصدارات المحفوظة: 0</div>
-        <div id="orders-count-badge" class="orders-pill">الطلبات المسجلة: 0</div>
-      </div>
-
-      <div class="summary-lists">
-        <div class="mini-panel">
-          <div id="saved-panel-title" class="mini-title">قائمة الإصدارات المحفوظة</div>
-          <div id="saved-panel-body">لا توجد إصدارات محفوظة حالياً.</div>
-        </div>
-        <div class="mini-panel">
-          <div id="orders-panel-title" class="mini-title">سجل الطلبات المسجلة</div>
-          <div id="orders-panel-body">لا توجد طلبات مسجلة حالياً.</div>
-        </div>
-      </div>
-
-      <div id="pi-status" class="status">جاهز — اضغط على «تسجيل الدخول عبر Pi».</div>
+  <header>
+    <div>
+      <div class="brand-title" id="storeTitle">Asmar 1972</div>
+      <div class="brand-sub" id="storeSub">كتب إلكترونية وقصص أطفال</div>
     </div>
-
-    <div class="box">
-      <h2 id="s-title">قصة دودو ودراجته الحمراء (عينة مجانية)</h2>
-      <p id="s-desc">اقرأ وحمّل العينة المجانية مباشرة من المتجر واستكشف أسلوب القصة والرسوم.</p>
-      <button type="button" id="s-btn" class="btn-pi" onclick="freeSample()">تحميل العينة المجانية</button>
-      <div>
-        <a id="s-direct" class="direct-link" href="./assets/dodo-sample.pdf" target="_blank" rel="noopener noreferrer" download="dodo-sample.pdf">فتح / تحميل ملف العينة (PDF)</a>
-      </div>
+    <div class="lang-bar">
+      <button type="button" id="btnAr" class="active" onclick="setLanguage('ar')">العربية</button>
+      <button type="button" id="btnEn" onclick="setLanguage('en')">English</button>
+      <button type="button" id="btnFr" onclick="setLanguage('fr')">Francais</button>
     </div>
+  </header>
 
-    <div class="box">
-      <h2 id="c-title">إصدارات وكتب KAHLA SALIM الرقمية</h2>
-      <p id="c-desc">مجموعة القصص والأدلة والملفات الرقمية المتاحة في المتجر.</p>
-      <div id="books-grid" class="books-grid"></div>
-    </div>
+  <main class="container">
+    <h2 id="catalogHeading">قائمة الكتب والقصص</h2>
+    <div id="booksGrid" class="grid"></div>
 
-    <div class="box">
-      <h2 id="a-title">عن المشروع والكاتب</h2>
-      <div id="a-body" class="about-box">
-        يجمع متجر <strong>Asmar 1972</strong> بإشراف <strong>KAHLA SALIM</strong> بين قصص الأطفال ومغامرات عامر ودودو، وأدلة التغذية الطبيعية، وحاسبة مشاريع البناء، مع تجربة استخدام مباشرة داخل متصفح Pi بثلاث لغات (العربية، الإنجليزية، والفرنسية).
-      </div>
-    </div>
-
-    <div id="foot-note" class="foot-note">Asmar 1972 • KAHLA SALIM — متجر رقمي جاهز للعرض والتطوير</div>
-  </div>
+    <section class="orders-box">
+      <h2 id="ordersHeading">الطلبات وحالة الدفع والتحميل</h2>
+      <div id="ordersList"></div>
+    </section>
+  </main>
 
   <script>
-    var currentLang = "ar";
-    var piInitialized = false;
-    var currentPiUser = null;
-    var savedBooks = [];
-    var orderList = [];
-    var SESSION_KEY = "asmar1972_pi_user";
-    var SAVED_KEY = "asmar1972_saved_books";
-    var ORDERS_KEY = "asmar1972_orders";
-    var FREE_SAMPLE_URL = "./assets/dodo-sample.pdf";
-
-    var PAYMENT_API_CONFIG = {
-      approveUrl: "/api/pi/approve",
-      completeUrl: "/api/pi/complete"
-    };
-
-    var PRODUCT_DOWNLOAD_URLS = {
-      "construction_calc": "https://drive.google.com/uc?export=download&id=1xB3k4GUaylYS2ihKxV972vpJbi9PxsAp",
-      "nutrition_wisdom": "https://drive.google.com/uc?export=download&id=1M6fimIWIGkDThkOxoTwKmOiFLFMLhgTQ",
-      "amer_little_hero": "https://drive.google.com/uc?export=download&id=172GZoRoWQjbHHx1OkCAxKPj3n701WfHP",
-      "amer_moto_cup": "https://drive.google.com/uc?export=download&id=1l96i7HCL-Rp2TebE56Kgpd3730hmrvtt",
-      "nutrition_tips": "https://drive.google.com/uc?export=download&id=176PwosTJpyp6MgDyskjuxGbt5B_ckhNI",
-      "amer_star_night": "https://drive.google.com/uc?export=download&id=1heKtMMDgCJaf0kQLWyEs97Nn76L5HYe3",
-      "trio_unforgettable_day": "https://drive.google.com/uc?export=download&id=1yagYTeMQIN7ps3hY_AHixmsetx0X3L-4",
-      "hamaima_bidaa": "https://drive.google.com/uc?export=download&id=1m-PEmBbwFD-0gnWvPkwPLgfWxAilm27Q"
-    };
-
-    var BOOKS_ORDER = [
-      "dodo",
-      "nutrition_wisdom",
-      "construction_calc",
-      "amer_little_hero",
-      "amer_moto_cup",
-      "amer_star_night",
-      "nutrition_tips",
-      "trio_unforgettable_day",
-      "hamaima_bidaa"
-    ];
-
     var BOOKS_DATA = {
-      dodo: {
-        isFreeSample: true,
-        pricePi: 0,
-        priceAr: "عينة مجانية",
-priceEn: "Free Sample",
-        priceFr: "Échantillon gratuit",
-        tagAr: "قصص الأطفال",
-        tagEn: "Children's Stories",
-        tagFr: "Histoires enfants",
-        nameAr: "قصة دودو ودراجته الحمراء",
-        nameEn: "Dodo and His Red Bicycle",
-        nameFr: "Dodo et son vélo rouge",
-        descAr: "قصة مصورة ممتعة للأطفال حول المغامرة والاكتشاف وقيمة الدراجة الحمراء مع عينة PDF.",
-        descEn: "An engaging illustrated children's story about adventure, discovery, and the red bicycle with a PDF sample.",
-        descFr: "Une histoire illustrée pour enfants sur l'aventure, la découverte et le vélo rouge avec échantillon PDF.",
-        detailAr: "إصدار «قصة دودو ودراجته الحمراء»: متاح مع عينة مجانية قابلة للتحميل المباشر (PDF).",
-        detailEn: "Release «Dodo and His Red Bicycle»: includes a direct downloadable free PDF sample.",
-        detailFr: "Édition « Dodo et son vélo rouge » : comprend un échantillon PDF gratuit téléchargeable."
+      dodo_story: {
+        pricePi: 3,
+        categoryAr: "قصص الأطفال",
+        categoryEn: "Children Story",
+        categoryFr: "Histoire Enfants",
+        titleAr: "قصة دودو ودراجته الحمراء",
+        titleEn: "Dodo and His Red Bicycle",
+        titleFr: "Dodo et son Velo Rouge",
+        descAr: "قصة مصورة ممتعة للأطفال حول المغامرة والاكتشاف.",
+descEn: "Fun illustrated story for children about adventure and discovery.",
+        descFr: "Histoire illustree pour enfants sur l aventure et la decouverte.",
+        downloadUrl: "https://example.com/dodo-story.pdf"
       },
-     nutrition_wisdom: {
-      isFreeSample: false,
-      pricePi: 5,
-      downloadUrl: "https://example.com/nutrition-wisdom.pdf",
-        priceAr: "5 Pi",
-        priceEn: "5 Pi",
-        priceFr: "5 Pi",
-        tagAr: "التغذية الطبيعية",
-        tagEn: "Natural Nutrition",
-        tagFr: "Nutrition naturelle",
-        nameAr: "حكمة الأجداد في التغذية",
-        nameEn: "Ancestral Wisdom in Nutrition",
-        nameFr: "Sagesse des ancêtres en nutrition",
-        descAr: "دليل عملي مستلهم من التقاليد الغذائية الطبيعية والعادات الصحية المتوازنة.",
-        descEn: "A practical guide inspired by natural food traditions and balanced healthy habits.",
-        descFr: "Un guide pratique inspiré des traditions alimentaires naturelles et de l'équilibre.",
-        detailAr: "إصدار «حكمة الأجداد في التغذية» (5 Pi): دليل معرفي يوثق التغذية الطبيعية والعادات الصحية.",
-        detailEn: "Release «Ancestral Wisdom in Nutrition» (5 Pi): a guide documenting natural nutrition and healthy habits.",
-        detailFr: "Édition « Sagesse des ancêtres en nutrition » (5 Pi) : guide sur la nutrition naturelle et l'équilibre."
-      },
-      construction_calc: {
-        isFreeSample: false,
-        pricePi: 6,
-        priceAr: "6 Pi",
-        priceEn: "6 Pi",
-        priceFr: "6 Pi",
-        tagAr: "مشاريع البناء",
-        tagEn: "Construction Projects",
-        tagFr: "Projets construction",
-        nameAr: "حاسبة مشاريع البناء",
-        nameEn: "Construction Projects Calculator",
-        nameFr: "Calculateur de projets de construction",
-        descAr: "مرجع عملي وتنظيمي لحساب وتقدير عناصر ومتطلبات مشاريع البناء.",
-        descEn: "A practical reference for calculating and organizing construction project estimates and items.",
-        descFr: "Une référence pratique pour estimer et organiser les éléments d'un projet de construction.",
-        detailAr: "إصدار «حاسبة مشاريع البناء» (6 Pi): أداة ومرجع رقمي لمساعدة أصحاب المشاريع في التقدير والحساب.",
-        detailEn: "Release «Construction Projects Calculator» (6 Pi): a digital reference for project estimation and planning.",
-        detailFr: "Édition « Calculateur de projets de construction » (6 Pi) : référence pratique pour l'estimation."
-      },
-      amer_little_hero: {
-        isFreeSample: false,
-        pricePi: 4,
-        priceAr: "4 Pi",
-        priceEn: "4 Pi",
-        priceFr: "4 Pi",
-        tagAr: "مغامرات عامر",
-        tagEn: "Amer Adventures",
-        tagFr: "Aventures d'Amer",
-        nameAr: "عامر البطل الصغير",
-        nameEn: "Amer the Little Hero",
-        nameFr: "Amer le petit héros",
-        descAr: "قصة مشوّقة للأطفال تبرز الشجاعة وحسن التصرف والمواقف الإيجابية لعامر.",
-        descEn: "An engaging children's story highlighting courage, good judgment, and Amer's positive actions.",
-        descFr: "Une histoire captivante pour enfants mettant en valeur le courage et les bonnes initiatives d'Amer.",
-detailAr: "إصدار «عامر البطل الصغير» (4 Pi): قصة قصصية موجّهة للناشئة ضمن سلسلة مغامرات عامر.",
-        detailEn: "Release «Amer the Little Hero» (4 Pi): a story for young readers in the Amer series.",
-        detailFr: "Édition « Amer le petit héros » (4 Pi) : un récit pour jeunes lecteurs dans la série Amer."
-      },
-      amer_moto_cup: {
-        isFreeSample: false,
-        pricePi: 4,
-        priceAr: "4 Pi",
-        priceEn: "4 Pi",
-        priceFr: "4 Pi",
-        tagAr: "مغامرات عامر",
-        tagEn: "Amer Adventures",
-        tagFr: "Aventures d'Amer",
-        nameAr: "عامر وبطولة الدراجة النارية",
-        nameEn: "Amer and the Motorcycle Championship",
-        nameFr: "Amer et le championnat de moto",
-        descAr: "مغامرة حماسية مليئة بالتحدي والإصرار والروح الرياضية في أجواء البطولة.",
-        descEn: "An action-packed adventure filled with challenge, determination, and sportsmanship.",
-        descFr: "Une aventure dynamique pleine de défi, de persévérance et d'esprit sportif.",
-        detailAr: "إصدار «عامر وبطولة الدراجة النارية» (4 Pi): قصة حماسية حول المثابرة والتحدي.",
-        detailEn: "Release «Amer and the Motorcycle Championship» (4 Pi): an exciting story of perseverance.",
-        detailFr: "Édition « Amer et le championnat de moto » (4 Pi) : une aventure autour de la persévérance."
-      },
-      amer_star_night: {
-        isFreeSample: false,
-        pricePi: 4,
-        priceAr: "4 Pi",
-        priceEn: "4 Pi",
-        priceFr: "4 Pi",
-        tagAr: "مغامرات عامر",
-        tagEn: "Amer Adventures",
-        tagFr: "Aventures d'Amer",
-        nameAr: "عامر وليلة النجوم عند الجدة",
-        nameEn: "Amer and the Starry Night at Grandma's",
-        nameFr: "Amer et la nuit étoilée chez Mamie",
-        descAr: "حكاية دافئة تجمع بين دفء الأسرة وحكايات الجدة وتأمل النجوم في الليل.",
-        descEn: "A warm tale blending family warmth, grandmother's stories, and stargazing at night.",
-        descFr: "Un récit chaleureux mêlant chaleur familiale, contes de grand-mère et étoiles.",
-        detailAr: "إصدار «عامر وليلة النجوم عند الجدة» (4 Pi): قصة عائلية هادئة ذات طابع وجداني جميل.",
-        detailEn: "Release «Amer and the Starry Night at Grandma's» (4 Pi): a warm family story.",
-        detailFr: "Édition « Amer et la nuit étoilée chez Mamie » (4 Pi) : une histoire familiale chaleureuse."
+      grandpa_nutrition: {
+        pricePi: 5,
+        categoryAr: "التغذية الطبيعية",
+        categoryEn: "Natural Nutrition",
+        categoryFr: "Nutrition Naturelle",
+        titleAr: "حكمة الأجداد في التغذية",
+        titleEn: "Ancestors Wisdom in Nutrition",
+        titleFr: "Sagesse des Ancetres en Nutrition",
+        descAr: "دليل عملي مستلهم من التقاليد الغذائية والعادات الصحية المتوازنة.",
+        descEn: "Practical guide inspired by balanced dietary traditions.",
+        descFr: "Guide pratique inspire des traditions alimentaires saines.",
+        downloadUrl: "https://example.com/grandpa-nutrition.pdf"
       },
       nutrition_tips: {
-        isFreeSample: false,
-        pricePi: 5,
-        priceAr: "5 Pi",
-        priceEn: "5 Pi",
-        priceFr: "5 Pi",
-        tagAr: "التغذية الطبيعية",
-        tagEn: "Natural Nutrition",
-        tagFr: "Nutrition naturelle",
-        nameAr: "كتاب نصائح في التغذية",
-        nameEn: "Guide to Nutrition Tips",
-        nameFr: "Guide de conseils en nutrition",
-        descAr: "مجموعة مركّزة من الإرشادات الغذائية اليومية البسيطة لدعم صحة الجسم والنشاط.",
-        descEn: "A focused collection of practical daily nutrition tips to support health and vitality.",
-        descFr: "Un recueil pratique de conseils nutritionnels quotidiens pour la santé et l'énergie.",
-        detailAr: "إصدار «كتاب نصائح في التغذية» (5 Pi): خلاصة نصائح غذائية عملية وسهلة التطبيق.",
-        detailEn: "Release «Guide to Nutrition Tips» (5 Pi): practical and easy-to-follow nutrition advice.",
-        detailFr: "Édition « Guide de conseils en nutrition » (5 Pi) : conseils pratiques au quotidien."
-      },
-      trio_unforgettable_day: {
-        isFreeSample: false,
         pricePi: 4,
-        priceAr: "4 Pi",
-        priceEn: "4 Pi",
-        priceFr: "4 Pi",
-        tagAr: "قصص ومغامرات",
-        tagEn: "Stories & Adventures",
-        tagFr: "Histoires & aventures",
-        nameAr: "مغامرات الثلاثي المرح: يوم لا ينسى",
-        nameEn: "Adventures of the Fun Trio: An Unforgettable Day",
-        nameFr: "Aventures du trio joyeux : Un jour inoubliable",
-descAr: "قصة جماعية مرحة تبرز الصداقة والتعاون والمواقف الطريفة في يوم حافل.",
-        descEn: "A lively group story highlighting friendship, teamwork, and memorable moments.",
-        descFr: "Une histoire joyeuse mettant en avant l'amitié, l'entraide et des moments inoubliables.",
-        detailAr: "إصدار «مغامرات الثلاثي المرح: يوم لا ينسى» (4 Pi): قصة ممتعة حول الصداقة والمرح.",
-        detailEn: "Release «Adventures of the Fun Trio: An Unforgettable Day» (4 Pi): a lively friendship story.",
-        detailFr: "Édition « Aventures du trio joyeux : Un jour inoubliable » (4 Pi) : récit d'amitié et de joie."
+        categoryAr: "الصحة والتغذية",
+        categoryEn: "Health & Nutrition",
+        categoryFr: "Sante et Nutrition",
+        titleAr: "نصائح في التغذية",
+        titleEn: "Nutrition Tips",
+        titleFr: "Conseils en Nutrition",
+        descAr: "إرشادات يومية مبسطة لاختيار الأغذية المناسبة وتنظيم الوجبات.",
+        descEn: "Simple daily guidelines for healthy food choices.",
+        descFr: "Conseils quotidiens simples pour une alimentation equilibree.",
+        downloadUrl: "https://example.com/nutrition-tips.pdf"
       },
-      hamaima_bidaa: {
-        isFreeSample: false,
-        pricePi: 7,
-        priceAr: "7 Pi",
-        priceEn: "7 Pi",
-        priceFr: "7 Pi",
-        tagAr: "أدب وقصص",
-        tagEn: "Literature & Stories",
-        tagFr: "Littérature & récits",
-        nameAr: "هميمة وبدعة: بريق الذهب وصدى الواجب",
-        nameEn: "Hamaima and Bid'a: Sparkle of Gold and Echo of Duty",
-        nameFr: "Hamaima et Bid'a : L'éclat de l'or et l'écho du devoir",
-        descAr: "عمل قصصي مشوّق يمزج بين السرد الأدبي والشخصيات والمعاني التربوية والواجب.",
-        descEn: "A compelling narrative blending literary storytelling, characters, educational values, and duty.",
-        descFr: "Un récit riche mêlant narration littéraire, personnages, valeurs et sens du devoir.",
-        detailAr: "إصدار «هميمة وبدعة: بريق الذهب وصدى الواجب» (7 Pi): عمل قصصي متكامل في مكتبة المتجر.",
-        detailEn: "Release «Hamaima and Bid'a: Sparkle of Gold and Echo of Duty» (7 Pi): a full story edition.",
-        detailFr: "Édition « Hamaima et Bid'a : L'éclat de l'or et l'écho du devoir » (7 Pi) : édition complète."
+      construction_calc: {
+        pricePi: 6,
+        categoryAr: "أدوات ومشاريع",
+        categoryEn: "Projects & Tools",
+        categoryFr: "Projets et Outils",
+        titleAr: "حاسبة مشاريع البناء",
+        titleEn: "Construction Projects Calculator",
+        titleFr: "Calculateur Projets Construction",
+        descAr: "مرجع عملي لحساب وتقدير متطلبات مشاريع البناء بوضوح.",
+        descEn: "Practical guide for estimating building project needs.",
+        descFr: "Guide pratique pour estimer les besoins de construction.",
+        downloadUrl: "https://example.com/construction-calc.pdf"
+      },
+      amer_hero: {
+        pricePi: 3,
+        categoryAr: "قصص الأطفال",
+        categoryEn: "Children Story",
+        categoryFr: "Histoire Enfants",
+        titleAr: "عامر البطل الصغير",
+        titleEn: "Amer the Little Hero",
+        titleFr: "Amer le Petit Heros",
+        descAr: "مغامرة شيقة للناشئة حول الشجاعة والتعاون وحسن التصرف.",
+        descEn: "Engaging story for kids about courage and teamwork.",
+        descFr: "Recit captivant sur le courage et l entraide.",
+        downloadUrl: "https://example.com/amer-hero.pdf"
+      },
+      amer_moto: {
+        pricePi: 3,
+        categoryAr: "قصص الأطفال",
+        categoryEn: "Children Story",
+        categoryFr: "Histoire Enfants",
+        titleAr: "عامر وبطولة الدراجة النارية",
+        titleEn: "Amer and the Motorcycle Championship",
+        titleFr: "Amer et le Championnat de Moto",
+        descAr: "قصة حماسية مليئة بالتشويق والدروس المفيدة للأطفال.",
+        descEn: "Exciting story full of suspense and useful lessons.",
+        descFr: "Histoire passionnante pleine de lecons utiles.",
+        downloadUrl: "https://example.com/amer-moto.pdf"
+      },
+      amer_stars: {
+        pricePi: 3,
+        categoryAr: "قصص الأطفال",
+        categoryEn: "Children Story",
+        categoryFr: "Histoire Enfants",
+        titleAr: "عامر وليلة النجوم عند الجدة",
+        titleEn: "Amer and the Night of Stars at Grandma",
+        titleFr: "Amer et la Nuit des Etoiles chez Grand-Mere",
+        descAr: "حكاية دافئة تجمع بين دفء العائلة وجمال الطبيعة ليلاً.",
+        descEn: "Warm tale combining family warmth and starry nights.",
+        descFr: "Conte chaleureux entre famille et nuit etoilee.",
+        downloadUrl: "https://example.com/amer-stars.pdf"
+      },
+      fun_trio: {
+pricePi: 4,
+        categoryAr: "قصص الأطفال",
+        categoryEn: "Children Story",
+        categoryFr: "Histoire Enfants",
+        titleAr: "مغامرات الثلاثي المرح",
+        titleEn: "Adventures of the Fun Trio",
+        titleFr: "Aventures du Trio Joyeux",
+        descAr: "ثلاثة أصدقاء يخوضون مواقف طريفة ومفيدة في كل محطة.",
+        descEn: "Three friends sharing funny and helpful adventures.",
+        descFr: "Trois amis dans des aventures joyeuses et instructives.",
+        downloadUrl: "https://example.com/fun-trio.pdf"
+      },
+      humayma_bidah: {
+        pricePi: 5,
+        categoryAr: "قصص وحكم",
+        categoryEn: "Stories & Wisdom",
+        categoryFr: "Contes et Sagesse",
+        titleAr: "هميمة وبدعة - بريق الذهب وصدى الواجب -",
+        titleEn: "Humayma and Bidah: Gold Gleam & Echo of Duty",
+        titleFr: "Houmayma et Bidah : Eclat d Or et Echo du Devoir",
+        descAr: "عمل قصصي يبرز قيمة الأمانة والواجب أمام بريق المظاهر.",
+        descEn: "Story highlighting duty and sincerity beyond appearances.",
+        descFr: "Recit mettant en valeur le devoir au-dela des apparences.",
+        downloadUrl: "https://example.com/humayma-bidah.pdf"
       }
     };
 
-    function getBookTitleByLang(bookKey) {
-      var item = BOOKS_DATA[bookKey];
-      if (!item) return "";
-      if (currentLang === "en") return item.nameEn;
-      if (currentLang === "fr") return item.nameFr;
-      return item.nameAr;
-    }
+    var STORAGE_KEY = "asmar1972_orders_v1";
+    var currentLang = "ar";
+    var ordersList = loadOrders();
 
-    function getProductDownloadUrl(bookKey) {
-      if (bookKey === "dodo") return FREE_SAMPLE_URL;
-      return PRODUCT_DOWNLOAD_URLS[bookKey] || "";
-    }
-
-    function getDownloadButtonText() {
-      if (currentLang === "en") return "Download / Open Product";
-      if (currentLang === "fr") return "Télécharger / Ouvrir le produit";
-      return "تحميل / فتح المنتج الآن";
-    }
-
-    function getPayNowButtonText() {
-      if (currentLang === "en") return "Pay with Pi Now";
-      if (currentLang === "fr") return "Payer avec Pi maintenant";
-      return "ادفع عبر Pi الآن";
-    }
-
-    function buildDownloadButtonHtml(bookKey) {
-      var url = getProductDownloadUrl(bookKey);
-      if (!url) return "";
-      return '<a class="download-action-link" href="' + url + '" target="_blank" rel="noopener noreferrer" download>' + getDownloadButtonText() + '</a>';
-    }
-
-    function loadSavedUser() {
+    if (window.Pi && typeof window.Pi.init === "function") {
       try {
-        var raw = sessionStorage.getItem(SESSION_KEY);
-        if (raw) {
-          currentPiUser = JSON.parse(raw);
-        }
-      } catch (e) {
-        currentPiUser = null;
-      }
-    }
-
-    function loadSavedBooks() {
-      try {
-        var raw = sessionStorage.getItem(SAVED_KEY);
-        if (raw) {
-          var parsed = JSON.parse(raw);
-          if (Array.isArray(parsed)) {
-            savedBooks = parsed;
-          }
-        }
-      } catch (e) {
-        savedBooks = [];
+        window.Pi.init({ version: "2.0", sandbox: false });
+      } catch (err) {
+        console.log("Pi init note:", err);
       }
     }
 
     function loadOrders() {
       try {
-        var raw = sessionStorage.getItem(ORDERS_KEY);
-        if (raw) {
-          var parsed = JSON.parse(raw);
-          if (Array.isArray(parsed)) {
-            orderList = parsed;
-          }
-        }
+        var raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return [];
+        var parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) return parsed;
+        return [];
       } catch (e) {
-        orderList = [];
+        return [];
       }
     }
 
-    function persistSavedBooks() {
+    function saveOrders() {
       try {
-        sessionStorage.setItem(SAVED_KEY, JSON.stringify(savedBooks));
-      } catch (e) {}
-      renderSavedUI();
-    }
-
-    function persistOrders() {
-      try {
-        sessionStorage.setItem(ORDERS_KEY, JSON.stringify(orderList));
-      } catch (e) {}
-      renderOrdersBadge();
-    }
-function savePiUser(userObj) {
-      currentPiUser = userObj;
-      try {
-        if (userObj) {
-          sessionStorage.setItem(SESSION_KEY, JSON.stringify(userObj));
-        } else {
-          sessionStorage.removeItem(SESSION_KEY);
-        }
-      } catch (e) {}
-      renderUserBadge();
-    }
-
-    function renderUserBadge() {
-      var badge = document.getElementById("pi-user-badge");
-      if (!badge) return;
-
-      if (currentPiUser && currentPiUser.username) {
-        if (currentLang === "en") {
-          badge.textContent = "Pi Account Connected: " + currentPiUser.username;
-        } else if (currentLang === "fr") {
-          badge.textContent = "Compte Pi connecté : " + currentPiUser.username;
-        } else {
-          badge.textContent = "حساب Pi متصل: " + currentPiUser.username;
-        }
-      } else {
-        if (currentLang === "en") {
-          badge.textContent = "Account Status: Guest (Not signed in with Pi)";
-        } else if (currentLang === "fr") {
-          badge.textContent = "Statut du compte : Invité (Non connecté avec Pi)";
-        } else {
-          badge.textContent = "حالة الحساب: زائر (غير مسجل عبر Pi)";
-        }
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(ordersList));
+      } catch (e) {
+        console.log("Save orders note:", e);
       }
     }
 
-    function renderOrdersList() {
-      var ordersBodyEl = document.getElementById("orders-panel-body");
-      if (!ordersBodyEl) return;
+    function getBookTitle(book) {
+      if (!book) return "";
+      if (currentLang === "en") return book.titleEn;
+      if (currentLang === "fr") return book.titleFr;
+      return book.titleAr;
+    }
 
-      if (!orderList.length) {
-        ordersBodyEl.textContent = currentLang === "en"
-          ? "No recorded orders yet."
-          : (currentLang === "fr" ? "Aucune commande enregistrée pour le moment." : "لا توجد طلبات مسجلة حالياً.");
-        return;
-      }
+    function getBookDesc(book) {
+      if (!book) return "";
+      if (currentLang === "en") return book.descEn;
+      if (currentLang === "fr") return book.descFr;
+      return book.descAr;
+    }
 
-      var html = '<ul class="mini-list">';
-      for (var i = 0; i < orderList.length; i++) {
-        var ord = orderList[i];
-        var title = getBookTitleByLang(ord.book);
-        var isPaid = (ord.paid === true)  (ord.status === "paid")  (ord.status === "completed");
-        var statusLabel = isPaid
-          ? (currentLang === "en" ? "Paid" : (currentLang === "fr" ? "Payée" : "مدفوع"))
-          : (currentLang === "en" ? "Pending" : (currentLang === "fr" ? "En attente" : "بانتظار الدفع"));
+    function getBookCategory(book) {
+      if (!book) return "";
+      if (currentLang === "en") return book.categoryEn;
+      if (currentLang === "fr") return book.categoryFr;
+      return book.categoryAr;
+    }
 
-        html += '<li><span class="ord-code">' + ord.id + '</span> — ' + title + ' (' + ord.pricePi + ' Pi) • ' + statusLabel;
-        if (isPaid) {
-          html += '<div>' + buildDownloadButtonHtml(ord.book) + '</div>';
-        } else {
-          html += '<div><button type="button" class="btn-pay-inline" onclick="startPiPaymentForOrder(\'' + ord.id + '\')">' + getPayNowButtonText() + '</button></div>';
+    function getText(key) {
+      var dict = {
+        ar: {
+          dir: "rtl",
+          sub: "كتب إلكترونية وقصص أطفال",
+          catalog: "قائمة الكتب والقصص",
+          orders: "الطلبات وحالة الدفع والتحميل",
+          orderBtn: "طلب الإصدار",
+          downloadBtn: "تحميل / فتح الكتاب",
+          paidText: "مدفوع ومفعّل",
+          pendingText: "بانتظار إتمام الدفع عبر Pi",
+          noOrders: "لا توجد طلبات مسجلة حتى الآن.",
+          orderIdLabel: "رقم الطلب",
+          bookLabel: "الكتاب",
+          priceLabel: "السعر"
+        },
+        en: {
+          dir: "ltr",
+          sub: "E-Books and Children Stories",
+          catalog: "Books & Stories Catalog",
+          orders: "Orders, Payment Status & Download",
+          orderBtn: "Request Edition",
+          downloadBtn: "Download / Open Book",
+          paidText: "Paid & Unlocked",
+          pendingText: "Pending Pi Payment Completion",
+          noOrders: "No orders recorded yet.",
+          orderIdLabel: "Order ID",
+          bookLabel: "Book",
+          priceLabel: "Price"
+        },
+        fr: {
+          dir: "ltr",
+          sub: "Livres Numeriques et Histoires Enfants",
+          catalog: "Catalogue Livres et Histoires",
+orders: "Commandes, Paiement et Telechargement",
+          orderBtn: "Commander l Edition",
+          downloadBtn: "Telecharger / Ouvrir le Livre",
+          paidText: "Paye et Debloque",
+          pendingText: "En attente de finalisation Pi",
+          noOrders: "Aucune commande enregistree pour le moment.",
+          orderIdLabel: "Commande",
+          bookLabel: "Livre",
+          priceLabel: "Prix"
         }
-        html += '</li>';
- function buildDownloadButtonHtml(bookKey) {
-  var hasData = (typeof BOOKS_DATA !== "undefined");
-  var book = (hasData && BOOKS_DATA[bookKey]) ? BOOKS_DATA[bookKey] : null;
-  var rawUrl = (book && book.downloadUrl) ? String(book.downloadUrl) : "";
-  var url = rawUrl.trim();
+      };
+      var langSet = dict.ar;
+      if (currentLang === "en") langSet = dict.en;
+      if (currentLang === "fr") langSet = dict.fr;
+      return langSet[key];
+    }
 
-  if (url === "") {
-    return "";
-  }
+    function setLanguage(lang) {
+      currentLang = lang;
+      document.documentElement.lang = lang;
+      document.documentElement.dir = getText("dir");
 
-  var label = "Open Link";
-  if (currentLang === "en") {
-    label = "Download / Open Book";
-  } else if (currentLang === "fr") {
-    label = "Telecharger / Ouvrir le livre";
-  }
+      document.getElementById("btnAr").className = (lang === "ar") ? "active" : "";
+      document.getElementById("btnEn").className = (lang === "en") ? "active" : "";
+      document.getElementById("btnFr").className = (lang === "fr") ? "active" : "";
 
-  return "<a class='btn-download' href='" + url + "' target='_blank' rel='noopener noreferrer'>" + label + "</a>";
-}      if (savedTitleEl) {
-        savedTitleEl.textContent = currentLang === "en"
-          ? "Saved Releases List"
-          : (currentLang === "fr" ? "Liste des éditions enregistrées" : "قائمة الإصدارات المحفوظة");
-      }
+      document.getElementById("storeSub").textContent = getText("sub");
+      document.getElementById("catalogHeading").textContent = getText("catalog");
+      document.getElementById("ordersHeading").textContent = getText("orders");
 
-      if (savedBodyEl) {
-        if (!savedBooks.length) {
-          savedBodyEl.textContent = currentLang === "en"
-            ? "No saved releases yet."
-            : (currentLang === "fr" ? "Aucune édition enregistrée pour le moment." : "لا توجد إصدارات محفوظة حالياً.");
-        } else {
-          var sHtml = '<ul class="mini-list">';
-          for (var i = 0; i < savedBooks.length; i++) {
-            var sTitle = getBookTitleByLang(savedBooks[i]);
-            if (sTitle) {
-              sHtml += "<li>" + sTitle + "</li>";
-            }
-          }
-          sHtml += "</ul>";
-          savedBodyEl.innerHTML = sHtml;
-        }
-      }
-
-      if (ordersTitleEl) {
-        ordersTitleEl.textContent = currentLang === "en"
-          ? "Recorded Orders Log"
-          : (currentLang === "fr" ? "Journal des commandes enregistrées" : "سجل الطلبات المسجلة");
-      }
-
+      renderBooks();
       renderOrdersList();
     }
-function renderOrdersBadge() {
-      var badge = document.getElementById("orders-count-badge");
-      if (badge) {
-        if (currentLang === "en") {
-          badge.textContent = "Recorded Orders: " + orderList.length;
-        } else if (currentLang === "fr") {
-          badge.textContent = "Commandes enregistrées : " + orderList.length;
-        } else {
-          badge.textContent = "الطلبات المسجلة: " + orderList.length;
-        }
-      }
-      renderSummaryLists();
+
+    function buildDownloadButtonHtml(bookKey) {
+      var book = BOOKS_DATA[bookKey];
+      if (!book) return "";
+      var rawUrl = book.downloadUrl ? String(book.downloadUrl) : "";
+      var cleanUrl = rawUrl.trim();
+      if (cleanUrl === "") return "";
+
+      return "<a class='btn btn-download' href='" + cleanUrl + "' target='_blank' rel='noopener noreferrer'>" + getText("downloadBtn") + "</a>";
     }
 
-    function renderBooksGrid() {
-      var grid = document.getElementById("books-grid");
-      if (!grid) return;
+    function createOrderAndPay(bookKey) {
+      var book = BOOKS_DATA[bookKey];
+      if (!book) return;
 
-      var html = "";
-      for (var i = 0; i < BOOKS_ORDER.length; i++) {
-        var key = BOOKS_ORDER[i];
-        var item = BOOKS_DATA[key];
-        if (!item) continue;
+      var newOrder = {
+        id: "ORD-" + String(Date.now()),
+        bookKey: bookKey,
+        pricePi: book.pricePi,
+        paid: false
+      };
 
-        var tag = currentLang === "en" ? item.tagEn : (currentLang === "fr" ? item.tagFr : item.tagAr);
-        var title = currentLang === "en" ? item.nameEn : (currentLang === "fr" ? item.nameFr : item.nameAr);
-        var desc = currentLang === "en" ? item.descEn : (currentLang === "fr" ? item.descFr : item.descAr);
-        var price = currentLang === "en" ? item.priceEn : (currentLang === "fr" ? item.priceFr : item.priceAr);
-        var isSaved = savedBooks.indexOf(key) !== -1;
+      ordersList.unshift(newOrder);
+      saveOrders();
+      renderOrdersList();
 
-        var saveLabel = isSaved
-          ? (currentLang === "en" ? "Saved ✓" : (currentLang === "fr" ? "Enregistré ✓" : "محفوظ في القائمة ✓"))
-          : (currentLang === "en" ? "Save to List" : (currentLang === "fr" ? "Ajouter à la liste" : "حفظ في القائمة"));
-
-        var detailLabel = item.isFreeSample
-          ? (currentLang === "en" ? "Preview Sample & Details" : (currentLang === "fr" ? "Aperçu et détails" : "معاينة العينة والتفاصيل"))
-          : (currentLang === "en" ? "Edition Details" : (currentLang === "fr" ? "Détails de l'édition" : "تفاصيل الإصدار"));
-
-        var orderBtnHtml = "";
-        if (!item.isFreeSample) {
-          var orderLabel = currentLang === "en"
-            ? ("Order Edition (" + item.pricePi + " Pi)")
-            : (currentLang === "fr" ? ("Commander (" + item.pricePi + " Pi)") : ("طلب الإصدار (" + item.pricePi + " Pi)"));
-          orderBtnHtml = '<button type="button" class="btn-order" onclick="createOrderAndPay(\'' + key + '\')">' + orderLabel + "</button>";
+      if (window.Pi && typeof window.Pi.createPayment === "function") {
+        try {
+          window.Pi.createPayment(
+            {
+              amount: book.pricePi,
+              memo: getBookTitle(book),
+              metadata: { orderId: newOrder.id, bookKey: bookKey }
+            },
+            {
+              onReadyForServerApproval: function(paymentId) {
+                console.log("Ready for approval:", paymentId);
+              },
+              onReadyForServerCompletion: function(paymentId, txid) {
+                console.log("Completed:", paymentId, txid);
+                markOrderPaid(newOrder.id);
+              },
+              onCancel: function() {
+                console.log("Payment cancelled");
+              },
+              onError: function(error) {
+                console.log("Pi payment note:", error);
+              }
+            }
+          );
+        } catch (err) {
+          console.log("Pi createPayment note:", err);
         }
-
-        html += '<div class="book-card">' +
-          "<div>" +
-          '<div class="book-meta">' +
-          '<span class="book-tag">' + tag + "</span>" +
-          '<span class="price-tag' + (item.isFreeSample ? " free" : "") + '">' + price + "</span>" +
-          "</div>" +
-          '<h3 class="book-title">' + title + "</h3>" +
-          '<p class="book-desc">' + desc + "</p>" +
-          "</div>" +
-          '<div class="card-actions">' +
-          orderBtnHtml +
-          '<button type="button" class="btn-book" onclick="selectBook(\'' + key + '\')">' + detailLabel + "</button>" +
-          '<button type="button" class="btn-save' + (isSaved ? " active" : "") + '" onclick="toggleSaveBook(\'' + key + '\')">' + saveLabel + "</button>" +
-          "</div>" +
-          "</div>";
-      }
-
-      grid.innerHTML = html;
-    }
-
-    function renderSavedUI() {
-      var countBadge = document.getElementById("saved-count-badge");
-      if (countBadge) {
-        if (currentLang === "en") {
-          countBadge.textContent = "Saved Releases: " + savedBooks.length;
-        } else if (currentLang === "fr") {
-          countBadge.textContent = "Éditions enregistrées : " + savedBooks.length;
-        } else {
-          countBadge.textContent = "الإصدارات المحفوظة: " + savedBooks.length;
-        }
-      }
-      renderSummaryLists();
-      renderBooksGrid();
-    }
-
-    function toggleSaveBook(bookKey) {
-      if (!BOOKS_DATA[bookKey]) return;
-      var idx = savedBooks.indexOf(bookKey);
-      var title = getBookTitleByLang(bookKey);
-if (idx === -1) {
-        savedBooks.push(bookKey);
-        persistSavedBooks();
-        if (currentLang === "en") showMsg("Added to saved list: " + title);
-        else if (currentLang === "fr") showMsg("Ajouté à la liste : " + title);
-        else showMsg("تمت إضافة «" + title + "» إلى قائمة الإصدارات المحفوظة.");
       } else {
-        savedBooks.splice(idx, 1);
-        persistSavedBooks();
-        if (currentLang === "en") showMsg("Removed from saved list: " + title);
-        else if (currentLang === "fr") showMsg("Retiré de la liste : " + title);
-        else showMsg("تمت إزالة «" + title + "» من قائمة الإصدارات المحفوظة.");
+        console.log("Pi SDK not active in current browser. Order ID:", newOrder.id);
       }
     }
 
-    function startPiPaymentForOrder(orderId) {
-      var idx = -1;
-      for (var i = 0; i < orderList.length; i++) {
-        if (orderList[i].id === orderId) {
-          idx = i;
+    function markOrderPaid(orderId) {
+      var i = 0;
+      for (i = 0; i < ordersList.length; i++) {
+        if (ordersList[i].id === orderId) {
+          ordersList[i].paid = true;
           break;
         }
       }
-      if (idx === -1) return;
-
-      var ord = orderList[idx];
-      var title = getBookTitleByLang(ord.book);
-      var downloadBtnHtml = buildDownloadButtonHtml(ord.book);
-
-      if (ord.paid === true && (ord.status === "paid" || ord.status === "completed")) {
-        renderOrdersList();
-        renderOrdersBadge();
-        showMsg(currentLang === "en"
-          ? ("Order " + ord.id + " is already paid." + (downloadBtnHtml ? "<div>" + downloadBtnHtml + "</div>" : ""))
-          : (currentLang === "fr"
-            ? ("La commande " + ord.id + " est déjà payée." + (downloadBtnHtml ? "<div>" + downloadBtnHtml + "</div>" : ""))
-            : ("الطلب رقم " + ord.id + " مدفوع بالفعل." + (downloadBtnHtml ? "<div>" + downloadBtnHtml + "</div>" : ""))));
-        return;
-      }
-
-      if (!(ensurePiInit() && window.Pi && typeof window.Pi.createPayment === "function")) {
-        showMsg(currentLang === "en"
-          ? "Pi payment is unavailable right now. Please open inside Pi Browser."
-          : (currentLang === "fr"
-            ? "Le paiement Pi est indisponible. Ouvrez dans Pi Browser."
-            : "الدفع عبر Pi غير متاح حالياً. تأكد من الفتح داخل متصفح Pi."));
-        return;
-      }
-
-      var paymentData = {
-        amount: Number(ord.pricePi),
-        memo: "Asmar 1972 — " + title + " (" + ord.id + ")",
-        metadata: {
-          orderId: ord.id,
-          bookKey: ord.book,
-          buyer: ord.buyer
-        }
-      };
-
-      var callbacks = {
-        onReadyForServerApproval: function (paymentId) {
-          fetch(PAYMENT_API_CONFIG.approveUrl, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              paymentId: paymentId,
-              orderId: ord.id,
-              bookKey: ord.book,
-              buyer: ord.buyer
-            })
-          }).catch(function (err) {
-            console.error("Approval request error:", err);
-          });
-        },
-        onReadyForServerCompletion: function (paymentId, txid) {
-          fetch(PAYMENT_API_CONFIG.completeUrl, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              paymentId: paymentId,
-              txid: txid,
-              orderId: ord.id,
-              bookKey: ord.book,
-              buyer: ord.buyer
-            })
-          }).catch(function (err) {
-            console.error("Completion request error:", err);
-          });
-
-          orderList[idx].paid = true;
-          orderList[idx].status = "paid";
-          orderList[idx].paymentId = paymentId || "";
-          orderList[idx].txid = txid || "";
-          persistOrders();
-          renderOrdersList();
-          renderOrdersBadge();
-
-          var unlockedBtn = buildDownloadButtonHtml(ord.book);
-          showMsg(currentLang === "en"
-            ? ("Payment completed for order " + ord.id + ". Direct access is unlocked:" + (unlockedBtn ? "<div>" + unlockedBtn + "</div>" : ""))
-: (currentLang === "fr"
-              ? ("Paiement terminé pour la commande " + ord.id + ". Accès direct débloqué :" + (unlockedBtn ? "<div>" + unlockedBtn + "</div>" : ""))
-              : ("تم إتمام الدفع للطلب رقم " + ord.id + " بنجاح، وتم تفعيل زر التحميل / الفتح المباشر:" + (unlockedBtn ? "<div>" + unlockedBtn + "</div>" : ""))));
-        },
-        onCancel: function (paymentId) {
-          orderList[idx].paid = false;
-          orderList[idx].status = "pending";
-          persistOrders();
-          renderOrdersList();
-          renderOrdersBadge();
-
-          showMsg(currentLang === "en"
-            ? "Payment cancelled for order " + ord.id + "."
-            : (currentLang === "fr"
-              ? "Paiement annulé pour la commande " + ord.id + "."
-              : "تم إلغاء عملية الدفع للطلب رقم " + ord.id + "."));
-        },
-        onError: function (error, payment) {
-          showMsg(currentLang === "en"
-            ? "Pi payment error for order " + ord.id + "."
-            : (currentLang === "fr"
-              ? "Erreur de paiement Pi pour la commande " + ord.id + "."
-              : "حدث خطأ أثناء الدفع عبر Pi للطلب رقم " + ord.id + "."));
-        }
-      };
-
- try {
-        window.Pi.createPayment(paymentData, callbacks);
-      } catch (e) {
-        console.error("Pi payment error:", e);
-        var errDetail = String(e);
-        if (e && e.message) {
-          errDetail = e.message;
-        } else if (e && e.error_message) {
-          errDetail = e.error_message;
-        } else if (e && e.code) {
-          errDetail = e.code;
-        }
-        showMsg(
-          (currentLang === "en"
-            ? "Could not start Pi payment."
-            : (currentLang === "fr"
-              ? "Impossible de démarrer le paiement Pi."
-              : "تعذر بدء عملية الدفع عبر Pi.")) + " [" + errDetail + "]"
-        );
-      }
-    }
-
-    function createOrderAndPay(bookKey, buyer) {
-
-      var book = BOOKS_DATA[bookKey];
-      if (!book || book.isFreeSample) return;
-
-      var resolvedBuyer = (buyer && String(buyer).trim())
-        ? String(buyer).trim()
-        : ((currentPiUser && currentPiUser.username)
-          ? currentPiUser.username
-          : (currentLang === "en" ? "Guest" : (currentLang === "fr" ? "Invité" : "زائر")));
-
-      var title = getBookTitleByLang(bookKey);
-      var orderId = "ORD-" + Math.floor(100000 + Math.random() * 900000);
-
-      orderList.push({
-        id: orderId,
-        book: bookKey,
-        pricePi: book.pricePi,
-        buyer: resolvedBuyer,
-        paid: false,
-        status: "pending"
-      });
-      persistOrders();
+      saveOrders();
       renderOrdersList();
-      renderOrdersBadge();
-
-      var codeSpan = '<span class="ord-code">' + orderId + "</span>";
-      if (currentLang === "en") {
-        showMsg("Order " + codeSpan + " registered for «" + title + "» (" + book.pricePi + " Pi) — Buyer: " + resolvedBuyer + ". Complete Pi payment to unlock download.");
-      } else if (currentLang === "fr") {
-        showMsg("Commande " + codeSpan + " enregistrée pour « " + title + " » (" + book.pricePi + " Pi) — Acheteur : " + resolvedBuyer + ". Finalisez le paiement Pi pour débloquer le téléchargement.");
-      } else {
-        showMsg("تم تسجيل الطلب رقم " + codeSpan + " لإصدار «" + title + "» بسعر (" + book.pricePi + " Pi) — المشتري: " + resolvedBuyer + ". أتمم الدفع عبر Pi لتفعيل زر التحميل / الفتح.");
-      }
-
-      startPiPaymentForOrder(orderId);
     }
 
-    function ensurePiInit() {
-      if (piInitialized) return true;
-      if (window.Pi && typeof window.Pi.init === "function") {
-        try {
-          window.Pi.init({ version: "2.0", sandbox: true });
-          piInitialized = true;
-          return true;
-        } catch (e) {
-          return false;
-        }
-      }
-      return false;
-    }
+    function renderBooks() {
+      var grid = document.getElementById("booksGrid");
+      if (!grid) return;
 
-    loadSavedUser();
-    loadSavedBooks();
-    loadOrders();
-    ensurePiInit();
-    renderUserBadge();
-    renderSavedUI();
-    renderOrdersBadge();
-
-    function showMsg(text) {
-      var el = document.getElementById("pi-status");
-      if (el) {
-        el.innerHTML = text;
-        el.scrollIntoView({ behavior: "smooth", block: "nearest" });
-      }
-    }
-function changeLang(lang) {
-      currentLang = lang;
-      document.getElementById("lang-ar").classList.remove("active");
-      document.getElementById("lang-en").classList.remove("active");
-      document.getElementById("lang-fr").classList.remove("active");
-
-      if (lang === "en") {
-        document.documentElement.lang = "en";
-        document.documentElement.dir = "ltr";
-        document.getElementById("lang-en").classList.add("active");
-        document.getElementById("top-pill").textContent = "Multilingual Digital Store • Pi Ecosystem";
-        document.getElementById("tagline").textContent = "A digital platform for illustrated stories, natural nutrition guides, project calculators, and knowledge releases in three languages.";
-        document.getElementById("pi-btn").textContent = "Sign in with Pi";
-        document.getElementById("share-btn").textContent = "Share Link";
-        document.getElementById("logout-btn").textContent = "Clear Session";
-        document.getElementById("s-title").textContent = "Dodo and His Red Bicycle (Free Sample)";
-        document.getElementById("s-desc").textContent = "Read and download the free sample directly from the store and explore the story and artwork.";
-        document.getElementById("s-btn").textContent = "Download Free Sample";
-        document.getElementById("s-direct").textContent = "Open / Download Sample File (PDF)";
-        document.getElementById("c-title").textContent = "KAHLA SALIM Digital Releases & Books";
-        document.getElementById("c-desc").textContent = "Stories, guides, and digital releases available in the store.";
-        document.getElementById("a-title").textContent = "About the Project & Author";
-        document.getElementById("a-body").innerHTML = "The <strong>Asmar 1972</strong> store by <strong>KAHLA SALIM</strong> brings together children's stories and Amer/Dodo adventures, natural nutrition guides, construction project calculators, and direct Pi Browser usability in Arabic, English, and French.";
-        document.getElementById("foot-note").textContent = "Asmar 1972 • KAHLA SALIM — Digital Store Ready for Demo & Growth";
-        renderUserBadge();
-        renderSavedUI();
-        renderOrdersBadge();
-        showMsg(currentPiUser && currentPiUser.username ? ("Welcome back, " + currentPiUser.username) : "Ready — click «Sign in with Pi».");
-      } else if (lang === "fr") {
-        document.documentElement.lang = "fr";
-        document.documentElement.dir = "ltr";
-        document.getElementById("lang-fr").classList.add("active");
-        document.getElementById("top-pill").textContent = "Boutique numérique multilingue • Pi Ecosystem";
-        document.getElementById("tagline").textContent = "Une plateforme numérique pour histoires illustrées, guides de nutrition naturelle, calculateurs de projets et publications multilingues.";
-        document.getElementById("pi-btn").textContent = "Connexion avec Pi";
-        document.getElementById("share-btn").textContent = "Partager le lien";
-        document.getElementById("logout-btn").textContent = "Effacer la session";
-        document.getElementById("s-title").textContent = "Dodo et son vélo rouge (Échantillon gratuit)";
-        document.getElementById("s-desc").textContent = "Lisez et téléchargez l'échantillon gratuit directement depuis la boutique.";
-        document.getElementById("s-btn").textContent = "Télécharger l'échantillon gratuit";
-        document.getElementById("s-direct").textContent = "Ouvrir / Télécharger l'échantillon (PDF)";
-        document.getElementById("c-title").textContent = "Publications et livres numériques KAHLA SALIM";
-        document.getElementById("c-desc").textContent = "Histoires, guides et éditions numériques disponibles dans la boutique.";
-        document.getElementById("a-title").textContent = "À propos du projet et de l'auteur";
-document.getElementById("a-body").innerHTML = "La boutique <strong>Asmar 1972</strong> de <strong>KAHLA SALIM</strong> réunit des histoires pour enfants et aventures d'Amer et Dodo, des guides de nutrition naturelle, des calculateurs de projets de construction et une utilisation directe dans Pi Browser en arabe, anglais et français.";
-        document.getElementById("foot-note").textContent = "Asmar 1972 • KAHLA SALIM — Boutique numérique prête pour démonstration et évolution";
-        renderUserBadge();
-        renderSavedUI();
-        renderOrdersBadge();
-        showMsg(currentPiUser && currentPiUser.username ? ("Bon retour, " + currentPiUser.username) : "Prêt — cliquez sur « Connexion avec Pi ».");
-      } else {
-        document.documentElement.lang = "ar";
-        document.documentElement.dir = "rtl";
-        document.getElementById("lang-ar").classList.add("active");
-        document.getElementById("top-pill").textContent = "متجر رقمي متكامل • Pi Ecosystem";
-        document.getElementById("tagline").textContent = "منصة رقمية للقصص المصورة وأدلة التغذية الطبيعية وحاسبة المشاريع والإصدارات المعرفية متعددة اللغات.";
-        document.getElementById("pi-btn").textContent = "تسجيل الدخول عبر Pi";
-        document.getElementById("share-btn").textContent = "مشاركة الرابط";
-        document.getElementById("logout-btn").textContent = "مسح الجلسة";
-        document.getElementById("s-title").textContent = "قصة دودو ودراجته الحمراء (عينة مجانية)";
-        document.getElementById("s-desc").textContent = "اقرأ وحمّل العينة المجانية مباشرة من المتجر واستكشف أسلوب القصة والرسوم.";
-        document.getElementById("s-btn").textContent = "تحميل العينة المجانية";
-        document.getElementById("s-direct").textContent = "فتح / تحميل ملف العينة (PDF)";
-        document.getElementById("c-title").textContent = "إصدارات وكتب KAHLA SALIM الرقمية";
-        document.getElementById("c-desc").textContent = "مجموعة القصص والأدلة والملفات الرقمية المتاحة في المتجر.";
-        document.getElementById("a-title").textContent = "عن المشروع والكاتب";
-        document.getElementById("a-body").innerHTML = "يجمع متجر <strong>Asmar 1972</strong> بإشراف <strong>KAHLA SALIM</strong> بين قصص الأطفال ومغامرات عامر ودودو، وأدلة التغذية الطبيعية، وحاسبة مشاريع البناء، مع تجربة استخدام مباشرة داخل متصفح Pi بثلاث لغات (العربية، الإنجليزية، والفرنسية).";
-        document.getElementById("foot-note").textContent = "Asmar 1972 • KAHLA SALIM — متجر رقمي جاهز للعرض والتطوير";
-        renderUserBadge();
-        renderSavedUI();
-        renderOrdersBadge();
-        showMsg(currentPiUser && currentPiUser.username ? ("مرحباً بعودتك، " + currentPiUser.username) : "جاهز — اضغط على «تسجيل الدخول عبر Pi».");
-      }
-    }
-
-    function shareStore() {
-      var url = window.location.href;
-      if (navigator.share) {
-        navigator.share({
-          title: "Asmar 1972 — KAHLA SALIM",
-          text: "Asmar 1972 Digital Store",
-          url: url
-        }).then(function () {
-          if (currentLang === "en") showMsg("Store link shared successfully.");
-          else if (currentLang === "fr") showMsg("Lien de la boutique partagé avec succès.");
-          else showMsg("تمت مشاركة رابط المتجر بنجاح.");
-        }).catch(function () {
-          copyFallback(url);
-        });
-      } else {
-        copyFallback(url);
-      }
-    }
-
-    function copyFallback(text) {
-      if (navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
-        navigator.clipboard.writeText(text).then(function () {
-          if (currentLang === "en") showMsg("Store link copied: " + text);
-          else if (currentLang === "fr") showMsg("Lien copié : " + text);
-          else showMsg("تم نسخ رابط المتجر: " + text);
-        }).catch(function () {
-          showMsg(text);
-        });
-      } else {
-        showMsg(text);
-      }
-    }
-function piLogout() {
-      savePiUser(null);
-      if (currentLang === "en") {
-        showMsg("Session cleared — returned to Guest mode.");
-      } else if (currentLang === "fr") {
-        showMsg("Session effacée — retour au mode Invité.");
-      } else {
-        showMsg("تم مسح الجلسة — عدت إلى وضع الزائر.");
-      }
-    }
-
-    function piLogin() {
-      showMsg("1/3: تم استدعاء piLogin...");
-      ensurePiInit();
-      if (!window.Pi) {
-        showMsg("خطأ: window.Pi غير موجود (افتح الرابط داخل Pi Browser).");
-        return;
-      }
-      if (typeof window.Pi.authenticate !== "function") {
-        showMsg("خطأ: Pi.authenticate غير متاحة.");
-        return;
-      }
-
-      showMsg("2/3: جارٍ استدعاء Pi.authenticate...");
-      var settled = false;
-      var timer = setTimeout(function () {
-        if (!settled) {
-          showMsg("تنبيه: لم يرد Pi.authenticate بعد (تحقق من نافذة الصلاحيات في Pi Browser أو وضع التطبيق).");
-        }
-      }, 10000);
-
-      try {
-        var req = window.Pi.authenticate(["username"], function (payment) {
-          showMsg("تنبيه دفعة غير مكتملة: " + JSON.stringify(payment));
-        });
-
-        if (req && typeof req.then === "function") {
-          req.then(function (auth) {
-            settled = true;
-            clearTimeout(timer);
-            var username = (auth && auth.user && auth.user.username) ? auth.user.username : "Pi User";
-            var uid = (auth && auth.user && auth.user.uid) ? auth.user.uid : "";
-            savePiUser({ username: username, uid: uid });
-            showMsg("3/3 نجاح: مرحباً " + username);
-          }).catch(function (err) {
-            settled = true;
-            clearTimeout(timer);
-            showMsg("3/3 فشل Promise: " + (err && err.message ? err.message : JSON.stringify(err)));
-          });
-        } else {
-          settled = true;
-          clearTimeout(timer);
-          showMsg("3/3: authenticate لم يُرجع Promise.");
-        }
-      } catch (e) {
-        settled = true;
-        clearTimeout(timer);
-        showMsg("استثناء catch: " + (e && e.message ? e.message : String(e)));
-      }
-    }
-
-    function triggerSampleDownload() {
-      var a = document.createElement("a");
-      a.href = FREE_SAMPLE_URL;
-      a.download = "dodo-sample.pdf";
-      a.target = "_blank";
-      a.rel = "noopener noreferrer";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-    }
-
-    function freeSample() {
-      var who = (currentPiUser && currentPiUser.username) ? (" (" + currentPiUser.username + ")") : "";
-      if (currentLang === "en") {
-        showMsg("Opening / downloading free sample" + who + "...");
-      } else if (currentLang === "fr") {
-        showMsg("Ouverture / téléchargement de l'échantillon gratuit" + who + "...");
-      } else {
-        showMsg("جارٍ فتح / تحميل العينة المجانية" + who + "...");
-      }
-      triggerSampleDownload();
-    }
-
-    function selectBook(bookKey) {
-      var item = BOOKS_DATA[bookKey];
-      if (!item) return;
-      var msg = currentLang === "en" ? item.detailEn : (currentLang === "fr" ? item.detailFr : item.detailAr);
-      if (currentPiUser && currentPiUser.username) {
-        msg += " — (" + currentPiUser.username + ")";
-      }
-      showMsg(msg);
-      if (item.isFreeSample) {
-        triggerSampleDownload();
-      }
-    }
-  </script>
-  <footer style="margin-top: 40px; padding: 20px 10px; border-top: 1px solid #e5e7eb; text-align: center; font-size: 14px;">
-    <a href="/privacy" style="margin: 0 12px; color: #5b21b6; text-decoration: none; font-weight: bold;">سياسة الخصوصية</a>
-    <span>|</span>
-    <a href="/terms" style="margin: 0 12px; color: #5b21b6; text-decoration: none; font-weight: bold;">شروط الاستخدام</a>
-  </footer>
-</body>
-</html>
+      var html = "";
+      var keys = Object.keys(BOOKS_DATA);
+      var i = 0;
+      for (i = 0; i < keys.length; i++) {
+        var key = keys[i];
+        var book = BOOKS_DATA[key];
+        html += "<div class='card'>";
+        html += "<div>";
+        html += "<span class='badge'>" + getBookCategory(book) + "</span>";
+html += "<h3>" + getBookTitle(book) + "</h3>";
+        html += "<p>" + getBookDesc(book) + "</p>";
+        html += "</div>";
+        html += "<div>";
+        html += "<div class='price'>" + book.pricePi + " Pi</div>";
+        html += "<button type='button' class='btn btn-pay' onclick=\"createOrderAndPay('" + key + "')\">" + getText("orderBtn") + " (" + book.pricePi + " Pi)</button>";
+        html += "</div>";
