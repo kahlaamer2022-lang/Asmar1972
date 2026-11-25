@@ -10,7 +10,8 @@ export default {
         });
       }
       try {
-        const { paymentId } = await request.json();
+        const body = await request.json();
+        const paymentId = body && body.paymentId;
         if (!env.PI_API_KEY) {
           return new Response(JSON.stringify({ error: "Missing PI_API_KEY" }), {
             status: 500,
@@ -23,16 +24,17 @@ export default {
             headers: { "Content-Type": "application/json" }
           });
         }
-        const piRes = await fetch(
-          https://api.minepi.com/v2/payments/${encodeURIComponent(paymentId)}/approve,
-          {
-            method: "POST",
-            headers: {
-              "Authorization": Key ${env.PI_API_KEY},
-              "Content-Type": "application/json"
-            }
+        const piUrl =
+          "https://api.minepi.com/v2/payments/" +
+          encodeURIComponent(paymentId) +
+          "/approve";
+        const piRes = await fetch(piUrl, {
+          method: "POST",
+          headers: {
+            "Authorization": "Key " + env.PI_API_KEY,
+            "Content-Type": "application/json"
           }
-        );
+        });
         const data = await piRes.text();
         return new Response(data, {
           status: piRes.status,
@@ -54,7 +56,9 @@ export default {
         });
       }
       try {
-        const { paymentId, txid } = await request.json();
+        const body = await request.json();
+        const paymentId = body && body.paymentId;
+        const txid = body && body.txid;
         if (!env.PI_API_KEY) {
           return new Response(JSON.stringify({ error: "Missing PI_API_KEY" }), {
             status: 500,
@@ -67,17 +71,18 @@ export default {
             headers: { "Content-Type": "application/json" }
           });
         }
-        const piRes = await fetch(
-          https://api.minepi.com/v2/payments/${encodeURIComponent(paymentId)}/complete,
-          {
-            method: "POST",
-            headers: {
-              "Authorization": Key ${env.PI_API_KEY},
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ txid })
-          }
-        );
+        const piUrl =
+          "https://api.minepi.com/v2/payments/" +
+          encodeURIComponent(paymentId) +
+          "/complete";
+        const piRes = await fetch(piUrl, {
+          method: "POST",
+          headers: {
+            "Authorization": "Key " + env.PI_API_KEY,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ txid: txid })
+        });
         const data = await piRes.text();
         return new Response(data, {
           status: piRes.status,
