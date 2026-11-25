@@ -241,8 +241,7 @@ pricePi: 4,
         downloadUrl: "https://example.com/humayma-bidah.pdf"
       }
     };
-
-    var STORAGE_KEY = "asmar1972_orders_v1";
+var STORAGE_KEY = "asmar1972_orders_v1";
     var currentLang = "ar";
     var ordersList = loadOrders();
 
@@ -329,7 +328,7 @@ pricePi: 4,
           dir: "ltr",
           sub: "Livres Numeriques et Histoires Enfants",
           catalog: "Catalogue Livres et Histoires",
-orders: "Commandes, Paiement et Telechargement",
+          orders: "Commandes, Paiement et Telechargement",
           orderBtn: "Commander l Edition",
           downloadBtn: "Telecharger / Ouvrir le Livre",
           paidText: "Paye et Debloque",
@@ -362,8 +361,7 @@ orders: "Commandes, Paiement et Telechargement",
       renderBooks();
       renderOrdersList();
     }
-
-    function buildDownloadButtonHtml(bookKey) {
+function buildDownloadButtonHtml(bookKey) {
       var book = BOOKS_DATA[bookKey];
       if (!book) return "";
       var rawUrl = book.downloadUrl ? String(book.downloadUrl) : "";
@@ -445,10 +443,52 @@ orders: "Commandes, Paiement et Telechargement",
         html += "<div class='card'>";
         html += "<div>";
         html += "<span class='badge'>" + getBookCategory(book) + "</span>";
-html += "<h3>" + getBookTitle(book) + "</h3>";
+        html += "<h3>" + getBookTitle(book) + "</h3>";
         html += "<p>" + getBookDesc(book) + "</p>";
         html += "</div>";
         html += "<div>";
         html += "<div class='price'>" + book.pricePi + " Pi</div>";
         html += "<button type='button' class='btn btn-pay' onclick=\"createOrderAndPay('" + key + "')\">" + getText("orderBtn") + " (" + book.pricePi + " Pi)</button>";
         html += "</div>";
+        html += "</div>";
+      }
+      grid.innerHTML = html;
+    }
+
+    function renderOrdersList() {
+      var container = document.getElementById("ordersList");
+      if (!container) return;
+
+      if (ordersList.length === 0) {
+        container.innerHTML = "<p>" + getText("noOrders") + "</p>";
+        return;
+      }
+
+      var html = "";
+      var i = 0;
+      for (i = 0; i < ordersList.length; i++) {
+        var order = ordersList[i];
+        var book = BOOKS_DATA[order.bookKey];
+        var bookTitle = book ? getBookTitle(book) : order.bookKey;
+
+        html += "<div class='order-item'>";
+        html += "<div><strong>" + getText("orderIdLabel") + ":</strong> " + order.id + "</div>";
+        html += "<div><strong>" + getText("bookLabel") + ":</strong> " + bookTitle + "</div>";
+        html += "<div><strong>" + getText("priceLabel") + ":</strong> " + order.pricePi + " Pi</div>";
+if (order.paid) {
+          html += "<div class='status-paid'>" + getText("paidText") + "</div>";
+          html += buildDownloadButtonHtml(order.bookKey);
+        } else {
+          html += "<div class='status-pending'>" + getText("pendingText") + "</div>";
+        }
+
+        html += "</div>";
+      }
+
+      container.innerHTML = html;
+    }
+
+    setLanguage("ar");
+  </script>
+</body>
+</html>
