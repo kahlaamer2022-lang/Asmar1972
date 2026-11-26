@@ -96,6 +96,7 @@
     }
     .status-paid { color: #047857; font-weight: bold; }
     .status-pending { color: #b45309; font-weight: bold; }
+    .status-cancelled { color: #b91c1c; font-weight: bold; }
   </style>
 </head>
 <body>
@@ -132,7 +133,7 @@
         titleEn: "Dodo and His Red Bicycle",
         titleFr: "Dodo et son Velo Rouge",
         descAr: "قصة مصورة ممتعة للأطفال حول المغامرة والاكتشاف.",
-descEn: "Fun illustrated story for children about adventure and discovery.",
+        descEn: "Fun illustrated story for children about adventure and discovery.",
         descFr: "Histoire illustree pour enfants sur l aventure et la decouverte.",
         downloadUrl: "https://example.com/dodo-story.pdf"
       },
@@ -215,7 +216,7 @@ descEn: "Fun illustrated story for children about adventure and discovery.",
         downloadUrl: "https://example.com/amer-stars.pdf"
       },
       fun_trio: {
-pricePi: 4,
+        pricePi: 4,
         categoryAr: "قصص الأطفال",
         categoryEn: "Children Story",
         categoryFr: "Histoire Enfants",
@@ -241,7 +242,8 @@ pricePi: 4,
         downloadUrl: "https://example.com/humayma-bidah.pdf"
       }
     };
-var STORAGE_KEY = "asmar1972_orders_v1";
+
+    var STORAGE_KEY = "asmar1972_orders_v1";
     var currentLang = "ar";
     var ordersList = loadOrders();
 
@@ -305,6 +307,7 @@ var STORAGE_KEY = "asmar1972_orders_v1";
           downloadBtn: "تحميل / فتح الكتاب",
           paidText: "مدفوع ومفعّل",
           pendingText: "بانتظار إتمام الدفع عبر Pi",
+          cancelledText: "تم إلغاء الدفع أو تعذّر إتمامه",
           noOrders: "لا توجد طلبات مسجلة حتى الآن.",
           orderIdLabel: "رقم الطلب",
           bookLabel: "الكتاب",
@@ -319,6 +322,7 @@ var STORAGE_KEY = "asmar1972_orders_v1";
           downloadBtn: "Download / Open Book",
           paidText: "Paid & Unlocked",
           pendingText: "Pending Pi Payment Completion",
+          cancelledText: "Payment cancelled or failed",
           noOrders: "No orders recorded yet.",
           orderIdLabel: "Order ID",
           bookLabel: "Book",
@@ -333,6 +337,7 @@ var STORAGE_KEY = "asmar1972_orders_v1";
           downloadBtn: "Telecharger / Ouvrir le Livre",
           paidText: "Paye et Debloque",
           pendingText: "En attente de finalisation Pi",
+          cancelledText: "Paiement annule ou echoue",
           noOrders: "Aucune commande enregistree pour le moment.",
           orderIdLabel: "Commande",
           bookLabel: "Livre",
@@ -361,7 +366,8 @@ var STORAGE_KEY = "asmar1972_orders_v1";
       renderBooks();
       renderOrdersList();
     }
-function buildDownloadButtonHtml(bookKey) {
+
+    function buildDownloadButtonHtml(bookKey) {
       var book = BOOKS_DATA[bookKey];
       if (!book) return "";
       var rawUrl = book.downloadUrl ? String(book.downloadUrl) : "";
@@ -369,6 +375,19 @@ function buildDownloadButtonHtml(bookKey) {
       if (cleanUrl === "") return "";
 
       return "<a class='btn btn-download' href='" + cleanUrl + "' target='_blank' rel='noopener noreferrer'>" + getText("downloadBtn") + "</a>";
+    }
+
+    function updateOrderStatus(orderId, status) {
+      var i = 0;
+      for (i = 0; i < ordersList.length; i++) {
+        if (ordersList[i].id === orderId) {
+          ordersList[i].status = status;
+          ordersList[i].paid = (status === "paid");
+          break;
+        }
+      }
+      saveOrders();
+      renderOrdersList();
     }
 
     function createOrderAndPay(bookKey) {
@@ -379,6 +398,7 @@ function buildDownloadButtonHtml(bookKey) {
         id: "ORD-" + String(Date.now()),
         bookKey: bookKey,
         pricePi: book.pricePi,
+        status: "pending",
         paid: false
       };
 
@@ -400,13 +420,15 @@ function buildDownloadButtonHtml(bookKey) {
               },
               onReadyForServerCompletion: function(paymentId, txid) {
                 console.log("Completed:", paymentId, txid);
-                markOrderPaid(newOrder.id);
+                updateOrderStatus(newOrder.id, "paid");
               },
               onCancel: function() {
                 console.log("Payment cancelled");
+                updateOrderStatus(newOrder.id, "cancelled");
               },
               onError: function(error) {
                 console.log("Pi payment note:", error);
+                updateOrderStatus(newOrder.id, "cancelled");
               }
             }
           );
@@ -416,18 +438,6 @@ function buildDownloadButtonHtml(bookKey) {
       } else {
         console.log("Pi SDK not active in current browser. Order ID:", newOrder.id);
       }
-    }
-
-    function markOrderPaid(orderId) {
-      var i = 0;
-      for (i = 0; i < ordersList.length; i++) {
-        if (ordersList[i].id === orderId) {
-          ordersList[i].paid = true;
-          break;
-        }
-      }
-      saveOrders();
-      renderOrdersList();
     }
 
     function renderBooks() {
@@ -470,14 +480,18 @@ function buildDownloadButtonHtml(bookKey) {
         var order = ordersList[i];
         var book = BOOKS_DATA[order.bookKey];
         var bookTitle = book ? getBookTitle(book) : order.bookKey;
+        var currentStatus = order.status || (order.paid ? "paid" : "pending");
 
         html += "<div class='order-item'>";
         html += "<div><strong>" + getText("orderIdLabel") + ":</strong> " + order.id + "</div>";
         html += "<div><strong>" + getText("bookLabel") + ":</strong> " + bookTitle + "</div>";
         html += "<div><strong>" + getText("priceLabel") + ":</strong> " + order.pricePi + " Pi</div>";
-if (order.paid) {
+
+        if (currentStatus === "paid") {
           html += "<div class='status-paid'>" + getText("paidText") + "</div>";
           html += buildDownloadButtonHtml(order.bookKey);
+        } else if (currentStatus === "cancelled") {
+          html += "<div class='status-cancelled'>" + getText("cancelledText") + "</div>";
         } else {
           html += "<div class='status-pending'>" + getText("pendingText") + "</div>";
         }
