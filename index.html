@@ -357,7 +357,10 @@
           dir: "rtl",
           sub: "كتب إلكترونية وقصص أطفال",
           guest: "ضيف / غير مسجّل",
+          signingIn: "جاري الدخول...",
           authBtn: "دخول Pi",
+          sdkNotReady: "واجهة Pi غير جاهزة. افتح الرابط من داخل Pi Browser.",
+          authFailed: "تم إلغاء دخول Pi أو تعذّر إتمامه.",
           notice: "ملاحظة: يبدو أنك تتصفح خارج Pi Browser. لإتمام الدفع الفعلي عبر Pi، افتح الرابط من داخل Pi Browser.",
           catalog: "قائمة الكتب والقصص",
           orders: "الطلبات وحالة الدفع والتحميل",
@@ -375,7 +378,10 @@
           dir: "ltr",
           sub: "E-Books and Children Stories",
           guest: "Guest / Signed out",
+          signingIn: "Signing in...",
           authBtn: "Pi Login",
+          sdkNotReady: "Pi SDK is not ready. Please open inside Pi Browser.",
+          authFailed: "Pi login was cancelled or failed.",
           notice: "Note: You appear to be outside Pi Browser. Open this link inside Pi Browser to complete real Pi payments.",
           catalog: "Books & Stories Catalog",
           orders: "Orders, Payment Status & Download",
@@ -393,7 +399,10 @@
           dir: "ltr",
           sub: "Livres Numeriques et Histoires Enfants",
           guest: "Invite / Non connecte",
+          signingIn: "Connexion...",
           authBtn: "Connexion Pi",
+          sdkNotReady: "Le SDK Pi n'est pas pret. Ouvrez dans Pi Browser.",
+          authFailed: "La connexion Pi a ete annulee ou a echoue.",
           notice: "Note : Vous semblez hors de Pi Browser. Ouvrez ce lien dans Pi Browser pour effectuer un paiement Pi reel.",
           catalog: "Catalogue Livres et Histoires",
           orders: "Commandes, Paiement et Telechargement",
@@ -425,25 +434,41 @@
     }
 
     function authenticatePiUser() {
-      if (!isLikelyPiBrowser() || !window.Pi || typeof window.Pi.authenticate !== "function") {
-        console.log("Pi authenticate not available outside Pi Browser.");
+      var badge = document.getElementById("piUserBadge");
+
+      if (!window.Pi || typeof window.Pi.authenticate !== "function") {
+        updateUserBadge();
+        alert(getText("sdkNotReady"));
         return Promise.resolve(null);
       }
 
-      return window.Pi.authenticate(["username", "payments"], function(incompletePayment) {
-        console.log("Incomplete payment found:", incompletePayment);
-      })
-      .then(function(auth) {
-        if (auth && auth.user) {
-          currentPiUser = auth.user;
+      if (badge) {
+        badge.textContent = getText("signingIn");
+      }
+
+      try {
+        return window.Pi.authenticate(["username", "payments"], function(incompletePayment) {
+          console.log("Incomplete payment found:", incompletePayment);
+        })
+        .then(function(auth) {
+          if (auth && auth.user) {
+            currentPiUser = auth.user;
+          }
           updateUserBadge();
-        }
-        return auth;
-      })
-      .catch(function(err) {
-        console.log("Pi authenticate note:", err);
-        return null;
-      });
+          return auth;
+        })
+        .catch(function(err) {
+          console.log("Pi authenticate note:", err);
+          updateUserBadge();
+          alert(getText("authFailed"));
+          return null;
+        });
+      } catch (err) {
+        console.log("Pi authenticate exception:", err);
+        updateUserBadge();
+        alert(getText("authFailed"));
+        return Promise.resolve(null);
+      }
     }
 
     function updateBrowserNotice() {
@@ -515,11 +540,6 @@
       ordersList.unshift(newOrder);
       saveOrders();
       renderOrdersList();
-
-      if (!isLikelyPiBrowser()) {
-        console.log("Opened outside Pi Browser. Order saved as pending:", newOrder.id);
-        return;
-      }
 
       if (window.Pi && typeof window.Pi.createPayment === "function") {
         var startPayment = function() {
@@ -646,7 +666,7 @@
     }
 
     setLanguage("ar");
-    if (isLikelyPiBrowser()) {
+    if (window.Pi && typeof window.Pi.authenticate === "function") {
       authenticatePiUser();
     }
   </script>
