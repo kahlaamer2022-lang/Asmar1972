@@ -289,13 +289,34 @@
     var currentPiUser = null;
     var ordersList = loadOrders();
 
+    function isPiSdkMessagingTimeoutError(errOrMsg) {
+      var text = "";
+      if (!errOrMsg) return false;
+      if (typeof errOrMsg === "string") {
+        text = errOrMsg;
+      } else if (errOrMsg.message) {
+        text = String(errOrMsg.message);
+      } else {
+        text = String(errOrMsg);
+      }
+      return text.indexOf("timed out") !== -1 || text.indexOf("Messaging") !== -1;
+    }
+
     window.addEventListener("unhandledrejection", function(event) {
-      var msg = event && event.reason ? String(event.reason.message || event.reason) : "";
-      if (msg.indexOf("timed out") !== -1 || msg.indexOf("Messaging") !== -1) {
+      var reason = event ? event.reason : null;
+      if (isPiSdkMessagingTimeoutError(reason)) {
         event.preventDefault();
-        console.log("Pi SDK timeout handled outside Pi Browser:", msg);
+        console.log("Pi SDK timeout handled outside Pi Browser:", reason);
       }
     });
+
+    window.onerror = function(message, source, lineno, colno, error) {
+      if (isPiSdkMessagingTimeoutError(message) || isPiSdkMessagingTimeoutError(error)) {
+        console.log("Pi SDK error suppressed outside Pi Browser:", message);
+        return true;
+      }
+      return false;
+    };
 
     if (window.Pi && typeof window.Pi.init === "function") {
       try {
@@ -360,7 +381,7 @@
           signingIn: "جاري الدخول...",
           authBtn: "دخول Pi",
           sdkNotReady: "واجهة Pi غير جاهزة. افتح الرابط من داخل Pi Browser.",
-          authFailed: "تم إلغاء دخول Pi أو تعذّر إتمامه.",
+          authFailed: "تم إلغاء دخول Pi أو تعذّر إتمامه (تأكد من فتح الرابط داخل Pi Browser).",
           notice: "ملاحظة: يبدو أنك تتصفح خارج Pi Browser. لإتمام الدفع الفعلي عبر Pi، افتح الرابط من داخل Pi Browser.",
           catalog: "قائمة الكتب والقصص",
           orders: "الطلبات وحالة الدفع والتحميل",
@@ -381,7 +402,7 @@
           signingIn: "Signing in...",
           authBtn: "Pi Login",
           sdkNotReady: "Pi SDK is not ready. Please open inside Pi Browser.",
-          authFailed: "Pi login was cancelled or failed.",
+          authFailed: "Pi login was cancelled or failed. Please open inside Pi Browser.",
           notice: "Note: You appear to be outside Pi Browser. Open this link inside Pi Browser to complete real Pi payments.",
           catalog: "Books & Stories Catalog",
           orders: "Orders, Payment Status & Download",
@@ -402,7 +423,7 @@
           signingIn: "Connexion...",
           authBtn: "Connexion Pi",
           sdkNotReady: "Le SDK Pi n'est pas pret. Ouvrez dans Pi Browser.",
-          authFailed: "La connexion Pi a ete annulee ou a echoue.",
+          authFailed: "La connexion Pi a ete annulee ou a echoue. Ouvrez dans Pi Browser.",
           notice: "Note : Vous semblez hors de Pi Browser. Ouvrez ce lien dans Pi Browser pour effectuer un paiement Pi reel.",
           catalog: "Catalogue Livres et Histoires",
           orders: "Commandes, Paiement et Telechargement",
@@ -433,12 +454,15 @@
       }
     }
 
-    function authenticatePiUser() {
+    function authenticatePiUser(options) {
+      var silent = options && options.silent === true;
       var badge = document.getElementById("piUserBadge");
 
       if (!window.Pi || typeof window.Pi.authenticate !== "function") {
         updateUserBadge();
-        alert(getText("sdkNotReady"));
+        if (!silent) {
+          alert(getText("sdkNotReady"));
+        }
         return Promise.resolve(null);
       }
 
@@ -446,27 +470,52 @@
         badge.textContent = getText("signingIn");
       }
 
+      var settled = false;
+      var uiTimer = setTimeout(function() {
+        if (!settled && !currentPiUser) {
+          updateUserBadge();
+        }
+      }, 8000);
+
       try {
-        return window.Pi.authenticate(["username", "payments"], function(incompletePayment) {
+        var authPromise = window.Pi.authenticate(["username", "payments"], function(incompletePayment) {
           console.log("Incomplete payment found:", incompletePayment);
-        })
-        .then(function(auth) {
-          if (auth && auth.user) {
-            currentPiUser = auth.user;
-          }
-          updateUserBadge();
-          return auth;
-        })
-        .catch(function(err) {
-          console.log("Pi authenticate note:", err);
-          updateUserBadge();
-          alert(getText("authFailed"));
-          return null;
         });
+
+        if (authPromise && typeof authPromise.catch === "function") {
+          authPromise.catch(function(err) {
+            console.log("Pi SDK background auth rejection:", err);
+          });
+        }
+
+        return authPromise
+          .then(function(auth) {
+            settled = true;
+            clearTimeout(uiTimer);
+            if (auth && auth.user) {
+              currentPiUser = auth.user;
+            }
+            updateUserBadge();
+            return auth;
+          })
+          .catch(function(err) {
+            settled = true;
+            clearTimeout(uiTimer);
+            console.log("Pi authenticate note:", err);
+            updateUserBadge();
+            if (!silent) {
+              alert(getText("authFailed"));
+            }
+            return null;
+          });
       } catch (err) {
+        settled = true;
+        clearTimeout(uiTimer);
         console.log("Pi authenticate exception:", err);
         updateUserBadge();
-        alert(getText("authFailed"));
+        if (!silent) {
+          alert(getText("authFailed"));
+        }
         return Promise.resolve(null);
       }
     }
@@ -544,7 +593,7 @@
       if (window.Pi && typeof window.Pi.createPayment === "function") {
         var startPayment = function() {
           try {
-            window.Pi.createPayment(
+            var payPromise = window.Pi.createPayment(
               {
                 amount: book.pricePi,
                 memo: getBookTitle(book),
@@ -586,14 +635,22 @@
                 }
               }
             );
+
+            if (payPromise && typeof payPromise.catch === "function") {
+              payPromise.catch(function(err) {
+                console.log("Pi createPayment promise note:", err);
+              });
+            }
           } catch (err) {
             console.log("Pi createPayment note:", err);
           }
         };
 
         if (!currentPiUser) {
-          authenticatePiUser().then(function() {
-            startPayment();
+          authenticatePiUser({ silent: false }).then(function(auth) {
+            if (auth && auth.user) {
+              startPayment();
+            }
           });
         } else {
           startPayment();
@@ -666,8 +723,8 @@
     }
 
     setLanguage("ar");
-    if (window.Pi && typeof window.Pi.authenticate === "function") {
-      authenticatePiUser();
+    if (isLikelyPiBrowser() && window.Pi && typeof window.Pi.authenticate === "function") {
+      authenticatePiUser({ silent: true });
     }
   </script>
 </body>
