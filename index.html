@@ -100,7 +100,7 @@
     .btn {
       border: none;
       border-radius: 7px;
-      padding: 9px 13px;
+      padding: 10px 14px;
       cursor: pointer;
       font-weight: bold;
       font-size: 14px;
@@ -112,8 +112,15 @@
     .btn-download {
       background: #d97706;
       color: #ffffff;
-      margin-top: 8px;
+      margin-top: 10px;
       width: 100%;
+      font-size: 15px;
+      padding: 12px 16px;
+      border: 2px solid #b45309;
+      box-shadow: 0 2px 6px rgba(217, 119, 6, 0.25);
+    }
+    .btn-download:hover {
+      background: #b45309;
     }
     .orders-box {
       margin-top: 28px;
@@ -125,13 +132,22 @@
     .order-item {
       border: 1px solid #e5e7eb;
       border-radius: 8px;
-      padding: 12px;
-      margin-top: 10px;
+      padding: 14px;
+      margin-top: 12px;
       background: #fafafa;
     }
-    .status-paid { color: #047857; font-weight: bold; }
-    .status-pending { color: #b45309; font-weight: bold; }
-    .status-cancelled { color: #b91c1c; font-weight: bold; }
+    .order-item-paid {
+      border: 1px solid #10b981;
+      background: #f0fdf4;
+    }
+    .status-paid {
+      color: #047857;
+      font-weight: bold;
+      margin-top: 6px;
+      font-size: 15px;
+    }
+    .status-pending { color: #b45309; font-weight: bold; margin-top: 6px; }
+    .status-cancelled { color: #b91c1c; font-weight: bold; margin-top: 6px; }
   </style>
 </head>
 <body>
@@ -386,8 +402,8 @@
           catalog: "قائمة الكتب والقصص",
           orders: "الطلبات وحالة الدفع والتحميل",
           orderBtn: "طلب الإصدار",
-          downloadBtn: "تحميل / فتح الكتاب",
-          paidText: "مدفوع ومفعّل",
+          downloadBtn: "تحميل / فتح الكتاب الآن",
+          paidText: "مدفوع ومفعّل - جاهز للتحميل",
           pendingText: "بانتظار إتمام الدفع عبر Pi",
           cancelledText: "تم إلغاء الدفع أو تعذّر إتمامه",
           noOrders: "لا توجد طلبات مسجلة حتى الآن.",
@@ -407,8 +423,8 @@
           catalog: "Books & Stories Catalog",
           orders: "Orders, Payment Status & Download",
           orderBtn: "Request Edition",
-          downloadBtn: "Download / Open Book",
-          paidText: "Paid & Unlocked",
+          downloadBtn: "Download / Open Book Now",
+          paidText: "Paid & Unlocked - Ready to Download",
           pendingText: "Pending Pi Payment Completion",
           cancelledText: "Payment cancelled or failed",
           noOrders: "No orders recorded yet.",
@@ -429,7 +445,7 @@
           orders: "Commandes, Paiement et Telechargement",
           orderBtn: "Commander l Edition",
           downloadBtn: "Telecharger / Ouvrir le Livre",
-          paidText: "Paye et Debloque",
+          paidText: "Paye et Debloque - Pret au Telechargement",
           pendingText: "En attente de finalisation Pi",
           cancelledText: "Paiement annule ou echoue",
           noOrders: "Aucune commande enregistree pour le moment.",
@@ -558,11 +574,27 @@
       renderOrdersList();
     }
 
-    function buildDownloadButtonHtml(bookKey) {
+    function getCleanDownloadUrl(bookKey) {
       var book = BOOKS_DATA[bookKey];
-      if (!book) return "";
-      var rawUrl = book.downloadUrl ? String(book.downloadUrl) : "";
-      var cleanUrl = rawUrl.trim();
+      if (!book || !book.downloadUrl) return "";
+      return String(book.downloadUrl).trim();
+    }
+
+    function openBookAutomatically(bookKey) {
+      var cleanUrl = getCleanDownloadUrl(bookKey);
+      if (!cleanUrl) return;
+      try {
+        var openedWin = window.open(cleanUrl, "_blank", "noopener,noreferrer");
+        if (!openedWin) {
+          window.location.href = cleanUrl;
+        }
+      } catch (e) {
+        window.location.href = cleanUrl;
+      }
+    }
+
+    function buildDownloadButtonHtml(bookKey) {
+      var cleanUrl = getCleanDownloadUrl(bookKey);
       if (cleanUrl === "") return "";
 
       return "<a class='btn btn-download' href='" + cleanUrl + "' target='_blank' rel='noopener noreferrer'>" + getText("downloadBtn") + "</a>";
@@ -570,15 +602,28 @@
 
     function updateOrderStatus(orderId, status) {
       var i = 0;
+      var matchedBookKey = null;
       for (i = 0; i < ordersList.length; i++) {
         if (ordersList[i].id === orderId) {
           ordersList[i].status = status;
           ordersList[i].paid = (status === "paid");
+          matchedBookKey = ordersList[i].bookKey;
           break;
         }
       }
       saveOrders();
       renderOrdersList();
+
+      if (status === "paid" && matchedBookKey) {
+        openBookAutomatically(matchedBookKey);
+      }
+    }
+
+    function isCompleteResponseSuccess(res, data) {
+      if (!res || !res.ok) return false;
+      if (!data) return true;
+      if (data.ok === false || data.success === false || data.error) return false;
+      return true;
     }
 
     function createOrderAndPay(bookKey) {
@@ -613,20 +658,24 @@
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ paymentId: paymentId })
                   })
-                  .then(function(res) { return res.json(); })
+                  .then(function(res) { return res.json().catch(function() { return {}; }); })
                   .then(function(data) { console.log("Approve result:", data); })
                   .catch(function(err) { console.log("Approve error:", err); });
                 },
                 onReadyForServerCompletion: function(paymentId, txid) {
+                  var responseObj = null;
                   fetch("/api/pi/complete", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ paymentId: paymentId, txid: txid })
                   })
-                  .then(function(res) { return res.json(); })
+                  .then(function(res) {
+                    responseObj = res;
+                    return res.json().catch(function() { return {}; });
+                  })
                   .then(function(data) {
                     console.log("Complete result:", data);
-                    if (data && data.ok) {
+                    if (isCompleteResponseSuccess(responseObj, data)) {
                       updateOrderStatus(newOrder.id, "paid");
                     }
                   })
@@ -708,8 +757,9 @@
         var book = BOOKS_DATA[order.bookKey];
         var bookTitle = book ? getBookTitle(book) : order.bookKey;
         var currentStatus = order.status || (order.paid ? "paid" : "pending");
+        var itemClass = (currentStatus === "paid") ? "order-item order-item-paid" : "order-item";
 
-        html += "<div class='order-item'>";
+        html += "<div class='" + itemClass + "'>";
         html += "<div><strong>" + getText("orderIdLabel") + ":</strong> " + order.id + "</div>";
         html += "<div><strong>" + getText("bookLabel") + ":</strong> " + bookTitle + "</div>";
         html += "<div><strong>" + getText("priceLabel") + ":</strong> " + order.pricePi + " Pi</div>";
