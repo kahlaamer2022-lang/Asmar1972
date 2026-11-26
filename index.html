@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="data:," />
   <title>Asmar 1972 - متجر الكتب الإلكترونية وقصص الأطفال</title>
   <script src="https://sdk.minepi.com/pi-sdk.js"></script>
   <style>
@@ -37,6 +38,16 @@
     }
     .lang-bar button.active { background: #059669; }
     .container { max-width: 1100px; margin: 22px auto; padding: 0 16px; }
+    .notice-box {
+      background: #fffbeb;
+      border: 1px solid #f59e0b;
+      color: #92400e;
+      padding: 12px 14px;
+      border-radius: 8px;
+      margin-bottom: 18px;
+      font-size: 14px;
+      display: none;
+    }
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
@@ -113,6 +124,8 @@
   </header>
 
   <main class="container">
+    <div id="browserNotice" class="notice-box"></div>
+
     <h2 id="catalogHeading">قائمة الكتب والقصص</h2>
     <div id="booksGrid" class="grid"></div>
 
@@ -247,12 +260,26 @@
     var currentLang = "ar";
     var ordersList = loadOrders();
 
+    // منع ظهور أخطاء Promise غير المعالجة عند فتح الصفحة خارج بيئة Pi Browser
+    window.addEventListener("unhandledrejection", function(event) {
+      var msg = event && event.reason ? String(event.reason.message || event.reason) : "";
+      if (msg.indexOf("timed out") !== -1 || msg.indexOf("Messaging") !== -1) {
+        event.preventDefault();
+        console.log("Pi SDK timeout handled outside Pi Browser:", msg);
+      }
+    });
+
     if (window.Pi && typeof window.Pi.init === "function") {
       try {
         window.Pi.init({ version: "2.0", sandbox: false });
       } catch (err) {
         console.log("Pi init note:", err);
       }
+    }
+
+    function isLikelyPiBrowser() {
+      var ua = navigator.userAgent || "";
+      return ua.indexOf("PiBrowser") !== -1;
     }
 
     function loadOrders() {
@@ -301,6 +328,7 @@
         ar: {
           dir: "rtl",
           sub: "كتب إلكترونية وقصص أطفال",
+          notice: "ملاحظة: يبدو أنك تتصفح خارج Pi Browser. لإتمام الدفع الفعلي عبر Pi، افتح الرابط من داخل Pi Browser.",
           catalog: "قائمة الكتب والقصص",
           orders: "الطلبات وحالة الدفع والتحميل",
           orderBtn: "طلب الإصدار",
@@ -316,6 +344,7 @@
         en: {
           dir: "ltr",
           sub: "E-Books and Children Stories",
+          notice: "Note: You appear to be outside Pi Browser. Open this link inside Pi Browser to complete real Pi payments.",
           catalog: "Books & Stories Catalog",
           orders: "Orders, Payment Status & Download",
           orderBtn: "Request Edition",
@@ -331,6 +360,7 @@
         fr: {
           dir: "ltr",
           sub: "Livres Numeriques et Histoires Enfants",
+          notice: "Note : Vous semblez hors de Pi Browser. Ouvrez ce lien dans Pi Browser pour effectuer un paiement Pi reel.",
           catalog: "Catalogue Livres et Histoires",
           orders: "Commandes, Paiement et Telechargement",
           orderBtn: "Commander l Edition",
@@ -350,6 +380,17 @@
       return langSet[key];
     }
 
+    function updateBrowserNotice() {
+      var noticeEl = document.getElementById("browserNotice");
+      if (!noticeEl) return;
+      if (!isLikelyPiBrowser()) {
+        noticeEl.textContent = getText("notice");
+        noticeEl.style.display = "block";
+      } else {
+        noticeEl.style.display = "none";
+      }
+    }
+
     function setLanguage(lang) {
       currentLang = lang;
       document.documentElement.lang = lang;
@@ -363,6 +404,7 @@
       document.getElementById("catalogHeading").textContent = getText("catalog");
       document.getElementById("ordersHeading").textContent = getText("orders");
 
+      updateBrowserNotice();
       renderBooks();
       renderOrdersList();
     }
@@ -405,6 +447,11 @@
       ordersList.unshift(newOrder);
       saveOrders();
       renderOrdersList();
+
+      if (!isLikelyPiBrowser()) {
+        console.log("Opened outside Pi Browser. Order saved as pending:", newOrder.id);
+        return;
+      }
 
       if (window.Pi && typeof window.Pi.createPayment === "function") {
         try {
