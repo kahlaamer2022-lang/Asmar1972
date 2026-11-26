@@ -176,7 +176,7 @@
         descAr: "قصة مصورة ممتعة للأطفال حول المغامرة والاكتشاف.",
         descEn: "Fun illustrated story for children about adventure and discovery.",
         descFr: "Histoire illustree pour enfants sur l aventure et la decouverte.",
-        downloadUrl: "https://example.com/dodo-story.pdf"
+        downloadUrl: "https://drive.google.com/file/d/1GzbXmTGuZNcNpLqh8BmuFYNxQJqjpGwU/view?usp=sharing"
       },
       grandpa_nutrition: {
         pricePi: 5,
@@ -189,7 +189,7 @@
         descAr: "دليل عملي مستلهم من التقاليد الغذائية والعادات الصحية المتوازنة.",
         descEn: "Practical guide inspired by balanced dietary traditions.",
         descFr: "Guide pratique inspire des traditions alimentaires saines.",
-        downloadUrl: "https://example.com/grandpa-nutrition.pdf"
+        downloadUrl: "https://drive.google.com/file/d/1M6fimIWIGkDThkOxoTwKmOiFLFMLhgTQ/view?usp=sharing"
       },
       nutrition_tips: {
         pricePi: 4,
@@ -202,7 +202,7 @@
         descAr: "إرشادات يومية مبسطة لاختيار الأغذية المناسبة وتنظيم الوجبات.",
         descEn: "Simple daily guidelines for healthy food choices.",
         descFr: "Conseils quotidiens simples pour une alimentation equilibree.",
-        downloadUrl: "https://example.com/nutrition-tips.pdf"
+        downloadUrl: "https://drive.google.com/file/d/176PwosTJpyp6MgDyskjuxGbt5B_ckhNI/view?usp=sharing"
       },
       construction_calc: {
         pricePi: 6,
@@ -215,7 +215,7 @@
         descAr: "مرجع عملي لحساب وتقدير متطلبات مشاريع البناء بوضوح.",
         descEn: "Practical guide for estimating building project needs.",
         descFr: "Guide pratique pour estimer les besoins de construction.",
-        downloadUrl: "https://example.com/construction-calc.pdf"
+        downloadUrl: "https://drive.google.com/file/d/1xB3k4GUaylYS2ihKxV972vpJbi9PxsAp/view?usp=sharing"
       },
       amer_hero: {
         pricePi: 3,
@@ -228,7 +228,7 @@
         descAr: "مغامرة شيقة للناشئة حول الشجاعة والتعاون وحسن التصرف.",
         descEn: "Engaging story for kids about courage and teamwork.",
         descFr: "Recit captivant sur le courage et l entraide.",
-        downloadUrl: "https://example.com/amer-hero.pdf"
+        downloadUrl: "https://drive.google.com/file/d/172GZoRoWQjbHHx1OkCAxKPj3n701WfHP/view?usp=sharing"
       },
       amer_moto: {
         pricePi: 3,
@@ -241,7 +241,7 @@
         descAr: "قصة حماسية مليئة بالتشويق والدروس المفيدة للأطفال.",
         descEn: "Exciting story full of suspense and useful lessons.",
         descFr: "Histoire passionnante pleine de lecons utiles.",
-        downloadUrl: "https://example.com/amer-moto.pdf"
+        downloadUrl: "https://drive.google.com/file/d/1l96i7HCL-Rp2TebE56Kgpd3730hmrvtt/view?usp=sharing"
       },
       amer_stars: {
         pricePi: 3,
@@ -254,7 +254,7 @@
         descAr: "حكاية دافئة تجمع بين دفء العائلة وجمال الطبيعة ليلاً.",
         descEn: "Warm tale combining family warmth and starry nights.",
         descFr: "Conte chaleureux entre famille et nuit etoilee.",
-        downloadUrl: "https://example.com/amer-stars.pdf"
+        downloadUrl: "https://drive.google.com/file/d/1heKtMMDgCJaf0kQLWyEs97Nn76L5HYe3/view?usp=sharing"
       },
       fun_trio: {
         pricePi: 4,
@@ -267,7 +267,7 @@
         descAr: "ثلاثة أصدقاء يخوضون مواقف طريفة ومفيدة في كل محطة.",
         descEn: "Three friends sharing funny and helpful adventures.",
         descFr: "Trois amis dans des aventures joyeuses et instructives.",
-        downloadUrl: "https://example.com/fun-trio.pdf"
+        downloadUrl: "https://drive.google.com/file/d/1yagYTeMQIN7ps3hY_AHixmsetx0X3L-4/view?usp=sharing"
       },
       humayma_bidah: {
         pricePi: 5,
@@ -280,7 +280,7 @@
         descAr: "عمل قصصي يبرز قيمة الأمانة والواجب أمام بريق المظاهر.",
         descEn: "Story highlighting duty and sincerity beyond appearances.",
         descFr: "Recit mettant en valeur le devoir au-dela des apparences.",
-        downloadUrl: "https://example.com/humayma-bidah.pdf"
+        downloadUrl: "https://drive.google.com/file/d/1m-PEmBbwFD-0gnWvPkwPLgfWxAilm27Q/view?usp=sharing"
       }
     };
 
@@ -708,24 +708,4 @@
         html += "<div><strong>" + getText("priceLabel") + ":</strong> " + order.pricePi + " Pi</div>";
 
         if (currentStatus === "paid") {
-          html += "<div class='status-paid'>" + getText("paidText") + "</div>";
-          html += buildDownloadButtonHtml(order.bookKey);
-        } else if (currentStatus === "cancelled") {
-          html += "<div class='status-cancelled'>" + getText("cancelledText") + "</div>";
-        } else {
-          html += "<div class='status-pending'>" + getText("pendingText") + "</div>";
-        }
-
-        html += "</div>";
-      }
-
-      container.innerHTML = html;
-    }
-
-    setLanguage("ar");
-    if (isLikelyPiBrowser() && window.Pi && typeof window.Pi.authenticate === "function") {
-      authenticatePiUser({ silent: true });
-    }
-  </script>
-</body>
-</html>
+          html += "<div class='status-paid'>" + getText("
