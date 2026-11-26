@@ -328,7 +328,7 @@
 
     function isLikelyPiBrowser() {
       var ua = navigator.userAgent || "";
-      return ua.indexOf("PiBrowser") !== -1;
+      return ua.indexOf("PiBrowser") !== -1 || ua.indexOf("Pi Browser") !== -1;
     }
 
     function loadOrders() {
@@ -536,14 +536,21 @@
       document.documentElement.lang = lang;
       document.documentElement.dir = getText("dir");
 
-      document.getElementById("btnAr").className = (lang === "ar") ? "active" : "";
-      document.getElementById("btnEn").className = (lang === "en") ? "active" : "";
-      document.getElementById("btnFr").className = (lang === "fr") ? "active" : "";
+      var btnAr = document.getElementById("btnAr");
+      var btnEn = document.getElementById("btnEn");
+      var btnFr = document.getElementById("btnFr");
+      if (btnAr) btnAr.className = (lang === "ar") ? "active" : "";
+      if (btnEn) btnEn.className = (lang === "en") ? "active" : "";
+      if (btnFr) btnFr.className = (lang === "fr") ? "active" : "";
 
-      document.getElementById("storeSub").textContent = getText("sub");
-      document.getElementById("btnAuth").textContent = getText("authBtn");
-      document.getElementById("catalogHeading").textContent = getText("catalog");
-      document.getElementById("ordersHeading").textContent = getText("orders");
+      var storeSub = document.getElementById("storeSub");
+      var btnAuth = document.getElementById("btnAuth");
+      var catalogHeading = document.getElementById("catalogHeading");
+      var ordersHeading = document.getElementById("ordersHeading");
+      if (storeSub) storeSub.textContent = getText("sub");
+      if (btnAuth) btnAuth.textContent = getText("authBtn");
+      if (catalogHeading) catalogHeading.textContent = getText("catalog");
+      if (ordersHeading) ordersHeading.textContent = getText("orders");
 
       updateUserBadge();
       updateBrowserNotice();
@@ -708,4 +715,32 @@
         html += "<div><strong>" + getText("priceLabel") + ":</strong> " + order.pricePi + " Pi</div>";
 
         if (currentStatus === "paid") {
-          html += "<div class='status-paid'>" + getText("
+          html += "<div class='status-paid'>" + getText("paidText") + "</div>";
+          html += buildDownloadButtonHtml(order.bookKey);
+        } else if (currentStatus === "cancelled") {
+          html += "<div class='status-cancelled'>" + getText("cancelledText") + "</div>";
+        } else {
+          html += "<div class='status-pending'>" + getText("pendingText") + "</div>";
+        }
+
+        html += "</div>";
+      }
+
+      container.innerHTML = html;
+    }
+
+    function initApp() {
+      setLanguage("ar");
+      if (isLikelyPiBrowser() && window.Pi && typeof window.Pi.authenticate === "function") {
+        authenticatePiUser({ silent: true });
+      }
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", initApp);
+    } else {
+      initApp();
+    }
+  </script>
+</body>
+</html>
