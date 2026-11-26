@@ -6,7 +6,7 @@
   <link rel="icon" href="data:," />
   <title>Asmar 1972 - متجر الكتب الإلكترونية وقصص الأطفال</title>
   <script src="https://sdk.minepi.com/pi-sdk.js"></script>
-  <>
+  <style>
     * { box-sizing: border-box; }
     body {
       margin: 0;
@@ -27,6 +27,30 @@
     }
     .brand-title { font-size: 20px; font-weight: bold; }
     .brand-sub { font-size: 13px; color: #d1d5db; }
+    .header-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+    }
+    .user-badge {
+      background: #1f2937;
+      border: 1px solid #374151;
+      color: #e5e7eb;
+      padding: 6px 11px;
+      border-radius: 6px;
+      font-size: 13px;
+    }
+    .auth-btn {
+      background: #2563eb;
+      color: #ffffff;
+      border: none;
+      padding: 7px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 13px;
+    }
     .lang-bar button {
       background: #374151;
       color: #ffffff;
@@ -116,10 +140,14 @@
       <div class="brand-title" id="storeTitle">Asmar 1972</div>
       <div class="brand-sub" id="storeSub">كتب إلكترونية وقصص أطفال</div>
     </div>
-    <div class="lang-bar">
-      <button type="button" id="btnAr" class="active" onclick="setLanguage('ar')">العربية</button>
-      <button type="button" id="btnEn" onclick="setLanguage('en')">English</button>
-      <button type="button" id="btnFr" onclick="setLanguage('fr')">Francais</button>
+    <div class="header-actions">
+      <span id="piUserBadge" class="user-badge">ضيف / غير مسجّل</span>
+      <button type="button" id="btnAuth" class="auth-btn" onclick="authenticatePiUser()">دخول Pi</button>
+      <div class="lang-bar">
+        <button type="button" id="btnAr" class="active" onclick="setLanguage('ar')">العربية</button>
+        <button type="button" id="btnEn" onclick="setLanguage('en')">English</button>
+        <button type="button" id="btnFr" onclick="setLanguage('fr')">Francais</button>
+      </div>
     </div>
   </header>
 
@@ -258,9 +286,9 @@
 
     var STORAGE_KEY = "asmar1972_orders_v1";
     var currentLang = "ar";
+    var currentPiUser = null;
     var ordersList = loadOrders();
 
-    // منع ظهور أخطاء Promise غير المعالجة عند فتح الصفحة خارج بيئة Pi Browser
     window.addEventListener("unhandledrejection", function(event) {
       var msg = event && event.reason ? String(event.reason.message || event.reason) : "";
       if (msg.indexOf("timed out") !== -1 || msg.indexOf("Messaging") !== -1) {
@@ -328,6 +356,8 @@
         ar: {
           dir: "rtl",
           sub: "كتب إلكترونية وقصص أطفال",
+          guest: "ضيف / غير مسجّل",
+          authBtn: "دخول Pi",
           notice: "ملاحظة: يبدو أنك تتصفح خارج Pi Browser. لإتمام الدفع الفعلي عبر Pi، افتح الرابط من داخل Pi Browser.",
           catalog: "قائمة الكتب والقصص",
           orders: "الطلبات وحالة الدفع والتحميل",
@@ -344,6 +374,8 @@
         en: {
           dir: "ltr",
           sub: "E-Books and Children Stories",
+          guest: "Guest / Signed out",
+          authBtn: "Pi Login",
           notice: "Note: You appear to be outside Pi Browser. Open this link inside Pi Browser to complete real Pi payments.",
           catalog: "Books & Stories Catalog",
           orders: "Orders, Payment Status & Download",
@@ -360,6 +392,8 @@
         fr: {
           dir: "ltr",
           sub: "Livres Numeriques et Histoires Enfants",
+          guest: "Invite / Non connecte",
+          authBtn: "Connexion Pi",
           notice: "Note : Vous semblez hors de Pi Browser. Ouvrez ce lien dans Pi Browser pour effectuer un paiement Pi reel.",
           catalog: "Catalogue Livres et Histoires",
           orders: "Commandes, Paiement et Telechargement",
@@ -378,6 +412,38 @@
       if (currentLang === "en") langSet = dict.en;
       if (currentLang === "fr") langSet = dict.fr;
       return langSet[key];
+    }
+
+    function updateUserBadge() {
+      var badge = document.getElementById("piUserBadge");
+      if (!badge) return;
+      if (currentPiUser && currentPiUser.username) {
+        badge.textContent = "@" + currentPiUser.username;
+      } else {
+        badge.textContent = getText("guest");
+      }
+    }
+
+    function authenticatePiUser() {
+      if (!isLikelyPiBrowser() || !window.Pi || typeof window.Pi.authenticate !== "function") {
+        console.log("Pi authenticate not available outside Pi Browser.");
+        return Promise.resolve(null);
+      }
+
+      return window.Pi.authenticate(["username", "payments"], function(incompletePayment) {
+        console.log("Incomplete payment found:", incompletePayment);
+      })
+      .then(function(auth) {
+        if (auth && auth.user) {
+          currentPiUser = auth.user;
+          updateUserBadge();
+        }
+        return auth;
+      })
+      .catch(function(err) {
+        console.log("Pi authenticate note:", err);
+        return null;
+      });
     }
 
     function updateBrowserNotice() {
@@ -401,9 +467,11 @@
       document.getElementById("btnFr").className = (lang === "fr") ? "active" : "";
 
       document.getElementById("storeSub").textContent = getText("sub");
+      document.getElementById("btnAuth").textContent = getText("authBtn");
       document.getElementById("catalogHeading").textContent = getText("catalog");
       document.getElementById("ordersHeading").textContent = getText("orders");
 
+      updateUserBadge();
       updateBrowserNotice();
       renderBooks();
       renderOrdersList();
@@ -454,33 +522,61 @@
       }
 
       if (window.Pi && typeof window.Pi.createPayment === "function") {
-        try {
-          window.Pi.createPayment(
-            {
-              amount: book.pricePi,
-              memo: getBookTitle(book),
-              metadata: { orderId: newOrder.id, bookKey: bookKey }
-            },
-            {
-              onReadyForServerApproval: function(paymentId) {
-                console.log("Ready for approval:", paymentId);
+        var startPayment = function() {
+          try {
+            window.Pi.createPayment(
+              {
+                amount: book.pricePi,
+                memo: getBookTitle(book),
+                metadata: { orderId: newOrder.id, bookKey: bookKey }
               },
-              onReadyForServerCompletion: function(paymentId, txid) {
-                console.log("Completed:", paymentId, txid);
-                updateOrderStatus(newOrder.id, "paid");
-              },
-              onCancel: function() {
-                console.log("Payment cancelled");
-                updateOrderStatus(newOrder.id, "cancelled");
-              },
-              onError: function(error) {
-                console.log("Pi payment note:", error);
-                updateOrderStatus(newOrder.id, "cancelled");
+              {
+                onReadyForServerApproval: function(paymentId) {
+                  fetch("/api/pi/approve", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ paymentId: paymentId })
+                  })
+                  .then(function(res) { return res.json(); })
+                  .then(function(data) { console.log("Approve result:", data); })
+                  .catch(function(err) { console.log("Approve error:", err); });
+                },
+                onReadyForServerCompletion: function(paymentId, txid) {
+                  fetch("/api/pi/complete", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ paymentId: paymentId, txid: txid })
+                  })
+                  .then(function(res) { return res.json(); })
+                  .then(function(data) {
+                    console.log("Complete result:", data);
+                    if (data && data.ok) {
+                      updateOrderStatus(newOrder.id, "paid");
+                    }
+                  })
+                  .catch(function(err) { console.log("Complete error:", err); });
+                },
+                onCancel: function() {
+                  console.log("Payment cancelled");
+                  updateOrderStatus(newOrder.id, "cancelled");
+                },
+                onError: function(error) {
+                  console.log("Pi payment note:", error);
+                  updateOrderStatus(newOrder.id, "cancelled");
+                }
               }
-            }
-          );
-        } catch (err) {
-          console.log("Pi createPayment note:", err);
+            );
+          } catch (err) {
+            console.log("Pi createPayment note:", err);
+          }
+        };
+
+        if (!currentPiUser) {
+          authenticatePiUser().then(function() {
+            startPayment();
+          });
+        } else {
+          startPayment();
         }
       } else {
         console.log("Pi SDK not active in current browser. Order ID:", newOrder.id);
@@ -550,6 +646,9 @@
     }
 
     setLanguage("ar");
+    if (isLikelyPiBrowser()) {
+      authenticatePiUser();
+    }
   </script>
 </body>
 </html>
