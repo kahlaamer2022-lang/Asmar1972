@@ -566,20 +566,21 @@
 
     function syncOrderToServer(orderObj) {
       if (!orderObj || typeof fetch !== "function") return;
-      var username = (currentPiUser && currentPiUser.username) ? currentPiUser.username : "";
-      var payload = Object.assign({}, orderObj, { username: username });
+      if (!currentPiUser || !currentPiUser.username) return;
+      var payload = Object.assign({}, orderObj, { username: currentPiUser.username });
       fetch("/api/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
-      }).catch(function() {});
+      })
+      .then(function(res) { return res.ok ? res.json() : null; })
+      .catch(function() {});
     }
 
     function fetchOrdersFromServer() {
       if (typeof fetch !== "function") return;
-      var query = (currentPiUser && currentPiUser.username)
-        ? "?username=" + encodeURIComponent(currentPiUser.username)
-        : "";
+      if (!currentPiUser || !currentPiUser.username) return;
+      var query = "?username=" + encodeURIComponent(currentPiUser.username);
       fetch("/api/orders" + query)
         .then(function(res) { return res.ok ? res.json() : null; })
         .then(function(data) {
@@ -1323,7 +1324,6 @@
     function initApp() {
       bindEvents();
       setLanguage("ar");
-      fetchOrdersFromServer();
     }
 
     if (document.readyState === "loading") {
