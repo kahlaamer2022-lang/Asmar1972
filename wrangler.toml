@@ -8,29 +8,3 @@ directory = "."
 [[kv_namespaces]]
 binding = "ORDERS_KV"
 id = "64f445eaf6944b48be8d26d09b1fe67d"
-```[cite: 1]
-
-### 2. حفظ كود `worker.js` النهائي
-احفظ نسخة `worker.js` المحدّثة في مجلد المشروع بحيث تحتوي على مسارات:
-* `/api/pi/approve`
-* `/api/pi/complete`
-* `/api/orders`
-* وتمرير باقي الطلبات إلى `env.ASSETS.fetch(request)`.
-
-### 3. ضبط مفتاح `PI_API_KEY` في Cloudflare
-تأكد من إضافة سر `PI_API_KEY` (من بوابة مطوري Pi) في إعدادات الـ Worker على Cloudflare (عبر Secrets / Environment Variables) حتى تنجح طلبات الموافقة والإتمام.
-
-### 4. ربط `index.html` بالمسارات الجديدة
-تأكد أن كود الدفع والطلبات في `index.html` يرسل إلى:
-* `/api/pi/approve` عند الموافقة على الدفع
-* `/api/pi/complete` عند إتمام المعاملة وتمرير بيانات الطلب (`orderInfo`)
-* `/api/orders?uid=...` لعرض الطلبات المحفوظة للمستخدم.
-
-### 5. النشر والاختبار
-ارفع التعديلات عبر GitHub Desktop أو انشر الـ Worker، ثم اختبر عملية دفع تجريبية وتأكد من ظهور الطلب في `ORDERS_KV` وعرضه في صفحة الطلبات.
-
----
-
-**نبدأ الآن بالخطوة 1:** هل ملف `wrangler.toml` في مجلد المشروع جاهز لتضع فيه هذا المحتوى، أم ننتقل مباشرة إلى **الخطوة 4** لفحص ربط `index.html`؟
-
-<FollowUp label="نبدأ بالخطوة 1: تجهيز ملف wrangler.toml" query="لنبدأ بالخطوة 1 وأخبرني إن كان إعداد wrangler.toml جاهزاً للنشر."/>
