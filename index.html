@@ -404,11 +404,52 @@
       }
     };
 
+    const ORDERS_STORAGE_KEY = "asmar1972_orders_v2";
+    const USER_STORAGE_KEY = "asmar1972_pi_user_v2";
+
+    function readSavedOrders() {
+      try {
+        const raw = localStorage.getItem(ORDERS_STORAGE_KEY);
+        const parsed = raw ? JSON.parse(raw) : [];
+        return Array.isArray(parsed) ? parsed : [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function writeSavedOrders(list) {
+      try {
+        localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify(list));
+      } catch (e) {}
+    }
+
+    function readSavedUser() {
+      try {
+        const raw = localStorage.getItem(USER_STORAGE_KEY);
+        return raw ? JSON.parse(raw) : null;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function writeSavedUser(user) {
+      try {
+        if (user) {
+          localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user));
+        } else {
+          localStorage.removeItem(USER_STORAGE_KEY);
+        }
+      } catch (e) {}
+    }
+
     let lang = "ar";
-    let piUser = null;
-    let orders = [];
+    let piUser = readSavedUser();
+    let orders = readSavedOrders();
     let activeDetailId = null;
-    let latestPaidProductId = null;
+    let latestPaidProductId = (() => {
+      const paid = orders.find((o) => o && o.status === "paid");
+      return paid ? paid.productId : null;
+    })();
 
     try {
       if (window.Pi && typeof window.Pi.init === "function") {
@@ -459,6 +500,8 @@
       orders = [];
       activeDetailId = null;
       latestPaidProductId = null;
+      writeSavedUser(null);
+      writeSavedOrders([]);
       try { localStorage.removeItem("asmar1972_orders"); } catch (e) {}
       updateUserUI();
       renderTopDownload();
@@ -481,6 +524,7 @@
         .then((auth) => {
           if (auth && auth.user) {
             piUser = auth.user;
+            writeSavedUser(piUser);
             updateUserUI();
             showToast("@" + piUser.username);
           }
@@ -506,6 +550,7 @@
 
     function markOrderPaid(order, product) {
       order.status = "paid";
+      writeSavedOrders(orders);
       latestPaidProductId = product.id;
       renderTopDownload();
       renderOrders();
@@ -549,6 +594,7 @@
         status: "pending"
       };
       orders.unshift(order);
+      writeSavedOrders(orders);
       renderOrders();
 
       if (window.Pi && typeof window.Pi.createPayment === "function") {
@@ -583,10 +629,12 @@
               },
               onCancel: () => {
                 order.status = "cancelled";
+                writeSavedOrders(orders);
                 renderOrders();
               },
               onError: () => {
                 order.status = "cancelled";
+                writeSavedOrders(orders);
                 renderOrders();
               }
             }
@@ -598,6 +646,7 @@
             .then((auth) => {
               if (auth && auth.user) {
                 piUser = auth.user;
+                writeSavedUser(piUser);
                 updateUserUI();
                 runPay();
               }
