@@ -103,6 +103,16 @@
       font-weight: bold;
       display: none;
     }
+    .copy-toast {
+      background: #111827;
+      color: #ffffff;
+      padding: 10px 14px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      font-size: 14px;
+      font-weight: bold;
+      display: none;
+    }
     .top-success-banner {
       display: none;
       background: #ecfdf5;
@@ -123,6 +133,12 @@
       margin-bottom: 10px;
       color: #047857;
       font-weight: bold;
+    }
+    .action-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 10px;
     }
     .grid {
       display: grid;
@@ -164,7 +180,6 @@
     .btn-download {
       background: #d97706;
       color: #ffffff;
-      margin-top: 10px;
       width: 100%;
       font-size: 15px;
       padding: 12px 16px;
@@ -173,6 +188,16 @@
     }
     .btn-download:hover {
       background: #b45309;
+    }
+    .btn-copy {
+      background: #1f2937;
+      color: #ffffff;
+      width: 100%;
+      font-size: 13px;
+      padding: 9px 12px;
+    }
+    .btn-copy:hover {
+      background: #374151;
     }
     .orders-box {
       margin-top: 28px;
@@ -223,6 +248,7 @@
     <div id="browserNotice" class="notice-box"></div>
     <div id="authConfirmBox" class="auth-confirm-box"></div>
     <div id="doneNoticeBox" class="done-notice-box"></div>
+    <div id="copyToast" class="copy-toast"></div>
 
     <div id="topSuccessBanner" class="top-success-banner">
       <div id="topSuccessTitle" class="top-success-title">تم الدفع بنجاح! كتابك جاهز للتحميل الآن</div>
@@ -368,6 +394,7 @@
     var downloadBannerDismissed = false;
     var downloadHideTimer = null;
     var allCompletedNoticeVisible = false;
+    var copyToastTimer = null;
 
     function isPiSdkMessagingTimeoutError(errOrMsg) {
       var text = "";
@@ -469,6 +496,8 @@
           orders: "الطلبات وحالة الدفع والتحميل",
           orderBtn: "طلب الإصدار",
           downloadBtn: "تحميل / فتح الكتاب الآن",
+          copyLinkBtn: "نسخ رابط التحميل",
+          linkCopied: "تم نسخ رابط التحميل بنجاح. يمكنك لصقه في المتصفح إذا احتجت.",
           paidText: "مدفوع ومفعّل - جاهز للتحميل",
           pendingText: "بانتظار إتمام الدفع عبر Pi",
           cancelledText: "تم إلغاء الدفع أو تعذّر إتمامه",
@@ -495,6 +524,8 @@
           orders: "Orders, Payment Status & Download",
           orderBtn: "Request Edition",
           downloadBtn: "Download / Open Book Now",
+          copyLinkBtn: "Copy Download Link",
+          linkCopied: "Download link copied. You can paste it in your browser if needed.",
           paidText: "Paid & Unlocked - Ready to Download",
           pendingText: "Pending Pi Payment Completion",
           cancelledText: "Payment cancelled or failed",
@@ -521,6 +552,8 @@
           orders: "Commandes, Paiement et Telechargement",
           orderBtn: "Commander l Edition",
           downloadBtn: "Telecharger / Ouvrir le Livre",
+          copyLinkBtn: "Copier le Lien de Telechargement",
+          linkCopied: "Lien copie avec succes. Vous pouvez le coller dans votre navigateur.",
           paidText: "Paye et Debloque - Pret au Telechargement",
           pendingText: "En attente de finalisation Pi",
           cancelledText: "Paiement annule ou echoue",
@@ -537,6 +570,53 @@
       if (currentLang === "en") langSet = dict.en;
       if (currentLang === "fr") langSet = dict.fr;
       return langSet[key];
+    }
+
+    function showCopyToast(message) {
+      var toast = document.getElementById("copyToast");
+      if (!toast) return;
+      toast.textContent = message;
+      toast.style.display = "block";
+      if (copyToastTimer) {
+        clearTimeout(copyToastTimer);
+      }
+      copyToastTimer = setTimeout(function() {
+        toast.style.display = "none";
+      }, 3500);
+    }
+
+    function copyBookDownloadLink(bookKey) {
+      var cleanUrl = getCleanDownloadUrl(bookKey);
+      if (!cleanUrl) return;
+
+      if (navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
+        navigator.clipboard.writeText(cleanUrl)
+          .then(function() {
+            showCopyToast(getText("linkCopied"));
+          })
+          .catch(function() {
+            fallbackCopyText(cleanUrl);
+          });
+      } else {
+        fallbackCopyText(cleanUrl);
+      }
+    }
+
+    function fallbackCopyText(text) {
+      try {
+        var tempInput = document.createElement("textarea");
+        tempInput.value = text;
+        tempInput.setAttribute("readonly", "");
+        tempInput.style.position = "absolute";
+        tempInput.style.left = "-9999px";
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        document.execCommand("copy");
+        document.body.removeChild(tempInput);
+        showCopyToast(getText("linkCopied"));
+      } catch (e) {
+        showCopyToast(text);
+      }
     }
 
     function updateUserBadge() {
@@ -646,330 +726,4 @@
       if (!noticeEl) return;
       if (!isLikelyPiBrowser()) {
         noticeEl.textContent = getText("notice");
-        noticeEl.style.display = "block";
-      } else {
-        noticeEl.style.display = "none";
-      }
-    }
-
-    function renderDoneNotice() {
-      var doneBox = document.getElementById("doneNoticeBox");
-      if (!doneBox) return;
-      if (allCompletedNoticeVisible) {
-        doneBox.textContent = getText("allDoneNotice");
-        doneBox.style.display = "block";
-      } else {
-        doneBox.style.display = "none";
-      }
-    }
-
-    function scheduleDownloadBannerDismiss() {
-      if (downloadHideTimer) {
-        clearTimeout(downloadHideTimer);
-      }
-      downloadHideTimer = setTimeout(function() {
-        downloadBannerDismissed = true;
-        allCompletedNoticeVisible = true;
-        renderTopSuccessBanner();
-        renderDoneNotice();
-      }, 4000);
-    }
-
-    function getCleanDownloadUrl(bookKey) {
-      var book = BOOKS_DATA[bookKey];
-      if (!book || !book.downloadUrl) return "";
-      return String(book.downloadUrl).trim();
-    }
-
-    function buildDownloadButtonHtml(bookKey) {
-      var cleanUrl = getCleanDownloadUrl(bookKey);
-      if (cleanUrl === "") return "";
-
-      return "<a class='btn btn-download' href='" + cleanUrl + "' target='_blank' rel='noopener noreferrer' onclick='scheduleDownloadBannerDismiss()'>" + getText("downloadBtn") + "</a>";
-    }
-
-    function renderTopSuccessBanner() {
-      var banner = document.getElementById("topSuccessBanner");
-      var titleEl = document.getElementById("topSuccessTitle");
-      var bookEl = document.getElementById("topSuccessBook");
-      var actionEl = document.getElementById("topSuccessAction");
-      if (!banner || !titleEl || !bookEl || !actionEl) return;
-
-      if (downloadBannerDismissed) {
-        banner.style.display = "none";
-        return;
-      }
-
-      var targetKey = lastPaidBookKey;
-      if (!targetKey) {
-        var i = 0;
-        for (i = 0; i < ordersList.length; i++) {
-          if (ordersList[i].status === "paid" || ordersList[i].paid) {
-            targetKey = ordersList[i].bookKey;
-            break;
-          }
-        }
-      }
-
-      if (!targetKey || !BOOKS_DATA[targetKey]) {
-        banner.style.display = "none";
-        return;
-      }
-
-      var book = BOOKS_DATA[targetKey];
-      titleEl.textContent = getText("topBannerTitle");
-      bookEl.textContent = getText("topBannerBookPrefix") + getBookTitle(book);
-      actionEl.innerHTML = buildDownloadButtonHtml(targetKey);
-      banner.style.display = "block";
-    }
-
-    function openBookAutomatically(bookKey) {
-      var cleanUrl = getCleanDownloadUrl(bookKey);
-      if (!cleanUrl) return;
-      try {
-        var openedWin = window.open(cleanUrl, "_blank", "noopener,noreferrer");
-        if (!openedWin) {
-          window.location.href = cleanUrl;
-        }
-      } catch (e) {
-        window.location.href = cleanUrl;
-      }
-      scheduleDownloadBannerDismiss();
-    }
-
-    function setLanguage(lang) {
-      currentLang = lang;
-      document.documentElement.lang = lang;
-      document.documentElement.dir = getText("dir");
-
-      var btnAr = document.getElementById("btnAr");
-      var btnEn = document.getElementById("btnEn");
-      var btnFr = document.getElementById("btnFr");
-      if (btnAr) btnAr.className = (lang === "ar") ? "active" : "";
-      if (btnEn) btnEn.className = (lang === "en") ? "active" : "";
-      if (btnFr) btnFr.className = (lang === "fr") ? "active" : "";
-
-      var storeSub = document.getElementById("storeSub");
-      var catalogHeading = document.getElementById("catalogHeading");
-      var ordersHeading = document.getElementById("ordersHeading");
-      if (storeSub) storeSub.textContent = getText("sub");
-      if (catalogHeading) catalogHeading.textContent = getText("catalog");
-      if (ordersHeading) ordersHeading.textContent = getText("orders");
-
-      updateUserBadge();
-      updateBrowserNotice();
-      renderDoneNotice();
-      renderTopSuccessBanner();
-      renderBooks();
-      renderOrdersList();
-    }
-
-    function updateOrderStatus(orderId, status) {
-      var i = 0;
-      var matchedBookKey = null;
-      for (i = 0; i < ordersList.length; i++) {
-        if (ordersList[i].id === orderId) {
-          ordersList[i].status = status;
-          ordersList[i].paid = (status === "paid");
-          matchedBookKey = ordersList[i].bookKey;
-          break;
-        }
-      }
-      saveOrders();
-
-      if (status === "paid" && matchedBookKey) {
-        lastPaidBookKey = matchedBookKey;
-        downloadBannerDismissed = false;
-        allCompletedNoticeVisible = false;
-      }
-
-      renderDoneNotice();
-      renderTopSuccessBanner();
-      renderOrdersList();
-
-      if (status === "paid" && matchedBookKey) {
-        var ordersSec = document.getElementById("ordersSection");
-        if (ordersSec && typeof ordersSec.scrollIntoView === "function") {
-          try {
-            ordersSec.scrollIntoView({ behavior: "smooth", block: "start" });
-          } catch (e) {}
-        }
-        openBookAutomatically(matchedBookKey);
-      }
-    }
-
-    function isCompleteResponseSuccess(res, data) {
-      if (!res || !res.ok) return false;
-      if (!data) return true;
-      if (data.ok === false || data.success === false || data.error) return false;
-      return true;
-    }
-
-    function createOrderAndPay(bookKey) {
-      var book = BOOKS_DATA[bookKey];
-      if (!book) return;
-
-      var newOrder = {
-        id: "ORD-" + String(Date.now()),
-        bookKey: bookKey,
-        pricePi: book.pricePi,
-        status: "pending",
-        paid: false
-      };
-
-      ordersList.unshift(newOrder);
-      saveOrders();
-      renderOrdersList();
-
-      if (window.Pi && typeof window.Pi.createPayment === "function") {
-        var startPayment = function() {
-          try {
-            var payPromise = window.Pi.createPayment(
-              {
-                amount: book.pricePi,
-                memo: getBookTitle(book),
-                metadata: { orderId: newOrder.id, bookKey: bookKey }
-              },
-              {
-                onReadyForServerApproval: function(paymentId) {
-                  fetch("/api/pi/approve", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ paymentId: paymentId })
-                  })
-                  .then(function(res) { return res.json().catch(function() { return {}; }); })
-                  .then(function(data) { console.log("Approve result:", data); })
-                  .catch(function(err) { console.log("Approve error:", err); });
-                },
-                onReadyForServerCompletion: function(paymentId, txid) {
-                  var responseObj = null;
-                  fetch("/api/pi/complete", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ paymentId: paymentId, txid: txid })
-                  })
-                  .then(function(res) {
-                    responseObj = res;
-                    return res.json().catch(function() { return {}; });
-                  })
-                  .then(function(data) {
-                    console.log("Complete result:", data);
-                    if (isCompleteResponseSuccess(responseObj, data)) {
-                      updateOrderStatus(newOrder.id, "paid");
-                    }
-                  })
-                  .catch(function(err) { console.log("Complete error:", err); });
-                },
-                onCancel: function() {
-                  console.log("Payment cancelled");
-                  updateOrderStatus(newOrder.id, "cancelled");
-                },
-                onError: function(error) {
-                  console.log("Pi payment note:", error);
-                  updateOrderStatus(newOrder.id, "cancelled");
-                }
-              }
-            );
-
-            if (payPromise && typeof payPromise.catch === "function") {
-              payPromise.catch(function(err) {
-                console.log("Pi createPayment promise note:", err);
-              });
-            }
-          } catch (err) {
-            console.log("Pi createPayment note:", err);
-          }
-        };
-
-        if (!currentPiUser) {
-          authenticatePiUser({ silent: false }).then(function(auth) {
-            if (auth && auth.user) {
-              startPayment();
-            }
-          });
-        } else {
-          startPayment();
-        }
-      } else {
-        console.log("Pi SDK not active in current browser. Order ID:", newOrder.id);
-      }
-    }
-
-    function renderBooks() {
-      var grid = document.getElementById("booksGrid");
-      if (!grid) return;
-
-      var html = "";
-      var keys = Object.keys(BOOKS_DATA);
-      var i = 0;
-      for (i = 0; i < keys.length; i++) {
-        var key = keys[i];
-        var book = BOOKS_DATA[key];
-        html += "<div class='card'>";
-        html += "<div>";
-        html += "<span class='badge'>" + getBookCategory(book) + "</span>";
-        html += "<h3>" + getBookTitle(book) + "</h3>";
-        html += "<p>" + getBookDesc(book) + "</p>";
-        html += "</div>";
-        html += "<div>";
-        html += "<div class='price'>" + book.pricePi + " Pi</div>";
-        html += "<button type='button' class='btn btn-pay' onclick=\"createOrderAndPay('" + key + "')\">" + getText("orderBtn") + " (" + book.pricePi + " Pi)</button>";
-        html += "</div>";
-        html += "</div>";
-      }
-      grid.innerHTML = html;
-    }
-
-    function renderOrdersList() {
-      var container = document.getElementById("ordersList");
-      if (!container) return;
-
-      if (ordersList.length === 0) {
-        container.innerHTML = "<p>" + getText("noOrders") + "</p>";
-        return;
-      }
-
-      var html = "";
-      var i = 0;
-      for (i = 0; i < ordersList.length; i++) {
-        var order = ordersList[i];
-        var book = BOOKS_DATA[order.bookKey];
-        var bookTitle = book ? getBookTitle(book) : order.bookKey;
-        var currentStatus = order.status || (order.paid ? "paid" : "pending");
-        var itemClass = (currentStatus === "paid") ? "order-item order-item-paid" : "order-item";
-
-        html += "<div class='" + itemClass + "'>";
-        html += "<div><strong>" + getText("orderIdLabel") + ":</strong> " + order.id + "</div>";
-        html += "<div><strong>" + getText("bookLabel") + ":</strong> " + bookTitle + "</div>";
-        html += "<div><strong>" + getText("priceLabel") + ":</strong> " + order.pricePi + " Pi</div>";
-
-        if (currentStatus === "paid") {
-          html += "<div class='status-paid'>" + getText("paidText") + "</div>";
-          html += buildDownloadButtonHtml(order.bookKey);
-        } else if (currentStatus === "cancelled") {
-          html += "<div class='status-cancelled'>" + getText("cancelledText") + "</div>";
-        } else {
-          html += "<div class='status-pending'>" + getText("pendingText") + "</div>";
-        }
-
-        html += "</div>";
-      }
-
-      container.innerHTML = html;
-    }
-
-    function initApp() {
-      setLanguage("ar");
-      if (isLikelyPiBrowser() && window.Pi && typeof window.Pi.authenticate === "function") {
-        authenticatePiUser({ silent: true });
-      }
-    }
-
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", initApp);
-    } else {
-      initApp();
-    }
-  </script>
-</body>
-</html>
+        noticeEl.style
