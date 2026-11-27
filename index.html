@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="icon" href="data:," />
   <title>Asmar 1972 - متجر رقمي متكامل Pi Ecosystem</title>
   <script src="https://sdk.minepi.com/pi-sdk.js"></script>
   <style>
@@ -15,279 +14,90 @@
       color: #1e1b4b;
       line-height: 1.6;
     }
-    .top-ecosystem-bar {
+    .eco-bar {
       background: #facc15;
       color: #1e1b4b;
       text-align: center;
       padding: 8px 14px;
-      font-size: 14px;
       font-weight: bold;
-      border-bottom: 2px solid #eab308;
+      font-size: 14px;
+      border-bottom: 2px solid #ca8a04;
     }
     header {
-      background: linear-gradient(135deg, #4c1d95 0%, #5b21b6 55%, #166534 100%);
+      background: linear-gradient(135deg, #4c1d95 0%, #6d28d9 55%, #15803d 100%);
       color: #ffffff;
       padding: 16px 20px;
       display: flex;
       flex-wrap: wrap;
       justify-content: space-between;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       border-bottom: 3px solid #facc15;
     }
     .brand-title { font-size: 20px; font-weight: bold; color: #fef08a; }
     .brand-sub { font-size: 13px; color: #ede9fe; }
-    .header-actions {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 8px;
-    }
-    .user-badge {
-      background: rgba(30, 27, 75, 0.75);
-      border: 1px solid #facc15;
-      color: #fef9c3;
-      padding: 6px 11px;
-      border-radius: 6px;
-      font-size: 13px;
-    }
-    .user-badge.logged-in {
-      background: #15803d;
-      border-color: #fde047;
-      color: #ffffff;
-      font-weight: bold;
-    }
-    .auth-btn {
-      background: #facc15;
-      color: #1e1b4b;
-      border: none;
-      padding: 7px 12px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: bold;
-      font-size: 13px;
-    }
-    .auth-btn.logged-in {
-      background: #16a34a;
-      color: #ffffff;
-      border: 1px solid #fde047;
-    }
-    .util-btn {
-      background: #16a34a;
-      color: #ffffff;
-      border: 1px solid #fde047;
-      padding: 7px 11px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: bold;
-      font-size: 12px;
-    }
-    .util-btn:hover { background: #15803d; }
-    .clear-btn {
-      background: #eab308;
-      color: #1e1b4b;
-      border: 1px solid #4c1d95;
-      padding: 7px 11px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: bold;
-      font-size: 12px;
-    }
-    .clear-btn:hover { background: #facc15; }
-    .lang-bar button {
+    .controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    .badge-user {
       background: #3b0764;
-      color: #ffffff;
-      border: 1px solid #a78bfa;
-      padding: 7px 11px;
+      color: #fef08a;
+      border: 1px solid #facc15;
+      padding: 6px 10px;
       border-radius: 6px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    button {
+      border: none;
+      border-radius: 7px;
+      padding: 8px 12px;
       cursor: pointer;
       font-weight: bold;
-      font-size: 12px;
+      font-family: inherit;
+      font-size: 13px;
     }
-    .lang-bar button.active {
-      background: #facc15;
-      color: #1e1b4b;
-      border-color: #fef08a;
-    }
-    .container { max-width: 1100px; margin: 22px auto; padding: 0 16px; }
-    .about-card {
+    .btn-pi { background: #facc15; color: #1e1b4b; }
+    .btn-share { background: #16a34a; color: #ffffff; border: 1px solid #fef08a; }
+    .btn-clear { background: #eab308; color: #1e1b4b; border: 1px solid #4c1d95; }
+    .btn-lang { background: #3b0764; color: #ffffff; border: 1px solid #c4b5fd; }
+    .btn-lang.active { background: #facc15; color: #1e1b4b; }
+
+    .wrap { max-width: 1100px; margin: 20px auto; padding: 0 16px; }
+    .box {
       background: #ffffff;
       border-radius: 10px;
-      padding: 16px 18px;
-      margin-bottom: 18px;
+      padding: 15px 18px;
+      margin-bottom: 16px;
       box-shadow: 0 2px 8px rgba(76, 29, 149, 0.08);
       border-inline-start: 5px solid #16a34a;
       border-top: 2px solid #facc15;
     }
-    .about-card h2 {
-      margin: 0 0 6px 0;
-      font-size: 18px;
-      color: #4c1d95;
-    }
-    .about-card p {
-      margin: 0;
-      font-size: 14px;
-      color: #312e81;
-    }
-    .about-tags {
-      margin-top: 10px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      font-size: 12px;
+    .toast {
+      display: none;
+      background: #4c1d95;
+      color: #fef08a;
+      border: 2px solid #facc15;
+      padding: 10px 14px;
+      border-radius: 8px;
+      margin-bottom: 14px;
       font-weight: bold;
+      font-size: 14px;
     }
-    .about-tag {
-      background: #dcfce7;
-      color: #14532d;
-      border: 1px solid #16a34a;
-      padding: 4px 10px;
-      border-radius: 999px;
-    }
-    .about-tag:nth-child(2) {
-      background: #fef9c3;
-      color: #713f12;
-      border-color: #eab308;
-    }
-    .about-tag:nth-child(3) {
-      background: #ede9fe;
-      color: #4c1d95;
-      border-color: #7c3aed;
-    }
-    .detail-box {
+    .detail-panel {
       display: none;
       background: #fefce8;
       border: 2px solid #eab308;
       border-inline-start: 5px solid #6d28d9;
-      color: #1e1b4b;
-      padding: 16px 18px;
-      border-radius: 10px;
-      margin-bottom: 18px;
-      box-shadow: 0 3px 10px rgba(109, 40, 217, 0.1);
-    }
-    .detail-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 8px;
-    }
-    .detail-title {
-      margin: 0;
-      font-size: 17px;
-      font-weight: bold;
-      color: #4c1d95;
-    }
-    .close-detail-btn {
-      background: #6d28d9;
-      color: #ffffff;
-      border: none;
-      border-radius: 6px;
-      padding: 5px 10px;
-      cursor: pointer;
-      font-size: 12px;
-      font-weight: bold;
-    }
-    .detail-meta {
-      font-size: 13px;
-      font-weight: bold;
-      color: #15803d;
-      margin-bottom: 8px;
-    }
-    .detail-desc {
-      margin: 0;
-      font-size: 14px;
-      color: #1e1b4b;
-    }
-    .notice-box {
-      background: #fef9c3;
-      border: 1px solid #eab308;
-      color: #713f12;
-      padding: 12px 14px;
-      border-radius: 8px;
-      margin-bottom: 18px;
-      font-size: 14px;
-      display: none;
-    }
-    .auth-confirm-box {
-      background: #ede9fe;
-      border: 1px solid #7c3aed;
-      color: #4c1d95;
-      padding: 12px 14px;
-      border-radius: 8px;
-      margin-bottom: 18px;
-      font-size: 14px;
-      font-weight: bold;
-      display: none;
-    }
-    .done-notice-box {
-      background: #dcfce7;
-      border: 1px solid #16a34a;
-      color: #14532d;
-      padding: 12px 14px;
-      border-radius: 8px;
-      margin-bottom: 18px;
-      font-size: 14px;
-      font-weight: bold;
-      display: none;
-    }
-    .copy-toast {
-      background: #4c1d95;
-      color: #fef08a;
-      border: 1px solid #facc15;
-      padding: 10px 14px;
-      border-radius: 8px;
-      margin-bottom: 16px;
-      font-size: 14px;
-      font-weight: bold;
-      display: none;
-    }
-    .top-success-banner {
-      display: none;
-      background: #dcfce7;
-      border: 2px solid #16a34a;
-      color: #14532d;
       padding: 16px;
       border-radius: 10px;
-      margin-bottom: 20px;
-      box-shadow: 0 4px 12px rgba(22, 163, 74, 0.16);
+      margin-bottom: 18px;
     }
-    .top-success-title {
-      font-size: 16px;
-      font-weight: bold;
-      margin-bottom: 6px;
-      color: #4c1d95;
-    }
-    .top-success-book {
-      font-size: 14px;
-      margin-bottom: 10px;
-      color: #15803d;
-      font-weight: bold;
-    }
-    .drive-tip {
-      font-size: 12px;
-      color: #1e1b4b;
-      background: #fef9c3;
-      border: 1px dashed #eab308;
-      border-radius: 6px;
-      padding: 8px 10px;
-      margin-top: 4px;
-    }
-    .action-stack {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-top: 10px;
-    }
-    .card-actions {
-      display: flex;
-      flex-direction: column;
-      gap: 7px;
-      margin-top: 8px;
-    }
+    .detail-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+    .detail-title { margin: 0; color: #4c1d95; font-size: 17px; }
+    .btn-close { background: #6d28d9; color: #ffffff; padding: 5px 10px; font-size: 12px; }
+
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: 16px;
     }
     .card {
@@ -295,261 +105,533 @@
       border-radius: 10px;
       padding: 16px;
       box-shadow: 0 2px 8px rgba(76, 29, 149, 0.08);
-      border-top: 3px solid #6d28d9;
+      border-top: 4px solid #6d28d9;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       gap: 12px;
     }
-    .card h3 {
-      margin: 8px 0 6px 0;
-      color: #4c1d95;
-      font-size: 17px;
-    }
-    .card p {
-      margin: 0;
-      font-size: 14px;
-      color: #374151;
-    }
-    .badge {
+    .cat {
       display: inline-block;
       background: #ede9fe;
       color: #5b21b6;
-      border: 1px solid #c4b5fd;
       padding: 3px 9px;
       border-radius: 999px;
       font-size: 12px;
       font-weight: bold;
     }
-    .price { font-size: 17px; font-weight: bold; color: #15803d; }
-    .btn {
-      border: none;
-      border-radius: 7px;
-      padding: 10px 14px;
-      cursor: pointer;
-      font-weight: bold;
-      font-size: 14px;
-      text-decoration: none;
-      display: inline-block;
-      text-align: center;
-    }
-    .btn-pay {
-      background: #16a34a;
-      color: #ffffff;
-      width: 100%;
-    }
-    .btn-pay:hover { background: #15803d; }
-    .btn-details {
-      background: #facc15;
-      color: #1e1b4b;
-      width: 100%;
-      font-size: 13px;
-      padding: 8px 12px;
-      border: 1px solid #eab308;
-    }
-    .btn-details:hover { background: #fde047; }
-    .btn-download {
-      background: #eab308;
-      color: #1e1b4b;
-      width: 100%;
-      font-size: 15px;
-      padding: 12px 16px;
-      border: 2px solid #6d28d9;
-      box-shadow: 0 2px 6px rgba(109, 40, 217, 0.2);
-    }
-    .btn-download:hover {
-      background: #facc15;
-    }
-    .btn-copy {
-      background: #5b21b6;
-      color: #ffffff;
-      width: 100%;
-      font-size: 13px;
-      padding: 9px 12px;
-    }
-    .btn-copy:hover {
-      background: #4c1d95;
-    }
+    .card h3 { margin: 8px 0 6px; color: #4c1d95; font-size: 17px; }
+    .card p { margin: 0; font-size: 14px; color: #374151; }
+    .price { font-size: 17px; font-weight: bold; color: #15803d; margin-bottom: 8px; }
+    .actions { display: flex; flex-direction: column; gap: 7px; }
+    .btn-order { background: #16a34a; color: #ffffff; width: 100%; }
+    .btn-detail { background: #facc15; color: #1e1b4b; width: 100%; border: 1px solid #ca8a04; }
+    .btn-dl { background: #eab308; color: #1e1b4b; width: 100%; border: 2px solid #6d28d9; }
+    .btn-copy { background: #5b21b6; color: #ffffff; width: 100%; }
+
     .orders-box {
-      margin-top: 28px;
+      margin-top: 24px;
       background: #ffffff;
       border-radius: 10px;
       padding: 18px;
       box-shadow: 0 2px 8px rgba(76, 29, 149, 0.08);
       border-top: 3px solid #16a34a;
     }
-    .orders-box h2 {
-      margin-top: 0;
-      color: #4c1d95;
-    }
-    .order-item {
+    .orders-box h2 { margin-top: 0; color: #4c1d95; }
+    .order-card {
       border: 1px solid #ddd6fe;
-      border-radius: 8px;
-      padding: 14px;
-      margin-top: 12px;
       background: #faf5ff;
+      border-radius: 8px;
+      padding: 12px;
+      margin-top: 10px;
     }
-    .order-item-paid {
-      border: 1px solid #16a34a;
-      background: #dcfce7;
-    }
-    .status-paid {
-      color: #15803d;
-      font-weight: bold;
-      margin-top: 6px;
-      font-size: 15px;
-    }
-    .status-pending { color: #a16207; font-weight: bold; margin-top: 6px; }
-    .status-cancelled { color: #b91c1c; font-weight: bold; margin-top: 6px; }
+    .order-paid { border-color: #16a34a; background: #dcfce7; }
+    .paid-msg { color: #15803d; font-weight: bold; margin: 6px 0; }
+    .pending-msg { color: #a16207; font-weight: bold; margin: 6px 0; }
+    .cancel-msg { color: #b91c1c; font-weight: bold; margin: 6px 0; }
+
     footer {
-      margin-top: 28px;
+      margin-top: 24px;
       background: #ffffff;
       border-radius: 10px;
-      padding: 18px;
-      box-shadow: 0 2px 8px rgba(76, 29, 149, 0.08);
+      padding: 16px 18px;
       border-bottom: 4px solid #6d28d9;
       font-size: 13px;
       color: #312e81;
     }
-    footer h3 {
-      margin: 0 0 8px 0;
-      font-size: 15px;
-      color: #4c1d95;
-    }
-    footer p {
-      margin: 0 0 8px 0;
-    }
+    footer h3 { margin: 0 0 6px; color: #4c1d95; font-size: 15px; }
+    footer p { margin: 0; }
   </style>
 </head>
 <body>
-  <div class="top-ecosystem-bar" id="topEcosystemText">متجر رقمي متكامل Pi Ecosystem</div>
+  <div class="eco-bar" id="ecoBar">متجر رقمي متكامل Pi Ecosystem</div>
 
   <header>
     <div>
-      <div class="brand-title" id="storeTitle">Asmar 1972</div>
-      <div class="brand-sub" id="storeSub">كتب إلكترونية وقصص أطفال</div>
+      <div class="brand-title">Asmar 1972</div>
+      <div class="brand-sub" id="subTitle">كتب إلكترونية وقصص أطفال</div>
     </div>
-    <div class="header-actions">
-      <span id="piUserBadge" class="user-badge">ضيف / غير مسجّل</span>
-      <button type="button" id="btnAuth" class="auth-btn">دخول Pi</button>
-      <button type="button" id="btnShareStore" class="util-btn">مشاركة رابط المتجر</button>
-      <button type="button" id="btnClearSession" class="clear-btn">مسح الجلسة</button>
-      <div class="lang-bar">
-        <button type="button" id="btnAr" class="active" data-lang="ar">العربية</button>
-        <button type="button" id="btnEn" data-lang="en">English</button>
-        <button type="button" id="btnFr" data-lang="fr">Francais</button>
-      </div>
+    <div class="controls">
+      <span class="badge-user" id="userBadge">ضيف / غير مسجّل</span>
+      <button type="button" class="btn-pi" id="btnLogin" onclick="loginPi()">دخول Pi</button>
+      <button type="button" class="btn-share" id="btnShare" onclick="shareStore()">مشاركة رابط المتجر</button>
+      <button type="button" class="btn-clear" id="btnClear" onclick="clearSession()">مسح الجلسة</button>
+      <button type="button" class="btn-lang active" id="langAr" onclick="switchLang('ar')">العربية</button>
+      <button type="button" class="btn-lang" id="langEn" onclick="switchLang('en')">English</button>
+      <button type="button" class="btn-lang" id="langFr" onclick="switchLang('fr')">Francais</button>
     </div>
   </header>
 
-  <main class="container">
-    <section class="about-card">
-      <h2 id="aboutHeading">عن متجر Asmar 1972</h2>
-      <p id="aboutText">متجر رقمي يقدم 9 أعمال أصلية تشمل قصص الأطفال، أدلة التغذية الطبيعية، وحاسبة مشاريع البناء مع تسليم رقمي فوري بعد إتمام الدفع عبر Pi.</p>
-      <div class="about-tags">
-        <span class="about-tag" id="tagInstant">تسليم رقمي فوري</span>
-        <span class="about-tag" id="tagWorks">9 أعمال أصلية</span>
-        <span class="about-tag" id="tagPi">دفع آمن عبر Pi</span>
-      </div>
-    </section>
-
-    <div id="browserNotice" class="notice-box"></div>
-    <div id="authConfirmBox" class="auth-confirm-box"></div>
-    <div id="doneNoticeBox" class="done-notice-box"></div>
-    <div id="copyToast" class="copy-toast"></div>
-
-    <section id="bookDetailsBox" class="detail-box">
-      <div class="detail-header">
-        <h3 id="detailTitle" class="detail-title"></h3>
-        <button type="button" id="btnCloseDetails" class="close-detail-btn">إغلاق</button>
-      </div>
-      <div id="detailMeta" class="detail-meta"></div>
-      <p id="detailDesc" class="detail-desc"></p>
-    </section>
-
-    <div id="topSuccessBanner" class="top-success-banner">
-      <div id="topSuccessTitle" class="top-success-title">تم الدفع بنجاح! كتابك جاهز للتحميل الآن</div>
-      <div id="topSuccessBook" class="top-success-book"></div>
-      <div id="topSuccessAction"></div>
+  <div class="wrap">
+    <div class="box">
+      <h2 id="aboutTitle" style="margin:0 0 6px;color:#4c1d95;font-size:18px;">عن متجر Asmar 1972</h2>
+      <p id="aboutDesc" style="margin:0;font-size:14px;">متجر رقمي يقدم 9 أعمال أصلية تشمل قصص الأطفال، أدلة التغذية الطبيعية، وحاسبة مشاريع البناء مع تسليم رقمي فوري بعد إتمام الدفع عبر Pi.</p>
     </div>
 
-    <h2 id="catalogHeading">قائمة الكتب والقصص</h2>
-    <div id="booksGrid" class="grid"></div>
+    <div class="toast" id="toastBox"></div>
 
-    <section id="ordersSection" class="orders-box">
-      <h2 id="ordersHeading">الطلبات وحالة الدفع والتحميل</h2>
-      <div id="ordersList"></div>
-    </section>
+    <div class="detail-panel" id="detailPanel">
+      <div class="detail-top">
+        <h3 class="detail-title" id="detailTitle"></h3>
+        <button type="button" class="btn-close" id="btnCloseDetail" onclick="hideDetails()">إغلاق</button>
+      </div>
+      <div id="detailMeta" style="font-size:13px;font-weight:bold;color:#15803d;margin:6px 0;"></div>
+      <p id="detailText" style="margin:0;font-size:14px;"></p>
+    </div>
+
+    <h2 id="catalogTitle" style="color:#4c1d95;">قائمة الكتب والقصص</h2>
+    <div class="grid" id="productsGrid"></div>
+
+    <div class="orders-box">
+      <h2 id="ordersTitle">الطلبات وحالة الدفع والتحميل</h2>
+      <div id="ordersContainer"></div>
+    </div>
 
     <footer>
-      <h3 id="policyHeading">سياسة الخصوصية وشروط الاستخدام</h3>
-      <p id="policyText">جميع المنتجات المعروضة هي ملفات رقمية متاحة فوراً بعد تأكيد الدفع ولا تتطلب شحناً مادياً. نستخدم معرف Pi فقط لتأكيد الهوية وإتمام الدفع دون تخزين بيانات حساسة أو كلمات مرور.</p>
+      <h3 id="policyTitle">سياسة الخصوصية وشروط الاستخدام</h3>
+      <p id="policyText">جميع المنتجات المعروضة هي ملفات رقمية متاحة فوراً بعد تأكيد الدفع ولا تتطلب شحناً مادياً. نستخدم معرف Pi فقط لتأكيد الهوية وإتمام الدفع.</p>
     </footer>
-  </main>
+  </div>
 
   <script>
-    var BOOKS_DATA = {
-      dodo_story: {
-        pricePi: 3,
-        categoryAr: "قصص الأطفال",
-        categoryEn: "Children Story",
-        categoryFr: "Histoire Enfants",
-        titleAr: "قصة دودو ودراجته الحمراء",
-        titleEn: "Dodo and His Red Bicycle",
-        titleFr: "Dodo et son Velo Rouge",
-        descAr: "قصة مصورة ممتعة للأطفال حول المغامرة والاكتشاف.",
-        descEn: "Fun illustrated story for children about adventure and discovery.",
-        descFr: "Histoire illustree pour enfants sur l aventure et la decouverte.",
-        downloadUrl: "https://drive.google.com/file/d/1GzbXmTGuZNcNpLqh8BmuFYNxQJqjpGwU/view?usp=sharing"
+    const PRODUCTS = [
+      {
+        id: "dodo_story",
+        price: 3,
+        cat: { ar: "قصص الأطفال", en: "Children Story", fr: "Histoire Enfants" },
+        title: { ar: "قصة دودو ودراجته الحمراء", en: "Dodo and His Red Bicycle", fr: "Dodo et son Velo Rouge" },
+        desc: { ar: "قصة مصورة ممتعة للأطفال حول المغامرة والاكتشاف.", en: "Fun illustrated story for children about adventure and discovery.", fr: "Histoire illustree pour enfants sur l aventure et la decouverte." },
+        url: "https://drive.google.com/file/d/1GzbXmTGuZNcNpLqh8BmuFYNxQJqjpGwU/view?usp=sharing"
       },
-      grandpa_nutrition: {
-        pricePi: 5,
-        categoryAr: "التغذية الطبيعية",
-        categoryEn: "Natural Nutrition",
-        categoryFr: "Nutrition Naturelle",
-        titleAr: "حكمة الأجداد في التغذية",
-        titleEn: "Ancestors Wisdom in Nutrition",
-        titleFr: "Sagesse des Ancetres en Nutrition",
-        descAr: "دليل عملي مستلهم من التقاليد الغذائية والعادات الصحية المتوازنة.",
-        descEn: "Practical guide inspired by balanced dietary traditions.",
-        descFr: "Guide pratique inspire des traditions alimentaires saines.",
-        downloadUrl: "https://drive.google.com/file/d/17UQ4XkOZjh44NtL40IH-qWPfS8s6BnZh/view?usp=sharing"
+      {
+        id: "grandpa_nutrition",
+        price: 5,
+        cat: { ar: "التغذية الطبيعية", en: "Natural Nutrition", fr: "Nutrition Naturelle" },
+        title: { ar: "حكمة الأجداد في التغذية", en: "Ancestors Wisdom in Nutrition", fr: "Sagesse des Ancetres en Nutrition" },
+        desc: { ar: "دليل عملي مستلهم من التقاليد الغذائية والعادات الصحية المتوازنة.", en: "Practical guide inspired by balanced dietary traditions.", fr: "Guide pratique inspire des traditions alimentaires saines." },
+        url: "https://drive.google.com/file/d/17UQ4XkOZjh44NtL40IH-qWPfS8s6BnZh/view?usp=sharing"
       },
-      nutrition_tips: {
-        pricePi: 4,
-        categoryAr: "الصحة والتغذية",
-        categoryEn: "Health & Nutrition",
-        categoryFr: "Sante et Nutrition",
-        titleAr: "نصائح في التغذية",
-        titleEn: "Nutrition Tips",
-        titleFr: "Conseils en Nutrition",
-        descAr: "إرشادات يومية مبسطة لاختيار الأغذية المناسبة وتنظيم الوجبات.",
-        descEn: "Simple daily guidelines for healthy food choices.",
-        descFr: "Conseils quotidiens simples pour une alimentation equilibree.",
-        downloadUrl: "https://drive.google.com/file/d/1sRyVJlvG43uuRuV1QuebsBq2Gcfj1nW1/view?usp=sharing"
+      {
+        id: "nutrition_tips",
+        price: 4,
+        cat: { ar: "الصحة والتغذية", en: "Health & Nutrition", fr: "Sante et Nutrition" },
+        title: { ar: "نصائح في التغذية", en: "Nutrition Tips", fr: "Conseils en Nutrition" },
+        desc: { ar: "إرشادات يومية مبسطة لاختيار الأغذية المناسبة وتنظيم الوجبات.", en: "Simple daily guidelines for healthy food choices.", fr: "Conseils quotidiens simples pour une alimentation equilibree." },
+        url: "https://drive.google.com/file/d/1sRyVJlvG43uuRuV1QuebsBq2Gcfj1nW1/view?usp=sharing"
       },
-      construction_calc: {
-        pricePi: 6,
-        categoryAr: "أدوات ومشاريع",
-        categoryEn: "Projects & Tools",
-        categoryFr: "Projets et Outils",
-        titleAr: "حاسبة مشاريع البناء",
-        titleEn: "Construction Projects Calculator",
-        titleFr: "Calculateur Projets Construction",
-        descAr: "مرجع عملي لحساب وتقدير متطلبات مشاريع البناء بوضوح.",
-        descEn: "Practical guide for estimating building project needs.",
-        descFr: "Guide pratique pour estimer les besoins de construction.",
-        downloadUrl: "https://drive.google.com/file/d/1gmGJmmZSzV231XXZec8ABgoBBhPCP_oO/view?usp=sharing"
+      {
+        id: "construction_calc",
+        price: 6,
+        cat: { ar: "أدوات ومشاريع", en: "Projects & Tools", fr: "Projets et Outils" },
+        title: { ar: "حاسبة مشاريع البناء", en: "Construction Projects Calculator", fr: "Calculateur Projets Construction" },
+        desc: { ar: "مرجع عملي لحساب وتقدير متطلبات مشاريع البناء بوضوح.", en: "Practical guide for estimating building project needs.", fr: "Guide pratique pour estimer les besoins de construction." },
+        url: "https://drive.google.com/file/d/1gmGJmmZSzV231XXZec8ABgoBBhPCP_oO/view?usp=sharing"
       },
-      amer_hero: {
-        pricePi: 3,
-        categoryAr: "قصص الأطفال",
-        categoryEn: "Children Story",
-        categoryFr: "Histoire Enfants",
-        titleAr: "عامر البطل الصغير",
-        titleEn: "Amer the Little Hero",
-        titleFr: "Amer le Petit Heros",
-        descAr: "مغامرة شيقة للناشئة حول الشجاعة والتعاون وحسن التصرف.",
-        descEn: "Engaging story for kids about courage and teamwork.",
-        descFr: "Recit captivant sur le courage et l entraide.",
-        downloadUrl: "
+      {
+        id: "amer_hero",
+        price: 3,
+        cat: { ar: "قصص الأطفال", en: "Children Story", fr: "Histoire Enfants" },
+        title: { ar: "عامر البطل الصغير", en: "Amer the Little Hero", fr: "Amer le Petit Heros" },
+        desc: { ar: "مغامرة شيقة للناشئة حول الشجاعة والتعاون وحسن التصرف.", en: "Engaging story for kids about courage and teamwork.", fr: "Recit captivant sur le courage et l entraide." },
+        url: "https://drive.google.com/file/d/1uoZhpSm5DlBcfDCZ-dmoFjuBfo7nd3jr/view?usp=sharing"
+      },
+      {
+        id: "amer_moto",
+        price: 3,
+        cat: { ar: "قصص الأطفال", en: "Children Story", fr: "Histoire Enfants" },
+        title: { ar: "عامر وبطولة الدراجة النارية", en: "Amer and the Motorcycle Championship", fr: "Amer et le Championnat de Moto" },
+        desc: { ar: "قصة حماسية مليئة بالتشويق والدروس المفيدة للأطفال.", en: "Exciting story full of suspense and useful lessons.", fr: "Histoire passionnante pleine de lecons utiles." },
+        url: "https://drive.google.com/file/d/1siC-LZfmgG9-oPrxt6ZPrafUwM50fPVf/view?usp=sharing"
+      },
+      {
+        id: "amer_stars",
+        price: 3,
+        cat: { ar: "قصص الأطفال", en: "Children Story", fr: "Histoire Enfants" },
+        title: { ar: "عامر وليلة النجوم عند الجدة", en: "Amer and the Night of Stars at Grandma", fr: "Amer et la Nuit des Etoiles chez Grand-Mere" },
+        desc: { ar: "حكاية دافئة تجمع بين دفء العائلة وجمال الطبيعة ليلاً.", en: "Warm tale combining family warmth and starry nights.", fr: "Conte chaleureux entre famille et nuit etoilee." },
+        url: "https://drive.google.com/file/d/1heKtMMDgCJaf0kQLWyEs97Nn76L5HYe3/view?usp=sharing"
+      },
+      {
+        id: "fun_trio",
+        price: 4,
+        cat: { ar: "قصص الأطفال", en: "Children Story", fr: "Histoire Enfants" },
+        title: { ar: "مغامرات الثلاثي المرح", en: "Adventures of the Fun Trio", fr: "Aventures du Trio Joyeux" },
+        desc: { ar: "ثلاثة أصدقاء يخوضون مواقف طريفة ومفيدة في كل محطة.", en: "Three friends sharing funny and helpful adventures.", fr: "Trois amis dans des aventures joyeuses et instructives." },
+        url: "https://drive.google.com/file/d/1yagYTeMQIN7ps3hY_AHixmsetx0X3L-4/view?usp=sharing"
+      },
+      {
+        id: "humayma_bidah",
+        price: 5,
+        cat: { ar: "قصص وحكم", en: "Stories & Wisdom", fr: "Contes et Sagesse" },
+        title: { ar: "هميمة وبدعة - بريق الذهب وصدى الواجب -", en: "Humayma and Bidah: Gold Gleam & Echo of Duty", fr: "Houmayma et Bidah : Eclat d Or et Echo du Devoir" },
+        desc: { ar: "عمل قصصي يبرز قيمة الأمانة والواجب أمام بريق المظاهر.", en: "Story highlighting duty and sincerity beyond appearances.", fr: "Recit mettant en valeur le devoir au-dela des apparences." },
+        url: "https://drive.google.com/file/d/1m-PEmBbwFD-0gnWvPkwPLgfWxAilm27Q/view?usp=sharing"
+      }
+    ];
+
+    const I18N = {
+      ar: {
+        dir: "rtl",
+        eco: "متجر رقمي متكامل Pi Ecosystem",
+        sub: "كتب إلكترونية وقصص أطفال",
+        guest: "ضيف / غير مسجّل",
+        login: "دخول Pi",
+        share: "مشاركة رابط المتجر",
+        clear: "مسح الجلسة",
+        aboutTitle: "عن متجر Asmar 1972",
+        aboutDesc: "متجر رقمي يقدم 9 أعمال أصلية تشمل قصص الأطفال، أدلة التغذية الطبيعية، وحاسبة مشاريع البناء مع تسليم رقمي فوري بعد إتمام الدفع عبر Pi.",
+        catalog: "قائمة الكتب والقصص",
+        orders: "الطلبات وحالة الدفع والتحميل",
+        orderBtn: "طلب الإصدار",
+        detailBtn: "تفاصيل الإصدار",
+        closeBtn: "إغلاق",
+        dlBtn: "تحميل / فتح الكتاب",
+        copyBtn: "نسخ رابط التحميل",
+        copied: "تم النسخ بنجاح.",
+        cleared: "تم مسح الجلسة بنجاح.",
+        noOrders: "لا توجد طلبات مسجلة حالياً.",
+        paid: "مدفوع ومفعّل",
+        pending: "بانتظار إتمام الدفع",
+        cancelled: "ملغي أو لم يكتمل",
+        policyTitle: "سياسة الخصوصية وشروط الاستخدام",
+        policyText: "جميع المنتجات المعروضة هي ملفات رقمية متاحة فوراً بعد تأكيد الدفع ولا تتطلب شحناً مادياً. نستخدم معرف Pi فقط لتأكيد الهوية وإتمام الدفع."
+      },
+      en: {
+        dir: "ltr",
+        eco: "Integrated Digital Store - Pi Ecosystem",
+        sub: "E-Books and Children Stories",
+        guest: "Guest / Signed out",
+        login: "Pi Login",
+        share: "Share Store Link",
+        clear: "Clear Session",
+        aboutTitle: "About Asmar 1972",
+        aboutDesc: "Digital store offering 9 original works including children's stories, natural nutrition guides, and a construction projects calculator with instant digital delivery via Pi.",
+        catalog: "Books & Stories Catalog",
+        orders: "Orders, Payment Status & Download",
+        orderBtn: "Request Edition",
+        detailBtn: "Edition Details",
+        closeBtn: "Close",
+        dlBtn: "Download / Open Book",
+        copyBtn: "Copy Download Link",
+        copied: "Copied successfully.",
+        cleared: "Session cleared successfully.",
+        noOrders: "No orders yet.",
+        paid: "Paid & Unlocked",
+        pending: "Pending Payment",
+        cancelled: "Cancelled / Failed",
+        policyTitle: "Privacy Policy & Terms of Use",
+        policyText: "All items are digital files delivered immediately after payment confirmation with no physical shipping. We only use Pi identity for sign-in and payment."
+      },
+      fr: {
+        dir: "ltr",
+        eco: "Boutique Numerique Integree - Pi Ecosystem",
+        sub: "Livres Numeriques et Histoires Enfants",
+        guest: "Invite / Non connecte",
+        login: "Connexion Pi",
+        share: "Partager le Lien",
+        clear: "Effacer Session",
+        aboutTitle: "A propos d'Asmar 1972",
+        aboutDesc: "Boutique numerique proposant 9 oeuvres originales : histoires pour enfants, guides de nutrition naturelle et calculateur de projets de construction via Pi.",
+        catalog: "Catalogue Livres et Histoires",
+        orders: "Commandes, Paiement et Telechargement",
+        orderBtn: "Commander l Edition",
+        detailBtn: "Details de l Edition",
+        closeBtn: "Fermer",
+        dlBtn: "Telecharger / Ouvrir",
+        copyBtn: "Copier le Lien",
+        copied: "Copie avec succes.",
+        cleared: "Session effacee.",
+        noOrders: "Aucune commande.",
+        paid: "Paye et Debloque",
+        pending: "En attente",
+        cancelled: "Annule",
+        policyTitle: "Politique de Confidentialite et Conditions",
+        policyText: "Tous les produits sont des fichiers numeriques livres immediatement apres confirmation du paiement, sans expedition physique."
+      }
+    };
+
+    let lang = "ar";
+    let piUser = null;
+    let orders = [];
+    let activeDetailId = null;
+
+    try {
+      if (window.Pi && typeof window.Pi.init === "function") {
+        window.Pi.init({ version: "2.0", sandbox: false });
+      }
+    } catch (e) {}
+
+    function t(key) {
+      return (I18N[lang] && I18N[lang][key]) || I18N.ar[key] || "";
+    }
+
+    function showToast(msg) {
+      const el = document.getElementById("toastBox");
+      el.textContent = msg;
+      el.style.display = "block";
+      setTimeout(() => { el.style.display = "none"; }, 3000);
+    }
+
+    function copyStr(val) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(val).then(() => showToast(t("copied"))).catch(() => fallbackCopy(val));
+      } else {
+        fallbackCopy(val);
+      }
+    }
+
+    function fallbackCopy(val) {
+      const ta = document.createElement("textarea");
+      ta.value = val;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+      showToast(t("copied"));
+    }
+
+    function shareStore() {
+      const url = window.location.href || "https://asmar1972.kahlaamer2022.workers.dev";
+      if (navigator.share) {
+        navigator.share({ title: "Asmar 1972", text: t("aboutDesc"), url }).catch(() => copyStr(url));
+      } else {
+        copyStr(url);
+      }
+    }
+
+    function clearSession() {
+      piUser = null;
+      orders = [];
+      activeDetailId = null;
+      try { localStorage.removeItem("asmar1972_orders"); } catch (e) {}
+      updateUserUI();
+      renderDetails();
+      renderOrders();
+      showToast(t("cleared"));
+    }
+
+    function updateUserUI() {
+      const badge = document.getElementById("userBadge");
+      badge.textContent = piUser && piUser.username ? "@" + piUser.username : t("guest");
+    }
+
+    function loginPi() {
+      if (!window.Pi || typeof window.Pi.authenticate !== "function") {
+        showToast("Pi SDK غير متاح خارج Pi Browser");
+        return;
+      }
+      window.Pi.authenticate(["username", "payments"], () => {})
+        .then((auth) => {
+          if (auth && auth.user) {
+            piUser = auth.user;
+            updateUserUI();
+            showToast("@" + piUser.username);
+          }
+        })
+        .catch(() => showToast("تعذّر تسجيل الدخول عبر Pi"));
+    }
+
+    function showDetails(id) {
+      activeDetailId = id;
+      renderDetails();
+      document.getElementById("detailPanel").scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+
+    function hideDetails() {
+      activeDetailId = null;
+      renderDetails();
+    }
+
+    function renderDetails() {
+      const panel = document.getElementById("detailPanel");
+      const item = PRODUCTS.find((p) => p.id === activeDetailId);
+      if (!item) {
+        panel.style.display = "none";
+        return;
+      }
+      document.getElementById("detailTitle").textContent = item.title[lang] || item.title.ar;
+      document.getElementById("detailMeta").textContent = (item.cat[lang] || item.cat.ar) + " | " + item.price + " Pi";
+      document.getElementById("detailText").textContent = item.desc[lang] || item.desc.ar;
+      document.getElementById("btnCloseDetail").textContent = t("closeBtn");
+      panel.style.display = "block";
+    }
+
+    function orderProduct(id) {
+      const item = PRODUCTS.find((p) => p.id === id);
+      if (!item) return;
+
+      const order = {
+        id: "ORD-" + Date.now(),
+        productId: item.id,
+        price: item.price,
+        status: "pending"
+      };
+      orders.unshift(order);
+      renderOrders();
+
+      if (window.Pi && typeof window.Pi.createPayment === "function") {
+        const runPay = () => {
+          window.Pi.createPayment(
+            {
+              amount: item.price,
+              memo: item.title[lang] || item.title.ar,
+              metadata: { orderId: order.id, productId: item.id }
+            },
+            {
+              onReadyForServerApproval: (paymentId) => {
+                fetch("/api/pi/approve", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ paymentId, orderId: order.id })
+                }).catch(() => {});
+              },
+              onReadyForServerCompletion: (paymentId, txid) => {
+                fetch("/api/pi/complete", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ paymentId, txid, orderId: order.id })
+                })
+                  .then((r) => r.ok ? r.json() : null)
+                  .then((data) => {
+                    if (data && data.ok !== false) {
+                      order.status = "paid";
+                      renderOrders();
+                      window.open(item.url, "_blank", "noopener,noreferrer");
+                    }
+                  })
+                  .catch(() => {});
+              },
+              onCancel: () => {
+                order.status = "cancelled";
+                renderOrders();
+              },
+              onError: () => {
+                order.status = "cancelled";
+                renderOrders();
+              }
+            }
+          ).catch(() => {});
+        };
+
+        if (!piUser) {
+          window.Pi.authenticate(["username", "payments"], () => {})
+            .then((auth) => {
+              if (auth && auth.user) {
+                piUser = auth.user;
+                updateUserUI();
+                runPay();
+              }
+            })
+            .catch(() => {});
+        } else {
+          runPay();
+        }
+      }
+    }
+
+    function renderProducts() {
+      const grid = document.getElementById("productsGrid");
+      grid.innerHTML = PRODUCTS.map((p) => `
+        <div class="card">
+          <div>
+            <span class="cat">${p.cat[lang] || p.cat.ar}</span>
+            <h3>${p.title[lang] || p.title.ar}</h3>
+            <p>${p.desc[lang] || p.desc.ar}</p>
+          </div>
+          <div>
+            <div class="price">${p.price} Pi</div>
+            <div class="actions">
+              <button type="button" class="btn-order" onclick="orderProduct('${p.id}')">${t("orderBtn")} (${p.price} Pi)</button>
+              <button type="button" class="btn-detail" onclick="showDetails('${p.id}')">${t("detailBtn")}</button>
+            </div>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function renderOrders() {
+      const box = document.getElementById("ordersContainer");
+      if (!orders.length) {
+        box.innerHTML = "<p style='margin:0;color:#4b5563;'>" + t("noOrders") + "</p>";
+        return;
+      }
+      box.innerHTML = orders.map((o) => {
+        const p = PRODUCTS.find((x) => x.id === o.productId);
+        const title = p ? (p.title[lang] || p.title.ar) : o.productId;
+        const url = p ? p.url : "";
+        let statusHtml = `<div class="pending-msg">${t("pending")}</div>`;
+        let extra = "";
+        if (o.status === "paid") {
+          statusHtml = `<div class="paid-msg">${t("paid")}</div>`;
+          if (url) {
+            extra = `
+              <div class="actions" style="margin-top:8px;">
+                <a class="btn btn-dl" href="${url}" target="_blank" rel="noopener noreferrer">${t("dlBtn")}</a>
+                <button type="button" class="btn-copy" onclick="copyStr('${url}')">${t("copyBtn")}</button>
+              </div>
+            `;
+          }
+        } else if (o.status === "cancelled") {
+          statusHtml = `<div class="cancel-msg">${t("cancelled")}</div>`;
+        }
+        return `
+          <div class="order-card ${o.status === "paid" ? "order-paid" : ""}">
+            <div><strong>${o.id}</strong> — ${title} (${o.price} Pi)</div>
+            ${statusHtml}
+            ${extra}
+          </div>
+        `;
+      }).join("");
+    }
+
+    function switchLang(newLang) {
+      lang = newLang;
+      document.documentElement.lang = lang;
+      document.documentElement.dir = t("dir");
+
+      document.getElementById("langAr").className = "btn-lang" + (lang === "ar" ? " active" : "");
+      document.getElementById("langEn").className = "btn-lang" + (lang === "en" ? " active" : "");
+      document.getElementById("langFr").className = "btn-lang" + (lang === "fr" ? " active" : "");
+
+      document.getElementById("ecoBar").textContent = t("eco");
+      document.getElementById("subTitle").textContent = t("sub");
+      document.getElementById("btnLogin").textContent = t("login");
+      document.getElementById("btnShare").textContent = t("share");
+      document.getElementById("btnClear").textContent = t("clear");
+      document.getElementById("aboutTitle").textContent = t("aboutTitle");
+      document.getElementById("aboutDesc").textContent = t("aboutDesc");
+      document.getElementById("catalogTitle").textContent = t("catalog");
+      document.getElementById("ordersTitle").textContent = t("orders");
+      document.getElementById("policyTitle").textContent = t("policyTitle");
+      document.getElementById("policyText").textContent = t("policyText");
+
+      updateUserUI();
+      renderProducts();
+      renderDetails();
+      renderOrders();
+    }
+
+    switchLang("ar");
+  </script>
+</body>
+</html>
