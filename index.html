@@ -364,7 +364,7 @@
         descAr: "دليل عملي مستلهم من التقاليد الغذائية والعادات الصحية المتوازنة.",
         descEn: "Practical guide inspired by balanced dietary traditions.",
         descFr: "Guide pratique inspire des traditions alimentaires saines.",
-        downloadUrl: "https://drive.google.com/file/d/1M6fimIWIGkDThkOxoTwKmOiFLFMLhgTQ/view?usp=sharing"
+        downloadUrl: "https://drive.google.com/file/d/17UQ4XkOZjh44NtL40IH-qWPfS8s6BnZh/view?usp=sharing"
       },
       nutrition_tips: {
         pricePi: 4,
@@ -377,7 +377,7 @@
         descAr: "إرشادات يومية مبسطة لاختيار الأغذية المناسبة وتنظيم الوجبات.",
         descEn: "Simple daily guidelines for healthy food choices.",
         descFr: "Conseils quotidiens simples pour une alimentation equilibree.",
-        downloadUrl: "https://drive.google.com/file/d/176PwosTJpyp6MgDyskjuxGbt5B_ckhNI/view?usp=sharing"
+        downloadUrl: "https://drive.google.com/file/d/1sRyVJlvG43uuRuV1QuebsBq2Gcfj1nW1/view?usp=sharing"
       },
       construction_calc: {
         pricePi: 6,
@@ -390,7 +390,7 @@
         descAr: "مرجع عملي لحساب وتقدير متطلبات مشاريع البناء بوضوح.",
         descEn: "Practical guide for estimating building project needs.",
         descFr: "Guide pratique pour estimer les besoins de construction.",
-        downloadUrl: "https://drive.google.com/file/d/1xB3k4GUaylYS2ihKxV972vpJbi9PxsAp/view?usp=sharing"
+        downloadUrl: "https://drive.google.com/file/d/1gmGJmmZSzV231XXZec8ABgoBBhPCP_oO/view?usp=sharing"
       },
       amer_hero: {
         pricePi: 3,
@@ -403,7 +403,7 @@
         descAr: "مغامرة شيقة للناشئة حول الشجاعة والتعاون وحسن التصرف.",
         descEn: "Engaging story for kids about courage and teamwork.",
         descFr: "Recit captivant sur le courage et l entraide.",
-        downloadUrl: "https://drive.google.com/file/d/172GZoRoWQjbHHx1OkCAxKPj3n701WfHP/view?usp=sharing"
+        downloadUrl: "https://drive.google.com/file/d/1uoZhpSm5DlBcfDCZ-dmoFjuBfo7nd3jr/view?usp=sharing"
       },
       amer_moto: {
         pricePi: 3,
@@ -416,7 +416,7 @@
         descAr: "قصة حماسية مليئة بالتشويق والدروس المفيدة للأطفال.",
         descEn: "Exciting story full of suspense and useful lessons.",
         descFr: "Histoire passionnante pleine de lecons utiles.",
-        downloadUrl: "https://drive.google.com/file/d/1l96i7HCL-Rp2TebE56Kgpd3730hmrvtt/view?usp=sharing"
+        downloadUrl: "https://drive.google.com/file/d/1siC-LZfmgG9-oPrxt6ZPrafUwM50fPVf/view?usp=sharing"
       },
       amer_stars: {
         pricePi: 3,
@@ -742,270 +742,4 @@
       toast.textContent = message;
       toast.style.display = "block";
       if (copyToastTimer) {
-        clearTimeout(copyToastTimer);
-      }
-      copyToastTimer = setTimeout(function() {
-        toast.style.display = "none";
-      }, 3500);
-    }
-
-    function getCleanDownloadUrl(bookKey) {
-      var book = BOOKS_DATA[bookKey];
-      if (!book || !book.downloadUrl) return "";
-      return String(book.downloadUrl).trim();
-    }
-
-    function copyBookDownloadLink(bookKey) {
-      var cleanUrl = getCleanDownloadUrl(bookKey);
-      if (!cleanUrl) return;
-
-      if (navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
-        navigator.clipboard.writeText(cleanUrl)
-          .then(function() {
-            showCopyToast(getText("linkCopied"));
-          })
-          .catch(function() {
-            fallbackCopyText(cleanUrl);
-          });
-      } else {
-        fallbackCopyText(cleanUrl);
-      }
-    }
-
-    function fallbackCopyText(text) {
-      try {
-        var tempInput = document.createElement("textarea");
-        tempInput.value = text;
-        tempInput.setAttribute("readonly", "");
-        tempInput.style.position = "absolute";
-        tempInput.style.left = "-9999px";
-        document.body.appendChild(tempInput);
-        tempInput.select();
-        document.execCommand("copy");
-        document.body.removeChild(tempInput);
-        showCopyToast(getText("linkCopied"));
-      } catch (e) {
-        showCopyToast(text);
-      }
-    }
-
-    function updateUserBadge() {
-      var badge = document.getElementById("piUserBadge");
-      var btnAuth = document.getElementById("btnAuth");
-      var confirmBox = document.getElementById("authConfirmBox");
-      var isLoggedIn = !!(currentPiUser && currentPiUser.username);
-
-      if (badge) {
-        if (isLoggedIn) {
-          badge.textContent = "@" + currentPiUser.username;
-          badge.className = "user-badge logged-in";
-        } else {
-          badge.textContent = getText("guest");
-          badge.className = "user-badge";
-        }
-      }
-
-      if (btnAuth) {
-        if (isLoggedIn) {
-          btnAuth.textContent = getText("loggedInBtnPrefix") + currentPiUser.username;
-          btnAuth.className = "auth-btn logged-in";
-        } else {
-          btnAuth.textContent = getText("authBtn");
-          btnAuth.className = "auth-btn";
-        }
-      }
-
-      if (confirmBox) {
-        if (isLoggedIn) {
-          confirmBox.textContent = getText("authConfirmedPrefix") + currentPiUser.username;
-          confirmBox.style.display = "block";
-        } else {
-          confirmBox.style.display = "none";
-        }
-      }
-    }
-
-    function authenticatePiUser(options) {
-      var silent = options && options.silent === true;
-      var badge = document.getElementById("piUserBadge");
-
-      if (!window.Pi || typeof window.Pi.authenticate !== "function") {
-        updateUserBadge();
-        if (!silent) {
-          alert(getText("sdkNotReady"));
-        }
-        return Promise.resolve(null);
-      }
-
-      if (badge) {
-        badge.textContent = getText("signingIn");
-      }
-
-      var settled = false;
-      var uiTimer = setTimeout(function() {
-        if (!settled && !currentPiUser) {
-          updateUserBadge();
-        }
-      }, 8000);
-
-      try {
-        var authPromise = window.Pi.authenticate(["username", "payments"], function(incompletePayment) {
-          console.log("Incomplete payment found:", incompletePayment);
-        });
-
-        if (authPromise && typeof authPromise.catch === "function") {
-          authPromise.catch(function() {});
-        }
-
-        return authPromise
-          .then(function(auth) {
-            settled = true;
-            clearTimeout(uiTimer);
-            if (auth && auth.user) {
-              currentPiUser = auth.user;
-            }
-            updateUserBadge();
-            fetchOrdersFromServer();
-            return auth;
-          })
-          .catch(function() {
-            settled = true;
-            clearTimeout(uiTimer);
-            updateUserBadge();
-            if (!silent) {
-              alert(getText("authFailed"));
-            }
-            return null;
-          });
-      } catch (err) {
-        settled = true;
-        clearTimeout(uiTimer);
-        updateUserBadge();
-        if (!silent) {
-          alert(getText("authFailed"));
-        }
-        return Promise.resolve(null);
-      }
-    }
-
-    function updateBrowserNotice() {
-      var noticeEl = document.getElementById("browserNotice");
-      if (!noticeEl) return;
-      if (!isLikelyPiBrowser()) {
-        noticeEl.textContent = getText("notice");
-        noticeEl.style.display = "block";
-      } else {
-        noticeEl.style.display = "none";
-      }
-    }
-
-    function renderDoneNotice() {
-      var doneBox = document.getElementById("doneNoticeBox");
-      if (!doneBox) return;
-      if (allCompletedNoticeVisible) {
-        doneBox.textContent = getText("allDoneNotice");
-        doneBox.style.display = "block";
-      } else {
-        doneBox.style.display = "none";
-      }
-    }
-
-    function completeAndDismissBanner() {
-      downloadBannerDismissed = true;
-      allCompletedNoticeVisible = true;
-      if (lastPaidOrderId) {
-        setDismissedOrderId(lastPaidOrderId);
-      }
-      renderTopSuccessBanner();
-      renderDoneNotice();
-    }
-
-    function triggerBookDownload(bookKey) {
-      var cleanUrl = getCleanDownloadUrl(bookKey);
-      completeAndDismissBanner();
-      if (!cleanUrl) return;
-      try {
-        window.open(cleanUrl, "_blank", "noopener,noreferrer");
-      } catch (e) {}
-    }
-
-    function buildDownloadButtonHtml(bookKey) {
-      var cleanUrl = getCleanDownloadUrl(bookKey);
-      if (cleanUrl === "") return "";
-
-      var html = "<div class='action-stack'>";
-      html += "<button type='button' class='btn btn-download' data-download-book='" + bookKey + "'>" + getText("downloadBtn") + "</button>";
-      html += "<button type='button' class='btn btn-copy' data-copy-book='" + bookKey + "'>" + getText("copyLinkBtn") + "</button>";
-      html += "<div class='drive-tip'>" + getText("driveTip") + "</div>";
-      html += "</div>";
-      return html;
-    }
-
-    function renderTopSuccessBanner() {
-      try {
-        var banner = document.getElementById("topSuccessBanner");
-        var titleEl = document.getElementById("topSuccessTitle");
-        var bookEl = document.getElementById("topSuccessBook");
-        var actionEl = document.getElementById("topSuccessAction");
-        if (!banner || !titleEl || !bookEl || !actionEl) return;
-
-        if (downloadBannerDismissed) {
-          banner.style.display = "none";
-          return;
-        }
-
-        var dismissedId = getDismissedOrderId();
-        var targetKey = lastPaidBookKey;
-        var targetOrderId = lastPaidOrderId;
-
-        if (!targetKey) {
-          var i = 0;
-          for (i = 0; i < ordersList.length; i++) {
-            if (ordersList[i].status === "paid" || ordersList[i].paid) {
-              targetKey = ordersList[i].bookKey;
-              targetOrderId = ordersList[i].id || "";
-              break;
-            }
-          }
-        }
-
-        if (targetOrderId && dismissedId && String(targetOrderId) === String(dismissedId)) {
-          banner.style.display = "none";
-          return;
-        }
-
-        if (!targetKey || !BOOKS_DATA[targetKey]) {
-          banner.style.display = "none";
-          return;
-        }
-
-        lastPaidOrderId = targetOrderId;
-        var book = BOOKS_DATA[targetKey];
-        titleEl.textContent = getText("topBannerTitle");
-        bookEl.textContent = getText("topBannerBookPrefix") + getBookTitle(book);
-        actionEl.innerHTML = buildDownloadButtonHtml(targetKey);
-        banner.style.display = "block";
-      } catch (e) {}
-    }
-
-    function updateOrderStatus(orderId, status) {
-      var i = 0;
-      var matchedBookKey = null;
-      var updatedOrder = null;
-      for (i = 0; i < ordersList.length; i++) {
-        if (ordersList[i].id === orderId) {
-          ordersList[i].status = status;
-          ordersList[i].paid = (status === "paid");
-          matchedBookKey = ordersList[i].bookKey;
-          updatedOrder = ordersList[i];
-          break;
-        }
-      }
-      saveOrders();
-      if (updatedOrder) {
-        syncOrderToServer(updatedOrder);
-      }
-
-      if (status === "paid" && matchedBookKey) {
-        lastPaidBookKey = matchedBookKey;
-        lastPaidOrderId = orderId;
+        clear
