@@ -82,6 +82,28 @@
       font-weight: bold;
       font-size: 14px;
     }
+    .top-download-box {
+      display: none;
+      background: #dcfce7;
+      border: 3px solid #16a34a;
+      border-inline-start: 6px solid #4c1d95;
+      border-radius: 10px;
+      padding: 16px 18px;
+      margin-bottom: 18px;
+      box-shadow: 0 4px 14px rgba(21, 128, 61, 0.2);
+    }
+    .top-dl-title {
+      font-size: 17px;
+      font-weight: bold;
+      color: #4c1d95;
+      margin-bottom: 4px;
+    }
+    .top-dl-book {
+      font-size: 15px;
+      font-weight: bold;
+      color: #15803d;
+      margin-bottom: 10px;
+    }
     .detail-panel {
       display: none;
       background: #fefce8;
@@ -126,7 +148,7 @@
     .actions { display: flex; flex-direction: column; gap: 7px; }
     .btn-order { background: #16a34a; color: #ffffff; width: 100%; }
     .btn-detail { background: #facc15; color: #1e1b4b; width: 100%; border: 1px solid #ca8a04; }
-    .btn-dl { background: #eab308; color: #1e1b4b; width: 100%; border: 2px solid #6d28d9; }
+    .btn-dl { background: #eab308; color: #1e1b4b; width: 100%; border: 2px solid #6d28d9; font-size: 14px; padding: 10px 14px; }
     .btn-copy { background: #5b21b6; color: #ffffff; width: 100%; }
 
     .orders-box {
@@ -189,6 +211,12 @@
     </div>
 
     <div class="toast" id="toastBox"></div>
+
+    <div class="top-download-box" id="topDownloadBox">
+      <div class="top-dl-title" id="topDlTitle">تم الدفع بنجاح! كتابك جاهز للتحميل الآن</div>
+      <div class="top-dl-book" id="topDlBook"></div>
+      <div class="actions" id="topDlActions"></div>
+    </div>
 
     <div class="detail-panel" id="detailPanel">
       <div class="detail-top">
@@ -305,7 +333,9 @@
         orderBtn: "طلب الإصدار",
         detailBtn: "تفاصيل الإصدار",
         closeBtn: "إغلاق",
-        dlBtn: "تحميل / فتح الكتاب",
+        topDlTitle: "تم الدفع بنجاح! كتابك جاهز للتحميل الآن",
+        topDlBookPrefix: "الكتاب المفعّل: ",
+        dlBtn: "تحميل / فتح الكتاب الآن",
         copyBtn: "نسخ رابط التحميل",
         copied: "تم النسخ بنجاح.",
         cleared: "تم مسح الجلسة بنجاح.",
@@ -331,7 +361,9 @@
         orderBtn: "Request Edition",
         detailBtn: "Edition Details",
         closeBtn: "Close",
-        dlBtn: "Download / Open Book",
+        topDlTitle: "Payment Successful! Your Book is Ready to Download",
+        topDlBookPrefix: "Unlocked Book: ",
+        dlBtn: "Download / Open Book Now",
         copyBtn: "Copy Download Link",
         copied: "Copied successfully.",
         cleared: "Session cleared successfully.",
@@ -357,7 +389,9 @@
         orderBtn: "Commander l Edition",
         detailBtn: "Details de l Edition",
         closeBtn: "Fermer",
-        dlBtn: "Telecharger / Ouvrir",
+        topDlTitle: "Paiement Reussi ! Votre Livre est Pret au Telechargement",
+        topDlBookPrefix: "Livre Debloque : ",
+        dlBtn: "Telecharger / Ouvrir le Livre",
         copyBtn: "Copier le Lien",
         copied: "Copie avec succes.",
         cleared: "Session effacee.",
@@ -374,6 +408,7 @@
     let piUser = null;
     let orders = [];
     let activeDetailId = null;
+    let latestPaidProductId = null;
 
     try {
       if (window.Pi && typeof window.Pi.init === "function") {
@@ -423,8 +458,10 @@
       piUser = null;
       orders = [];
       activeDetailId = null;
+      latestPaidProductId = null;
       try { localStorage.removeItem("asmar1972_orders"); } catch (e) {}
       updateUserUI();
+      renderTopDownload();
       renderDetails();
       renderOrders();
       showToast(t("cleared"));
@@ -449,6 +486,31 @@
           }
         })
         .catch(() => showToast("تعذّر تسجيل الدخول عبر Pi"));
+    }
+
+    function renderTopDownload() {
+      const box = document.getElementById("topDownloadBox");
+      const item = PRODUCTS.find((p) => p.id === latestPaidProductId);
+      if (!item || !item.url) {
+        box.style.display = "none";
+        return;
+      }
+      document.getElementById("topDlTitle").textContent = t("topDlTitle");
+      document.getElementById("topDlBook").textContent = t("topDlBookPrefix") + (item.title[lang] || item.title.ar);
+      document.getElementById("topDlActions").innerHTML = `
+        <a class="btn btn-dl" href="${item.url}" target="_blank" rel="noopener noreferrer">${t("dlBtn")}</a>
+        <button type="button" class="btn-copy" onclick="copyStr('${item.url}')">${t("copyBtn")}</button>
+      `;
+      box.style.display = "block";
+    }
+
+    function markOrderPaid(order, product) {
+      order.status = "paid";
+      latestPaidProductId = product.id;
+      renderTopDownload();
+      renderOrders();
+      document.getElementById("topDownloadBox").scrollIntoView({ behavior: "smooth", block: "center" });
+      window.open(product.url, "_blank", "noopener,noreferrer");
     }
 
     function showDetails(id) {
@@ -514,9 +576,7 @@
                   .then((r) => r.ok ? r.json() : null)
                   .then((data) => {
                     if (data && data.ok !== false) {
-                      order.status = "paid";
-                      renderOrders();
-                      window.open(item.url, "_blank", "noopener,noreferrer");
+                      markOrderPaid(order, item);
                     }
                   })
                   .catch(() => {});
@@ -626,6 +686,7 @@
       document.getElementById("policyText").textContent = t("policyText");
 
       updateUserUI();
+      renderTopDownload();
       renderProducts();
       renderDetails();
       renderOrders();
