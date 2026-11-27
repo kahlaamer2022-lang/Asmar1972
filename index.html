@@ -4,19 +4,28 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="icon" href="data:," />
-  <title>Asmar 1972 - متجر الكتب الإلكترونية وقصص الأطفال</title>
+  <title>Asmar 1972 - متجر رقمي متكامل Pi Ecosystem</title>
   <script src="https://sdk.minepi.com/pi-sdk.js"></script>
   <style>
     * { box-sizing: border-box; }
     body {
       margin: 0;
       font-family: Tahoma, Arial, sans-serif;
-      background: #f4f6f9;
-      color: #1f2937;
+      background: #f5f3ff;
+      color: #1e1b4b;
       line-height: 1.6;
     }
+    .top-ecosystem-bar {
+      background: #facc15;
+      color: #1e1b4b;
+      text-align: center;
+      padding: 7px 14px;
+      font-size: 13px;
+      font-weight: bold;
+      border-bottom: 2px solid #eab308;
+    }
     header {
-      background: #111827;
+      background: linear-gradient(135deg, #4c1d95 0%, #5b21b6 55%, #166534 100%);
       color: #ffffff;
       padding: 16px 20px;
       display: flex;
@@ -24,32 +33,33 @@
       justify-content: space-between;
       align-items: center;
       gap: 12px;
+      border-bottom: 3px solid #facc15;
     }
-    .brand-title { font-size: 20px; font-weight: bold; }
-    .brand-sub { font-size: 13px; color: #d1d5db; }
+    .brand-title { font-size: 20px; font-weight: bold; color: #fef08a; }
+    .brand-sub { font-size: 13px; color: #ede9fe; }
     .header-actions {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
     .user-badge {
-      background: #1f2937;
-      border: 1px solid #374151;
-      color: #e5e7eb;
+      background: rgba(30, 27, 75, 0.75);
+      border: 1px solid #facc15;
+      color: #fef9c3;
       padding: 6px 11px;
       border-radius: 6px;
       font-size: 13px;
     }
     .user-badge.logged-in {
-      background: #064e3b;
-      border-color: #10b981;
-      color: #ecfdf5;
+      background: #15803d;
+      border-color: #fde047;
+      color: #ffffff;
       font-weight: bold;
     }
     .auth-btn {
-      background: #2563eb;
-      color: #ffffff;
+      background: #facc15;
+      color: #1e1b4b;
       border: none;
       padding: 7px 12px;
       border-radius: 6px;
@@ -58,36 +68,66 @@
       font-size: 13px;
     }
     .auth-btn.logged-in {
-      background: #059669;
-    }
-    .lang-bar button {
-      background: #374151;
+      background: #16a34a;
       color: #ffffff;
-      border: none;
-      padding: 7px 12px;
+      border: 1px solid #fde047;
+    }
+    .util-btn {
+      background: #16a34a;
+      color: #ffffff;
+      border: 1px solid #fde047;
+      padding: 7px 11px;
       border-radius: 6px;
       cursor: pointer;
       font-weight: bold;
+      font-size: 12px;
     }
-    .lang-bar button.active { background: #059669; }
+    .util-btn:hover { background: #15803d; }
+    .clear-btn {
+      background: #eab308;
+      color: #1e1b4b;
+      border: 1px solid #4c1d95;
+      padding: 7px 11px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 12px;
+    }
+    .clear-btn:hover { background: #facc15; }
+    .lang-bar button {
+      background: #3b0764;
+      color: #ffffff;
+      border: 1px solid #a78bfa;
+      padding: 7px 11px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 12px;
+    }
+    .lang-bar button.active {
+      background: #facc15;
+      color: #1e1b4b;
+      border-color: #fef08a;
+    }
     .container { max-width: 1100px; margin: 22px auto; padding: 0 16px; }
     .about-card {
       background: #ffffff;
       border-radius: 10px;
       padding: 16px 18px;
       margin-bottom: 18px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-      border-inline-start: 4px solid #059669;
+      box-shadow: 0 2px 8px rgba(76, 29, 149, 0.08);
+      border-inline-start: 5px solid #16a34a;
+      border-top: 2px solid #facc15;
     }
     .about-card h2 {
       margin: 0 0 6px 0;
       font-size: 18px;
-      color: #111827;
+      color: #4c1d95;
     }
     .about-card p {
       margin: 0;
       font-size: 14px;
-      color: #374151;
+      color: #312e81;
     }
     .about-tags {
       margin-top: 10px;
@@ -95,18 +135,74 @@
       flex-wrap: wrap;
       gap: 8px;
       font-size: 12px;
-      color: #065f46;
       font-weight: bold;
     }
     .about-tag {
-      background: #ecfdf5;
+      background: #dcfce7;
+      color: #14532d;
+      border: 1px solid #16a34a;
       padding: 4px 10px;
       border-radius: 999px;
     }
+    .about-tag:nth-child(2) {
+      background: #fef9c3;
+      color: #713f12;
+      border-color: #eab308;
+    }
+    .about-tag:nth-child(3) {
+      background: #ede9fe;
+      color: #4c1d95;
+      border-color: #7c3aed;
+    }
+    .detail-box {
+      display: none;
+      background: #fefce8;
+      border: 2px solid #eab308;
+      border-inline-start: 5px solid #6d28d9;
+      color: #1e1b4b;
+      padding: 16px 18px;
+      border-radius: 10px;
+      margin-bottom: 18px;
+      box-shadow: 0 3px 10px rgba(109, 40, 217, 0.1);
+    }
+    .detail-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .detail-title {
+      margin: 0;
+      font-size: 17px;
+      font-weight: bold;
+      color: #4c1d95;
+    }
+    .close-detail-btn {
+      background: #6d28d9;
+      color: #ffffff;
+      border: none;
+      border-radius: 6px;
+      padding: 5px 10px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    .detail-meta {
+      font-size: 13px;
+      font-weight: bold;
+      color: #15803d;
+      margin-bottom: 8px;
+    }
+    .detail-desc {
+      margin: 0;
+      font-size: 14px;
+      color: #1e1b4b;
+    }
     .notice-box {
-      background: #fffbeb;
-      border: 1px solid #f59e0b;
-      color: #92400e;
+      background: #fef9c3;
+      border: 1px solid #eab308;
+      color: #713f12;
       padding: 12px 14px;
       border-radius: 8px;
       margin-bottom: 18px;
@@ -114,9 +210,9 @@
       display: none;
     }
     .auth-confirm-box {
-      background: #eff6ff;
-      border: 1px solid #3b82f6;
-      color: #1e3a8a;
+      background: #ede9fe;
+      border: 1px solid #7c3aed;
+      color: #4c1d95;
       padding: 12px 14px;
       border-radius: 8px;
       margin-bottom: 18px;
@@ -125,9 +221,9 @@
       display: none;
     }
     .done-notice-box {
-      background: #f0fdf4;
-      border: 1px solid #10b981;
-      color: #065f46;
+      background: #dcfce7;
+      border: 1px solid #16a34a;
+      color: #14532d;
       padding: 12px 14px;
       border-radius: 8px;
       margin-bottom: 18px;
@@ -136,8 +232,9 @@
       display: none;
     }
     .copy-toast {
-      background: #111827;
-      color: #ffffff;
+      background: #4c1d95;
+      color: #fef08a;
+      border: 1px solid #facc15;
       padding: 10px 14px;
       border-radius: 8px;
       margin-bottom: 16px;
@@ -147,30 +244,31 @@
     }
     .top-success-banner {
       display: none;
-      background: #ecfdf5;
-      border: 2px solid #059669;
-      color: #064e3b;
+      background: #dcfce7;
+      border: 2px solid #16a34a;
+      color: #14532d;
       padding: 16px;
       border-radius: 10px;
       margin-bottom: 20px;
-      box-shadow: 0 4px 12px rgba(5, 150, 105, 0.15);
+      box-shadow: 0 4px 12px rgba(22, 163, 74, 0.16);
     }
     .top-success-title {
       font-size: 16px;
       font-weight: bold;
       margin-bottom: 6px;
+      color: #4c1d95;
     }
     .top-success-book {
       font-size: 14px;
       margin-bottom: 10px;
-      color: #047857;
+      color: #15803d;
       font-weight: bold;
     }
     .drive-tip {
       font-size: 12px;
-      color: #374151;
-      background: #ffffff;
-      border: 1px dashed #9ca3af;
+      color: #1e1b4b;
+      background: #fef9c3;
+      border: 1px dashed #eab308;
       border-radius: 6px;
       padding: 8px 10px;
       margin-top: 4px;
@@ -181,6 +279,12 @@
       gap: 8px;
       margin-top: 10px;
     }
+    .card-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      margin-top: 8px;
+    }
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
@@ -190,22 +294,33 @@
       background: #ffffff;
       border-radius: 10px;
       padding: 16px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      box-shadow: 0 2px 8px rgba(76, 29, 149, 0.08);
+      border-top: 3px solid #6d28d9;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       gap: 12px;
     }
+    .card h3 {
+      margin: 8px 0 6px 0;
+      color: #4c1d95;
+    }
+    .card p {
+      margin: 0;
+      font-size: 14px;
+      color: #374151;
+    }
     .badge {
       display: inline-block;
-      background: #ecfdf5;
-      color: #065f46;
+      background: #ede9fe;
+      color: #5b21b6;
+      border: 1px solid #c4b5fd;
       padding: 3px 9px;
       border-radius: 999px;
       font-size: 12px;
       font-weight: bold;
     }
-    .price { font-size: 17px; font-weight: bold; color: #047857; }
+    .price { font-size: 17px; font-weight: bold; color: #15803d; }
     .btn {
       border: none;
       border-radius: 7px;
@@ -217,68 +332,88 @@
       display: inline-block;
       text-align: center;
     }
-    .btn-pay { background: #059669; color: #ffffff; width: 100%; }
-    .btn-download {
-      background: #d97706;
+    .btn-pay {
+      background: #16a34a;
       color: #ffffff;
+      width: 100%;
+    }
+    .btn-pay:hover { background: #15803d; }
+    .btn-details {
+      background: #facc15;
+      color: #1e1b4b;
+      width: 100%;
+      font-size: 13px;
+      padding: 8px 12px;
+      border: 1px solid #eab308;
+    }
+    .btn-details:hover { background: #fde047; }
+    .btn-download {
+      background: #eab308;
+      color: #1e1b4b;
       width: 100%;
       font-size: 15px;
       padding: 12px 16px;
-      border: 2px solid #b45309;
-      box-shadow: 0 2px 6px rgba(217, 119, 6, 0.25);
+      border: 2px solid #6d28d9;
+      box-shadow: 0 2px 6px rgba(109, 40, 217, 0.2);
     }
     .btn-download:hover {
-      background: #b45309;
+      background: #facc15;
     }
     .btn-copy {
-      background: #1f2937;
+      background: #5b21b6;
       color: #ffffff;
       width: 100%;
       font-size: 13px;
       padding: 9px 12px;
     }
     .btn-copy:hover {
-      background: #374151;
+      background: #4c1d95;
     }
     .orders-box {
       margin-top: 28px;
       background: #ffffff;
       border-radius: 10px;
       padding: 18px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      box-shadow: 0 2px 8px rgba(76, 29, 149, 0.08);
+      border-top: 3px solid #16a34a;
+    }
+    .orders-box h2 {
+      margin-top: 0;
+      color: #4c1d95;
     }
     .order-item {
-      border: 1px solid #e5e7eb;
+      border: 1px solid #ddd6fe;
       border-radius: 8px;
       padding: 14px;
       margin-top: 12px;
-      background: #fafafa;
+      background: #faf5ff;
     }
     .order-item-paid {
-      border: 1px solid #10b981;
-      background: #f0fdf4;
+      border: 1px solid #16a34a;
+      background: #dcfce7;
     }
     .status-paid {
-      color: #047857;
+      color: #15803d;
       font-weight: bold;
       margin-top: 6px;
       font-size: 15px;
     }
-    .status-pending { color: #b45309; font-weight: bold; margin-top: 6px; }
+    .status-pending { color: #a16207; font-weight: bold; margin-top: 6px; }
     .status-cancelled { color: #b91c1c; font-weight: bold; margin-top: 6px; }
     footer {
       margin-top: 28px;
       background: #ffffff;
       border-radius: 10px;
       padding: 18px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 2px 8px rgba(76, 29, 149, 0.08);
+      border-bottom: 4px solid #6d28d9;
       font-size: 13px;
-      color: #4b5563;
+      color: #312e81;
     }
     footer h3 {
       margin: 0 0 8px 0;
       font-size: 15px;
-      color: #111827;
+      color: #4c1d95;
     }
     footer p {
       margin: 0 0 8px 0;
@@ -286,6 +421,8 @@
   </style>
 </head>
 <body>
+  <div class="top-ecosystem-bar" id="topEcosystemText">متجر رقمي متكامل Pi Ecosystem</div>
+
   <header>
     <div>
       <div class="brand-title" id="storeTitle">Asmar 1972</div>
@@ -294,6 +431,8 @@
     <div class="header-actions">
       <span id="piUserBadge" class="user-badge">ضيف / غير مسجّل</span>
       <button type="button" id="btnAuth" class="auth-btn">دخول Pi</button>
+      <button type="button" id="btnShareStore" class="util-btn">مشاركة رابط المتجر</button>
+      <button type="button" id="btnClearSession" class="clear-btn">مسح الجلسة</button>
       <div class="lang-bar">
         <button type="button" id="btnAr" class="active" data-lang="ar">العربية</button>
         <button type="button" id="btnEn" data-lang="en">English</button>
@@ -317,6 +456,15 @@
     <div id="authConfirmBox" class="auth-confirm-box"></div>
     <div id="doneNoticeBox" class="done-notice-box"></div>
     <div id="copyToast" class="copy-toast"></div>
+
+    <section id="bookDetailsBox" class="detail-box">
+      <div class="detail-header">
+        <h3 id="detailTitle" class="detail-title"></h3>
+        <button type="button" id="btnCloseDetails" class="close-detail-btn">إغلاق</button>
+      </div>
+      <div id="detailMeta" class="detail-meta"></div>
+      <p id="detailDesc" class="detail-desc"></p>
+    </section>
 
     <div id="topSuccessBanner" class="top-success-banner">
       <div id="topSuccessTitle" class="top-success-title">تم الدفع بنجاح! كتابك جاهز للتحميل الآن</div>
@@ -466,6 +614,7 @@
     var ordersList = loadOrders();
     var lastPaidBookKey = null;
     var lastPaidOrderId = null;
+    var selectedDetailBookKey = null;
     var downloadBannerDismissed = false;
     var allCompletedNoticeVisible = false;
     var copyToastTimer = null;
@@ -623,6 +772,7 @@
       var dict = {
         ar: {
           dir: "rtl",
+          ecosystem: "متجر رقمي متكامل Pi Ecosystem",
           sub: "كتب إلكترونية وقصص أطفال",
           aboutHeading: "عن متجر Asmar 1972",
           aboutText: "متجر رقمي يقدم 9 أعمال أصلية تشمل قصص الأطفال، أدلة التغذية الطبيعية، وحاسبة مشاريع البناء مع تسليم رقمي فوري بعد إتمام الدفع عبر Pi.",
@@ -637,6 +787,13 @@
           authBtn: "دخول Pi",
           loggedInBtnPrefix: "متصل: @",
           authConfirmedPrefix: "تم تسجيل الدخول بنجاح عبر Pi: @",
+          shareBtn: "مشاركة رابط المتجر",
+          shareCopied: "تم نسخ رابط المتجر للمشاركة.",
+          clearSessionBtn: "مسح الجلسة",
+          sessionCleared: "تم مسح الجلسة والبيانات المحلية بنجاح.",
+          detailsBtn: "تفاصيل الإصدار",
+          closeBtn: "إغلاق",
+          categoryLabel: "التصنيف",
           sdkNotReady: "واجهة Pi غير جاهزة. افتح الرابط من داخل Pi Browser.",
           authFailed: "تم إلغاء دخول Pi أو تعذّر إتمامه (تأكد من فتح الرابط داخل Pi Browser).",
           notice: "ملاحظة: يبدو أنك تتصفح خارج Pi Browser. لإتمام الدفع الفعلي عبر Pi، افتح الرابط من داخل Pi Browser.",
@@ -659,6 +816,7 @@
         },
         en: {
           dir: "ltr",
+          ecosystem: "Integrated Digital Store - Pi Ecosystem",
           sub: "E-Books and Children Stories",
           aboutHeading: "About Asmar 1972",
           aboutText: "Digital store offering 9 original works including children's stories, natural nutrition guides, and a construction projects calculator with instant digital delivery after Pi payment.",
@@ -673,6 +831,13 @@
           authBtn: "Pi Login",
           loggedInBtnPrefix: "Connected: @",
           authConfirmedPrefix: "Successfully signed in via Pi: @",
+          shareBtn: "Share Store Link",
+          shareCopied: "Store link copied for sharing.",
+          clearSessionBtn: "Clear Session",
+          sessionCleared: "Session and local data cleared successfully.",
+          detailsBtn: "Edition Details",
+          closeBtn: "Close",
+          categoryLabel: "Category",
           sdkNotReady: "Pi SDK is not ready. Please open inside Pi Browser.",
           authFailed: "Pi login was cancelled or failed. Please open inside Pi Browser.",
           notice: "Note: You appear to be outside Pi Browser. Open this link inside Pi Browser to complete real Pi payments.",
@@ -695,6 +860,7 @@
         },
         fr: {
           dir: "ltr",
+          ecosystem: "Boutique Numerique Integree - Pi Ecosystem",
           sub: "Livres Numeriques et Histoires Enfants",
           aboutHeading: "A propos d'Asmar 1972",
           aboutText: "Boutique numerique proposant 9 oeuvres originales : histoires pour enfants, guides de nutrition naturelle et calculateur de projets de construction avec livraison numerique immediate via Pi.",
@@ -709,6 +875,13 @@
           authBtn: "Connexion Pi",
           loggedInBtnPrefix: "Connecte : @",
           authConfirmedPrefix: "Connexion Pi reussie : @",
+          shareBtn: "Partager le Lien",
+          shareCopied: "Lien de la boutique copie.",
+          clearSessionBtn: "Effacer Session",
+          sessionCleared: "Session et donnees locales effacees.",
+          detailsBtn: "Details de l Edition",
+          closeBtn: "Fermer",
+          categoryLabel: "Categorie",
           sdkNotReady: "Le SDK Pi n'est pas pret. Ouvrez dans Pi Browser.",
           authFailed: "La connexion Pi a ete annulee ou a echoue. Ouvrez dans Pi Browser.",
           notice: "Note : Vous semblez hors de Pi Browser. Ouvrez ce lien dans Pi Browser pour effectuer un paiement Pi reel.",
@@ -749,30 +922,22 @@
       }, 3500);
     }
 
-    function getCleanDownloadUrl(bookKey) {
-      var book = BOOKS_DATA[bookKey];
-      if (!book || !book.downloadUrl) return "";
-      return String(book.downloadUrl).trim();
-    }
-
-    function copyBookDownloadLink(bookKey) {
-      var cleanUrl = getCleanDownloadUrl(bookKey);
-      if (!cleanUrl) return;
-
+    function copyTextValue(text, confirmMsg) {
+      if (!text) return;
       if (navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
-        navigator.clipboard.writeText(cleanUrl)
+        navigator.clipboard.writeText(text)
           .then(function() {
-            showCopyToast(getText("linkCopied"));
+            showCopyToast(confirmMsg);
           })
           .catch(function() {
-            fallbackCopyText(cleanUrl);
+            fallbackCopyText(text, confirmMsg);
           });
       } else {
-        fallbackCopyText(cleanUrl);
+        fallbackCopyText(text, confirmMsg);
       }
     }
 
-    function fallbackCopyText(text) {
+    function fallbackCopyText(text, confirmMsg) {
       try {
         var tempInput = document.createElement("textarea");
         tempInput.value = text;
@@ -783,10 +948,98 @@
         tempInput.select();
         document.execCommand("copy");
         document.body.removeChild(tempInput);
-        showCopyToast(getText("linkCopied"));
+        showCopyToast(confirmMsg);
       } catch (e) {
         showCopyToast(text);
       }
+    }
+
+    function shareStoreLink() {
+      var storeUrl = window.location.href || "https://asmar1972.kahlaamer2022.workers.dev";
+      if (navigator.share && typeof navigator.share === "function") {
+        navigator.share({
+          title: "Asmar 1972 - " + getText("ecosystem"),
+          text: getText("aboutText"),
+          url: storeUrl
+        }).catch(function() {
+          copyTextValue(storeUrl, getText("shareCopied"));
+        });
+      } else {
+        copyTextValue(storeUrl, getText("shareCopied"));
+      }
+    }
+
+    function clearCurrentSession() {
+      currentPiUser = null;
+      ordersList = [];
+      lastPaidBookKey = null;
+      lastPaidOrderId = null;
+      selectedDetailBookKey = null;
+      downloadBannerDismissed = false;
+      allCompletedNoticeVisible = false;
+      try {
+        localStorage.removeItem(STORAGE_KEY);
+        localStorage.removeItem(DISMISSED_ORDER_KEY);
+      } catch (e) {}
+      updateUserBadge();
+      renderDetailsBox();
+      renderDoneNotice();
+      renderTopSuccessBanner();
+      renderOrdersList();
+      showCopyToast(getText("sessionCleared"));
+    }
+
+    function openBookDetails(bookKey) {
+      if (!BOOKS_DATA[bookKey]) return;
+      selectedDetailBookKey = bookKey;
+      renderDetailsBox();
+      var box = document.getElementById("bookDetailsBox");
+      if (box && typeof box.scrollIntoView === "function") {
+        try {
+          box.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        } catch (e) {}
+      }
+    }
+
+    function closeBookDetails() {
+      selectedDetailBookKey = null;
+      renderDetailsBox();
+    }
+
+    function renderDetailsBox() {
+      var box = document.getElementById("bookDetailsBox");
+      var titleEl = document.getElementById("detailTitle");
+      var metaEl = document.getElementById("detailMeta");
+      var descEl = document.getElementById("detailDesc");
+      var closeBtn = document.getElementById("btnCloseDetails");
+      if (!box || !titleEl || !metaEl || !descEl) return;
+
+      if (closeBtn) {
+        closeBtn.textContent = getText("closeBtn");
+      }
+
+      if (!selectedDetailBookKey || !BOOKS_DATA[selectedDetailBookKey]) {
+        box.style.display = "none";
+        return;
+      }
+
+      var book = BOOKS_DATA[selectedDetailBookKey];
+      titleEl.textContent = getBookTitle(book);
+      metaEl.textContent = getText("categoryLabel") + ": " + getBookCategory(book) + " | " + getText("priceLabel") + ": " + book.pricePi + " Pi";
+      descEl.textContent = getBookDesc(book);
+      box.style.display = "block";
+    }
+
+    function getCleanDownloadUrl(bookKey) {
+      var book = BOOKS_DATA[bookKey];
+      if (!book || !book.downloadUrl) return "";
+      return String(book.downloadUrl).trim();
+    }
+
+    function copyBookDownloadLink(bookKey) {
+      var cleanUrl = getCleanDownloadUrl(bookKey);
+      if (!cleanUrl) return;
+      copyTextValue(cleanUrl, getText("linkCopied"));
     }
 
     function updateUserBadge() {
@@ -796,501 +1049,4 @@
       var isLoggedIn = !!(currentPiUser && currentPiUser.username);
 
       if (badge) {
-        if (isLoggedIn) {
-          badge.textContent = "@" + currentPiUser.username;
-          badge.className = "user-badge logged-in";
-        } else {
-          badge.textContent = getText("guest");
-          badge.className = "user-badge";
-        }
-      }
-
-      if (btnAuth) {
-        if (isLoggedIn) {
-          btnAuth.textContent = getText("loggedInBtnPrefix") + currentPiUser.username;
-          btnAuth.className = "auth-btn logged-in";
-        } else {
-          btnAuth.textContent = getText("authBtn");
-          btnAuth.className = "auth-btn";
-        }
-      }
-
-      if (confirmBox) {
-        if (isLoggedIn) {
-          confirmBox.textContent = getText("authConfirmedPrefix") + currentPiUser.username;
-          confirmBox.style.display = "block";
-        } else {
-          confirmBox.style.display = "none";
-        }
-      }
-    }
-
-    function authenticatePiUser(options) {
-      var silent = options && options.silent === true;
-      var badge = document.getElementById("piUserBadge");
-
-      if (!window.Pi || typeof window.Pi.authenticate !== "function") {
-        updateUserBadge();
-        if (!silent) {
-          alert(getText("sdkNotReady"));
-        }
-        return Promise.resolve(null);
-      }
-
-      if (badge) {
-        badge.textContent = getText("signingIn");
-      }
-
-      var settled = false;
-      var uiTimer = setTimeout(function() {
-        if (!settled && !currentPiUser) {
-          updateUserBadge();
-        }
-      }, 8000);
-
-      try {
-        var authPromise = window.Pi.authenticate(["username", "payments"], function(incompletePayment) {
-          console.log("Incomplete payment found:", incompletePayment);
-        });
-
-        if (authPromise && typeof authPromise.catch === "function") {
-          authPromise.catch(function() {});
-        }
-
-        return authPromise
-          .then(function(auth) {
-            settled = true;
-            clearTimeout(uiTimer);
-            if (auth && auth.user) {
-              currentPiUser = auth.user;
-            }
-            updateUserBadge();
-            fetchOrdersFromServer();
-            return auth;
-          })
-          .catch(function() {
-            settled = true;
-            clearTimeout(uiTimer);
-            updateUserBadge();
-            if (!silent) {
-              alert(getText("authFailed"));
-            }
-            return null;
-          });
-      } catch (err) {
-        settled = true;
-        clearTimeout(uiTimer);
-        updateUserBadge();
-        if (!silent) {
-          alert(getText("authFailed"));
-        }
-        return Promise.resolve(null);
-      }
-    }
-
-    function updateBrowserNotice() {
-      var noticeEl = document.getElementById("browserNotice");
-      if (!noticeEl) return;
-      if (!isLikelyPiBrowser()) {
-        noticeEl.textContent = getText("notice");
-        noticeEl.style.display = "block";
-      } else {
-        noticeEl.style.display = "none";
-      }
-    }
-
-    function renderDoneNotice() {
-      var doneBox = document.getElementById("doneNoticeBox");
-      if (!doneBox) return;
-      if (allCompletedNoticeVisible) {
-        doneBox.textContent = getText("allDoneNotice");
-        doneBox.style.display = "block";
-      } else {
-        doneBox.style.display = "none";
-      }
-    }
-
-    function completeAndDismissBanner() {
-      downloadBannerDismissed = true;
-      allCompletedNoticeVisible = true;
-      if (lastPaidOrderId) {
-        setDismissedOrderId(lastPaidOrderId);
-      }
-      renderTopSuccessBanner();
-      renderDoneNotice();
-    }
-
-    function triggerBookDownload(bookKey) {
-      var cleanUrl = getCleanDownloadUrl(bookKey);
-      completeAndDismissBanner();
-      if (!cleanUrl) return;
-      try {
-        window.open(cleanUrl, "_blank", "noopener,noreferrer");
-      } catch (e) {}
-    }
-
-    function buildDownloadButtonHtml(bookKey) {
-      var cleanUrl = getCleanDownloadUrl(bookKey);
-      if (cleanUrl === "") return "";
-
-      var html = "<div class='action-stack'>";
-      html += "<button type='button' class='btn btn-download' data-download-book='" + bookKey + "'>" + getText("downloadBtn") + "</button>";
-      html += "<button type='button' class='btn btn-copy' data-copy-book='" + bookKey + "'>" + getText("copyLinkBtn") + "</button>";
-      html += "<div class='drive-tip'>" + getText("driveTip") + "</div>";
-      html += "</div>";
-      return html;
-    }
-
-    function renderTopSuccessBanner() {
-      try {
-        var banner = document.getElementById("topSuccessBanner");
-        var titleEl = document.getElementById("topSuccessTitle");
-        var bookEl = document.getElementById("topSuccessBook");
-        var actionEl = document.getElementById("topSuccessAction");
-        if (!banner || !titleEl || !bookEl || !actionEl) return;
-
-        if (downloadBannerDismissed) {
-          banner.style.display = "none";
-          return;
-        }
-
-        var dismissedId = getDismissedOrderId();
-        var targetKey = lastPaidBookKey;
-        var targetOrderId = lastPaidOrderId;
-
-        if (!targetKey) {
-          var i = 0;
-          for (i = 0; i < ordersList.length; i++) {
-            if (ordersList[i].status === "paid" || ordersList[i].paid) {
-              targetKey = ordersList[i].bookKey;
-              targetOrderId = ordersList[i].id || "";
-              break;
-            }
-          }
-        }
-
-        if (targetOrderId && dismissedId && String(targetOrderId) === String(dismissedId)) {
-          banner.style.display = "none";
-          return;
-        }
-
-        if (!targetKey || !BOOKS_DATA[targetKey]) {
-          banner.style.display = "none";
-          return;
-        }
-
-        lastPaidOrderId = targetOrderId;
-        var book = BOOKS_DATA[targetKey];
-        titleEl.textContent = getText("topBannerTitle");
-        bookEl.textContent = getText("topBannerBookPrefix") + getBookTitle(book);
-        actionEl.innerHTML = buildDownloadButtonHtml(targetKey);
-        banner.style.display = "block";
-      } catch (e) {}
-    }
-
-    function updateOrderStatus(orderId, status) {
-      var i = 0;
-      var matchedBookKey = null;
-      var updatedOrder = null;
-      for (i = 0; i < ordersList.length; i++) {
-        if (ordersList[i].id === orderId) {
-          ordersList[i].status = status;
-          ordersList[i].paid = (status === "paid");
-          matchedBookKey = ordersList[i].bookKey;
-          updatedOrder = ordersList[i];
-          break;
-        }
-      }
-      saveOrders();
-      if (updatedOrder) {
-        syncOrderToServer(updatedOrder);
-      }
-
-      if (status === "paid" && matchedBookKey) {
-        lastPaidBookKey = matchedBookKey;
-        lastPaidOrderId = orderId;
-        downloadBannerDismissed = false;
-        allCompletedNoticeVisible = false;
-      }
-
-      renderDoneNotice();
-      renderTopSuccessBanner();
-      renderOrdersList();
-
-      if (status === "paid" && matchedBookKey) {
-        var ordersSec = document.getElementById("ordersSection");
-        if (ordersSec && typeof ordersSec.scrollIntoView === "function") {
-          try {
-            ordersSec.scrollIntoView({ behavior: "smooth", block: "start" });
-          } catch (e) {}
-        }
-        triggerBookDownload(matchedBookKey);
-      }
-    }
-
-    function isCompleteResponseSuccess(res, data) {
-      if (!res || !res.ok) return false;
-      if (!data) return true;
-      if (data.ok === false || data.success === false || data.error) return false;
-      return true;
-    }
-
-    function createOrderAndPay(bookKey) {
-      var book = BOOKS_DATA[bookKey];
-      if (!book) return;
-
-      var newOrder = {
-        id: "ORD-" + String(Date.now()),
-        bookKey: bookKey,
-        pricePi: book.pricePi,
-        status: "pending",
-        paid: false
-      };
-
-      ordersList.unshift(newOrder);
-      saveOrders();
-      syncOrderToServer(newOrder);
-      renderOrdersList();
-
-      if (window.Pi && typeof window.Pi.createPayment === "function") {
-        var startPayment = function() {
-          try {
-            var payPromise = window.Pi.createPayment(
-              {
-                amount: book.pricePi,
-                memo: getBookTitle(book),
-                metadata: { orderId: newOrder.id, bookKey: bookKey }
-              },
-              {
-                onReadyForServerApproval: function(paymentId) {
-                  fetch("/api/pi/approve", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ paymentId: paymentId, orderId: newOrder.id })
-                  })
-                  .then(function(res) { return res.json().catch(function() { return {}; }); })
-                  .catch(function() {
-                    showCopyToast(getText("pendingText"));
-                  });
-                },
-                onReadyForServerCompletion: function(paymentId, txid) {
-                  var responseObj = null;
-                  fetch("/api/pi/complete", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ paymentId: paymentId, txid: txid, orderId: newOrder.id })
-                  })
-                  .then(function(res) {
-                    responseObj = res;
-                    return res.json().catch(function() { return {}; });
-                  })
-                  .then(function(data) {
-                    if (isCompleteResponseSuccess(responseObj, data)) {
-                      updateOrderStatus(newOrder.id, "paid");
-                    } else {
-                      showCopyToast(getText("pendingText"));
-                    }
-                  })
-                  .catch(function() {
-                    showCopyToast(getText("pendingText"));
-                  });
-                },
-                onCancel: function() {
-                  updateOrderStatus(newOrder.id, "cancelled");
-                },
-                onError: function() {
-                  updateOrderStatus(newOrder.id, "cancelled");
-                }
-              }
-            );
-
-            if (payPromise && typeof payPromise.catch === "function") {
-              payPromise.catch(function() {});
-            }
-          } catch (err) {}
-        };
-
-        if (!currentPiUser) {
-          authenticatePiUser({ silent: false }).then(function(auth) {
-            if (auth && auth.user) {
-              startPayment();
-            }
-          });
-        } else {
-          startPayment();
-        }
-      }
-    }
-
-    function renderBooks() {
-      try {
-        var grid = document.getElementById("booksGrid");
-        if (!grid) return;
-
-        var html = "";
-        var keys = Object.keys(BOOKS_DATA);
-        var i = 0;
-        for (i = 0; i < keys.length; i++) {
-          var key = keys[i];
-          var book = BOOKS_DATA[key];
-          html += "<div class='card'>";
-          html += "<div>";
-          html += "<span class='badge'>" + getBookCategory(book) + "</span>";
-          html += "<h3>" + getBookTitle(book) + "</h3>";
-          html += "<p>" + getBookDesc(book) + "</p>";
-          html += "</div>";
-          html += "<div>";
-          html += "<div class='price'>" + book.pricePi + " Pi</div>";
-          html += "<button type='button' class='btn btn-pay' data-pay-book='" + key + "'>" + getText("orderBtn") + " (" + book.pricePi + " Pi)</button>";
-          html += "</div>";
-          html += "</div>";
-        }
-        grid.innerHTML = html;
-      } catch (e) {}
-    }
-
-    function renderOrdersList() {
-      try {
-        var container = document.getElementById("ordersList");
-        if (!container) return;
-
-        if (ordersList.length === 0) {
-          container.innerHTML = "<p>" + getText("noOrders") + "</p>";
-          return;
-        }
-
-        var html = "";
-        var i = 0;
-        for (i = 0; i < ordersList.length; i++) {
-          var order = ordersList[i];
-          var book = BOOKS_DATA[order.bookKey];
-          var bookTitle = book ? getBookTitle(book) : order.bookKey;
-          var currentStatus = order.status || (order.paid ? "paid" : "pending");
-          var itemClass = (currentStatus === "paid") ? "order-item order-item-paid" : "order-item";
-
-          html += "<div class='" + itemClass + "'>";
-          html += "<div><strong>" + getText("orderIdLabel") + ":</strong> " + order.id + "</div>";
-          html += "<div><strong>" + getText("bookLabel") + ":</strong> " + bookTitle + "</div>";
-          html += "<div><strong>" + getText("priceLabel") + ":</strong> " + order.pricePi + " Pi</div>";
-
-          if (currentStatus === "paid") {
-            html += "<div class='status-paid'>" + getText("paidText") + "</div>";
-            html += buildDownloadButtonHtml(order.bookKey);
-          } else if (currentStatus === "cancelled") {
-            html += "<div class='status-cancelled'>" + getText("cancelledText") + "</div>";
-          } else {
-            html += "<div class='status-pending'>" + getText("pendingText") + "</div>";
-          }
-
-          html += "</div>";
-        }
-
-        container.innerHTML = html;
-      } catch (e) {}
-    }
-
-    function setLanguage(lang) {
-      currentLang = lang;
-      document.documentElement.lang = lang;
-      document.documentElement.dir = getText("dir");
-
-      var btnAr = document.getElementById("btnAr");
-      var btnEn = document.getElementById("btnEn");
-      var btnFr = document.getElementById("btnFr");
-      if (btnAr) btnAr.className = (lang === "ar") ? "active" : "";
-      if (btnEn) btnEn.className = (lang === "en") ? "active" : "";
-      if (btnFr) btnFr.className = (lang === "fr") ? "active" : "";
-
-      var storeSub = document.getElementById("storeSub");
-      var aboutHeading = document.getElementById("aboutHeading");
-      var aboutText = document.getElementById("aboutText");
-      var tagInstant = document.getElementById("tagInstant");
-      var tagWorks = document.getElementById("tagWorks");
-      var tagPi = document.getElementById("tagPi");
-      var policyHeading = document.getElementById("policyHeading");
-      var policyText = document.getElementById("policyText");
-      var catalogHeading = document.getElementById("catalogHeading");
-      var ordersHeading = document.getElementById("ordersHeading");
-      if (storeSub) storeSub.textContent = getText("sub");
-      if (aboutHeading) aboutHeading.textContent = getText("aboutHeading");
-      if (aboutText) aboutText.textContent = getText("aboutText");
-      if (tagInstant) tagInstant.textContent = getText("tagInstant");
-      if (tagWorks) tagWorks.textContent = getText("tagWorks");
-      if (tagPi) tagPi.textContent = getText("tagPi");
-      if (policyHeading) policyHeading.textContent = getText("policyHeading");
-      if (policyText) policyText.textContent = getText("policyText");
-      if (catalogHeading) catalogHeading.textContent = getText("catalog");
-      if (ordersHeading) ordersHeading.textContent = getText("orders");
-
-      updateUserBadge();
-      updateBrowserNotice();
-      renderDoneNotice();
-      renderTopSuccessBanner();
-      renderBooks();
-      renderOrdersList();
-    }
-
-    function bindEvents() {
-      var btnAuth = document.getElementById("btnAuth");
-      if (btnAuth) {
-        btnAuth.addEventListener("click", function() {
-          authenticatePiUser({ silent: false });
-        });
-      }
-
-      var langButtons = document.querySelectorAll(".lang-bar button[data-lang]");
-      var j = 0;
-      for (j = 0; j < langButtons.length; j++) {
-        langButtons[j].addEventListener("click", function() {
-          var chosenLang = this.getAttribute("data-lang");
-          if (chosenLang) {
-            setLanguage(chosenLang);
-          }
-        });
-      }
-
-      document.addEventListener("click", function(event) {
-        var target = event.target;
-        if (!target) return;
-
-        var payBtn = target.closest("[data-pay-book]");
-        if (payBtn) {
-          var bookKey = payBtn.getAttribute("data-pay-book");
-          if (bookKey) {
-            createOrderAndPay(bookKey);
-          }
-          return;
-        }
-
-        var copyBtn = target.closest("[data-copy-book]");
-        if (copyBtn) {
-          var copyKey = copyBtn.getAttribute("data-copy-book");
-          if (copyKey) {
-            copyBookDownloadLink(copyKey);
-          }
-          return;
-        }
-
-        var dlBtn = target.closest("[data-download-book]");
-        if (dlBtn) {
-          var dlKey = dlBtn.getAttribute("data-download-book");
-          if (dlKey) {
-            triggerBookDownload(dlKey);
-          }
-        }
-      });
-    }
-
-    function initApp() {
-      bindEvents();
-      setLanguage("ar");
-    }
-
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", initApp);
-    } else {
-      initApp();
-    }
-  </script>
-</body>
-</html>
+        if
