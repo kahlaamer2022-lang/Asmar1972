@@ -41,6 +41,12 @@
       border-radius: 6px;
       font-size: 13px;
     }
+    .user-badge.logged-in {
+      background: #064e3b;
+      border-color: #10b981;
+      color: #ecfdf5;
+      font-weight: bold;
+    }
     .auth-btn {
       background: #2563eb;
       color: #ffffff;
@@ -50,6 +56,9 @@
       cursor: pointer;
       font-weight: bold;
       font-size: 13px;
+    }
+    .auth-btn.logged-in {
+      background: #059669;
     }
     .lang-bar button {
       background: #374151;
@@ -71,6 +80,38 @@
       margin-bottom: 18px;
       font-size: 14px;
       display: none;
+    }
+    .auth-confirm-box {
+      background: #eff6ff;
+      border: 1px solid #3b82f6;
+      color: #1e3a8a;
+      padding: 12px 14px;
+      border-radius: 8px;
+      margin-bottom: 18px;
+      font-size: 14px;
+      font-weight: bold;
+      display: none;
+    }
+    .top-success-banner {
+      display: none;
+      background: #ecfdf5;
+      border: 2px solid #059669;
+      color: #064e3b;
+      padding: 16px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 12px rgba(5, 150, 105, 0.15);
+    }
+    .top-success-title {
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+    .top-success-book {
+      font-size: 14px;
+      margin-bottom: 10px;
+      color: #047857;
+      font-weight: bold;
     }
     .grid {
       display: grid;
@@ -169,11 +210,18 @@
 
   <main class="container">
     <div id="browserNotice" class="notice-box"></div>
+    <div id="authConfirmBox" class="auth-confirm-box"></div>
+
+    <div id="topSuccessBanner" class="top-success-banner">
+      <div id="topSuccessTitle" class="top-success-title">تم الدفع بنجاح! كتابك جاهز للتحميل الآن</div>
+      <div id="topSuccessBook" class="top-success-book"></div>
+      <div id="topSuccessAction"></div>
+    </div>
 
     <h2 id="catalogHeading">قائمة الكتب والقصص</h2>
     <div id="booksGrid" class="grid"></div>
 
-    <section class="orders-box">
+    <section id="ordersSection" class="orders-box">
       <h2 id="ordersHeading">الطلبات وحالة الدفع والتحميل</h2>
       <div id="ordersList"></div>
     </section>
@@ -304,6 +352,7 @@
     var currentLang = "ar";
     var currentPiUser = null;
     var ordersList = loadOrders();
+    var lastPaidBookKey = null;
 
     function isPiSdkMessagingTimeoutError(errOrMsg) {
       var text = "";
@@ -396,6 +445,8 @@
           guest: "ضيف / غير مسجّل",
           signingIn: "جاري الدخول...",
           authBtn: "دخول Pi",
+          loggedInBtnPrefix: "متصل: @",
+          authConfirmedPrefix: "تم تسجيل الدخول بنجاح عبر Pi: @",
           sdkNotReady: "واجهة Pi غير جاهزة. افتح الرابط من داخل Pi Browser.",
           authFailed: "تم إلغاء دخول Pi أو تعذّر إتمامه (تأكد من فتح الرابط داخل Pi Browser).",
           notice: "ملاحظة: يبدو أنك تتصفح خارج Pi Browser. لإتمام الدفع الفعلي عبر Pi، افتح الرابط من داخل Pi Browser.",
@@ -409,7 +460,9 @@
           noOrders: "لا توجد طلبات مسجلة حتى الآن.",
           orderIdLabel: "رقم الطلب",
           bookLabel: "الكتاب",
-          priceLabel: "السعر"
+          priceLabel: "السعر",
+          topBannerTitle: "تم الدفع بنجاح! كتابك جاهز للتحميل الآن",
+          topBannerBookPrefix: "الإصدار المفعّل: "
         },
         en: {
           dir: "ltr",
@@ -417,6 +470,8 @@
           guest: "Guest / Signed out",
           signingIn: "Signing in...",
           authBtn: "Pi Login",
+          loggedInBtnPrefix: "Connected: @",
+          authConfirmedPrefix: "Successfully signed in via Pi: @",
           sdkNotReady: "Pi SDK is not ready. Please open inside Pi Browser.",
           authFailed: "Pi login was cancelled or failed. Please open inside Pi Browser.",
           notice: "Note: You appear to be outside Pi Browser. Open this link inside Pi Browser to complete real Pi payments.",
@@ -430,7 +485,9 @@
           noOrders: "No orders recorded yet.",
           orderIdLabel: "Order ID",
           bookLabel: "Book",
-          priceLabel: "Price"
+          priceLabel: "Price",
+          topBannerTitle: "Payment Successful! Your Book is Ready to Download",
+          topBannerBookPrefix: "Unlocked Edition: "
         },
         fr: {
           dir: "ltr",
@@ -438,6 +495,8 @@
           guest: "Invite / Non connecte",
           signingIn: "Connexion...",
           authBtn: "Connexion Pi",
+          loggedInBtnPrefix: "Connecte : @",
+          authConfirmedPrefix: "Connexion Pi reussie : @",
           sdkNotReady: "Le SDK Pi n'est pas pret. Ouvrez dans Pi Browser.",
           authFailed: "La connexion Pi a ete annulee ou a echoue. Ouvrez dans Pi Browser.",
           notice: "Note : Vous semblez hors de Pi Browser. Ouvrez ce lien dans Pi Browser pour effectuer un paiement Pi reel.",
@@ -451,7 +510,9 @@
           noOrders: "Aucune commande enregistree pour le moment.",
           orderIdLabel: "Commande",
           bookLabel: "Livre",
-          priceLabel: "Prix"
+          priceLabel: "Prix",
+          topBannerTitle: "Paiement Reussi ! Votre Livre est Pret au Telechargement",
+          topBannerBookPrefix: "Edition Debloquee : "
         }
       };
       var langSet = dict.ar;
@@ -462,11 +523,37 @@
 
     function updateUserBadge() {
       var badge = document.getElementById("piUserBadge");
-      if (!badge) return;
-      if (currentPiUser && currentPiUser.username) {
-        badge.textContent = "@" + currentPiUser.username;
-      } else {
-        badge.textContent = getText("guest");
+      var btnAuth = document.getElementById("btnAuth");
+      var confirmBox = document.getElementById("authConfirmBox");
+      var isLoggedIn = !!(currentPiUser && currentPiUser.username);
+
+      if (badge) {
+        if (isLoggedIn) {
+          badge.textContent = "@" + currentPiUser.username;
+          badge.className = "user-badge logged-in";
+        } else {
+          badge.textContent = getText("guest");
+          badge.className = "user-badge";
+        }
+      }
+
+      if (btnAuth) {
+        if (isLoggedIn) {
+          btnAuth.textContent = getText("loggedInBtnPrefix") + currentPiUser.username;
+          btnAuth.className = "auth-btn logged-in";
+        } else {
+          btnAuth.textContent = getText("authBtn");
+          btnAuth.className = "auth-btn";
+        }
+      }
+
+      if (confirmBox) {
+        if (isLoggedIn) {
+          confirmBox.textContent = getText("authConfirmedPrefix") + currentPiUser.username;
+          confirmBox.style.display = "block";
+        } else {
+          confirmBox.style.display = "none";
+        }
       }
     }
 
@@ -547,37 +634,47 @@
       }
     }
 
-    function setLanguage(lang) {
-      currentLang = lang;
-      document.documentElement.lang = lang;
-      document.documentElement.dir = getText("dir");
-
-      var btnAr = document.getElementById("btnAr");
-      var btnEn = document.getElementById("btnEn");
-      var btnFr = document.getElementById("btnFr");
-      if (btnAr) btnAr.className = (lang === "ar") ? "active" : "";
-      if (btnEn) btnEn.className = (lang === "en") ? "active" : "";
-      if (btnFr) btnFr.className = (lang === "fr") ? "active" : "";
-
-      var storeSub = document.getElementById("storeSub");
-      var btnAuth = document.getElementById("btnAuth");
-      var catalogHeading = document.getElementById("catalogHeading");
-      var ordersHeading = document.getElementById("ordersHeading");
-      if (storeSub) storeSub.textContent = getText("sub");
-      if (btnAuth) btnAuth.textContent = getText("authBtn");
-      if (catalogHeading) catalogHeading.textContent = getText("catalog");
-      if (ordersHeading) ordersHeading.textContent = getText("orders");
-
-      updateUserBadge();
-      updateBrowserNotice();
-      renderBooks();
-      renderOrdersList();
-    }
-
     function getCleanDownloadUrl(bookKey) {
       var book = BOOKS_DATA[bookKey];
       if (!book || !book.downloadUrl) return "";
       return String(book.downloadUrl).trim();
+    }
+
+    function buildDownloadButtonHtml(bookKey) {
+      var cleanUrl = getCleanDownloadUrl(bookKey);
+      if (cleanUrl === "") return "";
+
+      return "<a class='btn btn-download' href='" + cleanUrl + "' target='_blank' rel='noopener noreferrer'>" + getText("downloadBtn") + "</a>";
+    }
+
+    function renderTopSuccessBanner() {
+      var banner = document.getElementById("topSuccessBanner");
+      var titleEl = document.getElementById("topSuccessTitle");
+      var bookEl = document.getElementById("topSuccessBook");
+      var actionEl = document.getElementById("topSuccessAction");
+      if (!banner || !titleEl || !bookEl || !actionEl) return;
+
+      var targetKey = lastPaidBookKey;
+      if (!targetKey) {
+        var i = 0;
+        for (i = 0; i < ordersList.length; i++) {
+          if (ordersList[i].status === "paid" || ordersList[i].paid) {
+            targetKey = ordersList[i].bookKey;
+            break;
+          }
+        }
+      }
+
+      if (!targetKey || !BOOKS_DATA[targetKey]) {
+        banner.style.display = "none";
+        return;
+      }
+
+      var book = BOOKS_DATA[targetKey];
+      titleEl.textContent = getText("topBannerTitle");
+      bookEl.textContent = getText("topBannerBookPrefix") + getBookTitle(book);
+      actionEl.innerHTML = buildDownloadButtonHtml(targetKey);
+      banner.style.display = "block";
     }
 
     function openBookAutomatically(bookKey) {
@@ -593,11 +690,30 @@
       }
     }
 
-    function buildDownloadButtonHtml(bookKey) {
-      var cleanUrl = getCleanDownloadUrl(bookKey);
-      if (cleanUrl === "") return "";
+    function setLanguage(lang) {
+      currentLang = lang;
+      document.documentElement.lang = lang;
+      document.documentElement.dir = getText("dir");
 
-      return "<a class='btn btn-download' href='" + cleanUrl + "' target='_blank' rel='noopener noreferrer'>" + getText("downloadBtn") + "</a>";
+      var btnAr = document.getElementById("btnAr");
+      var btnEn = document.getElementById("btnEn");
+      var btnFr = document.getElementById("btnFr");
+      if (btnAr) btnAr.className = (lang === "ar") ? "active" : "";
+      if (btnEn) btnEn.className = (lang === "en") ? "active" : "";
+      if (btnFr) btnFr.className = (lang === "fr") ? "active" : "";
+
+      var storeSub = document.getElementById("storeSub");
+      var catalogHeading = document.getElementById("catalogHeading");
+      var ordersHeading = document.getElementById("ordersHeading");
+      if (storeSub) storeSub.textContent = getText("sub");
+      if (catalogHeading) catalogHeading.textContent = getText("catalog");
+      if (ordersHeading) ordersHeading.textContent = getText("orders");
+
+      updateUserBadge();
+      updateBrowserNotice();
+      renderTopSuccessBanner();
+      renderBooks();
+      renderOrdersList();
     }
 
     function updateOrderStatus(orderId, status) {
@@ -612,9 +728,21 @@
         }
       }
       saveOrders();
+
+      if (status === "paid" && matchedBookKey) {
+        lastPaidBookKey = matchedBookKey;
+      }
+
+      renderTopSuccessBanner();
       renderOrdersList();
 
       if (status === "paid" && matchedBookKey) {
+        var ordersSec = document.getElementById("ordersSection");
+        if (ordersSec && typeof ordersSec.scrollIntoView === "function") {
+          try {
+            ordersSec.scrollIntoView({ behavior: "smooth", block: "start" });
+          } catch (e) {}
+        }
         openBookAutomatically(matchedBookKey);
       }
     }
