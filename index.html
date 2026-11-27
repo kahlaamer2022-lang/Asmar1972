@@ -404,344 +404,104 @@
       }
     };
 
-    const ORDERS_STORAGE_KEY = "asmar1972_orders_v2";
-    const USER_STORAGE_KEY = "asmar1972_pi_user_v2";
+    const ORDERS_KEY = "asmar1972_orders_v3";
+    const USER_KEY = "asmar1972_user_v3";
+    const WIN_PREFIX = "ASMAR1972_STATE:";
+
+    function writeCookie(name, val) {
+      try {
+        document.cookie = name + "=" + encodeURIComponent(val) + "; path=/; max-age=2592000; SameSite=Lax";
+      } catch (e) {}
+    }
+
+    function readCookie(name) {
+      try {
+        const prefix = name + "=";
+        const parts = (document.cookie || "").split(";");
+        for (let i = 0; i < parts.length; i++) {
+          const part = parts[i].trim();
+          if (part.indexOf(prefix) === 0) {
+            return decodeURIComponent(part.substring(prefix.length));
+          }
+        }
+      } catch (e) {}
+      return "";
+    }
+
+    function readWindowState() {
+      try {
+        if (typeof window.name === "string" && window.name.indexOf(WIN_PREFIX) === 0) {
+          return JSON.parse(window.name.substring(WIN_PREFIX.length));
+        }
+      } catch (e) {}
+      return {};
+    }
+
+    function writeWindowState(patch) {
+      try {
+        const current = readWindowState();
+        const next = Object.assign({}, current, patch);
+        window.name = WIN_PREFIX + JSON.stringify(next);
+      } catch (e) {}
+    }
 
     function readSavedOrders() {
       try {
-        const raw = localStorage.getItem(ORDERS_STORAGE_KEY);
-        const parsed = raw ? JSON.parse(raw) : [];
-        return Array.isArray(parsed) ? parsed : [];
-      } catch (e) {
-        return [];
-      }
+        const ls = localStorage.getItem(ORDERS_KEY);
+        if (ls) {
+          const parsed = JSON.parse(ls);
+          if (Array.isArray(parsed) && parsed.length) return parsed;
+        }
+      } catch (e) {}
+      const win = readWindowState();
+      if (Array.isArray(win.orders) && win.orders.length) return win.orders;
+      try {
+        const ck = readCookie(ORDERS_KEY);
+        if (ck) {
+          const parsedCk = JSON.parse(ck);
+          if (Array.isArray(parsedCk) && parsedCk.length) return parsedCk;
+        }
+      } catch (e) {}
+      return [];
     }
 
     function writeSavedOrders(list) {
+      const safeList = Array.isArray(list) ? list : [];
+      try { localStorage.setItem(ORDERS_KEY, JSON.stringify(safeList)); } catch (e) {}
+      writeWindowState({ orders: safeList });
       try {
-        localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify(list));
+        const serialized = JSON.stringify(safeList);
+        if (serialized.length < 3500) {
+          writeCookie(ORDERS_KEY, serialized);
+        }
       } catch (e) {}
+    }
+
+    function clearSavedOrders() {
+      try { localStorage.removeItem(ORDERS_KEY); } catch (e) {}
+      writeWindowState({ orders: [], user: null });
+      writeCookie(ORDERS_KEY, "");
+      writeCookie(USER_KEY, "");
     }
 
     function readSavedUser() {
       try {
-        const raw = localStorage.getItem(USER_STORAGE_KEY);
-        return raw ? JSON.parse(raw) : null;
-      } catch (e) {
-        return null;
-      }
+        const ls = localStorage.getItem(USER_KEY);
+        if (ls) return JSON.parse(ls);
+      } catch (e) {}
+      const win = readWindowState();
+      if (win && win.user) return win.user;
+      try {
+        const ck = readCookie(USER_KEY);
+        if (ck) return JSON.parse(ck);
+      } catch (e) {}
+      return null;
     }
 
     function writeSavedUser(user) {
       try {
-        if (user) {
-          localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user));
-        } else {
-          localStorage.removeItem(USER_STORAGE_KEY);
-        }
+        if (user) localStorage.setItem(USER_KEY, JSON.stringify(user));
+        else localStorage.removeItem(USER_KEY);
       } catch (e) {}
-    }
-
-    let lang = "ar";
-    let piUser = readSavedUser();
-    let orders = readSavedOrders();
-    let activeDetailId = null;
-    let latestPaidProductId = (() => {
-      const paid = orders.find((o) => o && o.status === "paid");
-      return paid ? paid.productId : null;
-    })();
-
-    try {
-      if (window.Pi && typeof window.Pi.init === "function") {
-        window.Pi.init({ version: "2.0", sandbox: false });
-      }
-    } catch (e) {}
-
-    function t(key) {
-      return (I18N[lang] && I18N[lang][key]) || I18N.ar[key] || "";
-    }
-
-    function showToast(msg) {
-      const el = document.getElementById("toastBox");
-      el.textContent = msg;
-      el.style.display = "block";
-      setTimeout(() => { el.style.display = "none"; }, 3000);
-    }
-
-    function copyStr(val) {
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(val).then(() => showToast(t("copied"))).catch(() => fallbackCopy(val));
-      } else {
-        fallbackCopy(val);
-      }
-    }
-
-    function fallbackCopy(val) {
-      const ta = document.createElement("textarea");
-      ta.value = val;
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand("copy");
-      document.body.removeChild(ta);
-      showToast(t("copied"));
-    }
-
-    function shareStore() {
-      const url = window.location.href || "https://asmar1972.kahlaamer2022.workers.dev";
-      if (navigator.share) {
-        navigator.share({ title: "Asmar 1972", text: t("aboutDesc"), url }).catch(() => copyStr(url));
-      } else {
-        copyStr(url);
-      }
-    }
-
-    function clearSession() {
-      piUser = null;
-      orders = [];
-      activeDetailId = null;
-      latestPaidProductId = null;
-      writeSavedUser(null);
-      writeSavedOrders([]);
-      try { localStorage.removeItem("asmar1972_orders"); } catch (e) {}
-      updateUserUI();
-      renderTopDownload();
-      renderDetails();
-      renderOrders();
-      showToast(t("cleared"));
-    }
-
-    function updateUserUI() {
-      const badge = document.getElementById("userBadge");
-      badge.textContent = piUser && piUser.username ? "@" + piUser.username : t("guest");
-    }
-
-    function loginPi() {
-      if (!window.Pi || typeof window.Pi.authenticate !== "function") {
-        showToast("Pi SDK غير متاح خارج Pi Browser");
-        return;
-      }
-      window.Pi.authenticate(["username", "payments"], () => {})
-        .then((auth) => {
-          if (auth && auth.user) {
-            piUser = auth.user;
-            writeSavedUser(piUser);
-            updateUserUI();
-            showToast("@" + piUser.username);
-          }
-        })
-        .catch(() => showToast("تعذّر تسجيل الدخول عبر Pi"));
-    }
-
-    function renderTopDownload() {
-      const box = document.getElementById("topDownloadBox");
-      const item = PRODUCTS.find((p) => p.id === latestPaidProductId);
-      if (!item || !item.url) {
-        box.style.display = "none";
-        return;
-      }
-      document.getElementById("topDlTitle").textContent = t("topDlTitle");
-      document.getElementById("topDlBook").textContent = t("topDlBookPrefix") + (item.title[lang] || item.title.ar);
-      document.getElementById("topDlActions").innerHTML = `
-        <a class="btn btn-dl" href="${item.url}" target="_blank" rel="noopener noreferrer">${t("dlBtn")}</a>
-        <button type="button" class="btn-copy" onclick="copyStr('${item.url}')">${t("copyBtn")}</button>
-      `;
-      box.style.display = "block";
-    }
-
-    function markOrderPaid(order, product) {
-      order.status = "paid";
-      writeSavedOrders(orders);
-      latestPaidProductId = product.id;
-      renderTopDownload();
-      renderOrders();
-      document.getElementById("topDownloadBox").scrollIntoView({ behavior: "smooth", block: "center" });
-      window.open(product.url, "_blank", "noopener,noreferrer");
-    }
-
-    function showDetails(id) {
-      activeDetailId = id;
-      renderDetails();
-      document.getElementById("detailPanel").scrollIntoView({ behavior: "smooth", block: "nearest" });
-    }
-
-    function hideDetails() {
-      activeDetailId = null;
-      renderDetails();
-    }
-
-    function renderDetails() {
-      const panel = document.getElementById("detailPanel");
-      const item = PRODUCTS.find((p) => p.id === activeDetailId);
-      if (!item) {
-        panel.style.display = "none";
-        return;
-      }
-      document.getElementById("detailTitle").textContent = item.title[lang] || item.title.ar;
-      document.getElementById("detailMeta").textContent = (item.cat[lang] || item.cat.ar) + " | " + item.price + " Pi";
-      document.getElementById("detailText").textContent = item.desc[lang] || item.desc.ar;
-      document.getElementById("btnCloseDetail").textContent = t("closeBtn");
-      panel.style.display = "block";
-    }
-
-    function orderProduct(id) {
-      const item = PRODUCTS.find((p) => p.id === id);
-      if (!item) return;
-
-      const order = {
-        id: "ORD-" + Date.now(),
-        productId: item.id,
-        price: item.price,
-        status: "pending"
-      };
-      orders.unshift(order);
-      writeSavedOrders(orders);
-      renderOrders();
-
-      if (window.Pi && typeof window.Pi.createPayment === "function") {
-        const runPay = () => {
-          window.Pi.createPayment(
-            {
-              amount: item.price,
-              memo: item.title[lang] || item.title.ar,
-              metadata: { orderId: order.id, productId: item.id }
-            },
-            {
-              onReadyForServerApproval: (paymentId) => {
-                fetch("/api/pi/approve", {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ paymentId, orderId: order.id })
-                }).catch(() => {});
-              },
-              onReadyForServerCompletion: (paymentId, txid) => {
-                fetch("/api/pi/complete", {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ paymentId, txid, orderId: order.id })
-                })
-                  .then((r) => r.ok ? r.json() : null)
-                  .then((data) => {
-                    if (data && data.ok !== false) {
-                      markOrderPaid(order, item);
-                    }
-                  })
-                  .catch(() => {});
-              },
-              onCancel: () => {
-                order.status = "cancelled";
-                writeSavedOrders(orders);
-                renderOrders();
-              },
-              onError: () => {
-                order.status = "cancelled";
-                writeSavedOrders(orders);
-                renderOrders();
-              }
-            }
-          ).catch(() => {});
-        };
-
-        if (!piUser) {
-          window.Pi.authenticate(["username", "payments"], () => {})
-            .then((auth) => {
-              if (auth && auth.user) {
-                piUser = auth.user;
-                writeSavedUser(piUser);
-                updateUserUI();
-                runPay();
-              }
-            })
-            .catch(() => {});
-        } else {
-          runPay();
-        }
-      }
-    }
-
-    function renderProducts() {
-      const grid = document.getElementById("productsGrid");
-      grid.innerHTML = PRODUCTS.map((p) => `
-        <div class="card">
-          <div>
-            <span class="cat">${p.cat[lang] || p.cat.ar}</span>
-            <h3>${p.title[lang] || p.title.ar}</h3>
-            <p>${p.desc[lang] || p.desc.ar}</p>
-          </div>
-          <div>
-            <div class="price">${p.price} Pi</div>
-            <div class="actions">
-              <button type="button" class="btn-order" onclick="orderProduct('${p.id}')">${t("orderBtn")} (${p.price} Pi)</button>
-              <button type="button" class="btn-detail" onclick="showDetails('${p.id}')">${t("detailBtn")}</button>
-            </div>
-          </div>
-        </div>
-      `).join("");
-    }
-
-    function renderOrders() {
-      const box = document.getElementById("ordersContainer");
-      if (!orders.length) {
-        box.innerHTML = "<p style='margin:0;color:#4b5563;'>" + t("noOrders") + "</p>";
-        return;
-      }
-      box.innerHTML = orders.map((o) => {
-        const p = PRODUCTS.find((x) => x.id === o.productId);
-        const title = p ? (p.title[lang] || p.title.ar) : o.productId;
-        const url = p ? p.url : "";
-        let statusHtml = `<div class="pending-msg">${t("pending")}</div>`;
-        let extra = "";
-        if (o.status === "paid") {
-          statusHtml = `<div class="paid-msg">${t("paid")}</div>`;
-          if (url) {
-            extra = `
-              <div class="actions" style="margin-top:8px;">
-                <a class="btn btn-dl" href="${url}" target="_blank" rel="noopener noreferrer">${t("dlBtn")}</a>
-                <button type="button" class="btn-copy" onclick="copyStr('${url}')">${t("copyBtn")}</button>
-              </div>
-            `;
-          }
-        } else if (o.status === "cancelled") {
-          statusHtml = `<div class="cancel-msg">${t("cancelled")}</div>`;
-        }
-        return `
-          <div class="order-card ${o.status === "paid" ? "order-paid" : ""}">
-            <div><strong>${o.id}</strong> — ${title} (${o.price} Pi)</div>
-            ${statusHtml}
-            ${extra}
-          </div>
-        `;
-      }).join("");
-    }
-
-    function switchLang(newLang) {
-      lang = newLang;
-      document.documentElement.lang = lang;
-      document.documentElement.dir = t("dir");
-
-      document.getElementById("langAr").className = "btn-lang" + (lang === "ar" ? " active" : "");
-      document.getElementById("langEn").className = "btn-lang" + (lang === "en" ? " active" : "");
-      document.getElementById("langFr").className = "btn-lang" + (lang === "fr" ? " active" : "");
-
-      document.getElementById("ecoBar").textContent = t("eco");
-      document.getElementById("subTitle").textContent = t("sub");
-      document.getElementById("btnLogin").textContent = t("login");
-      document.getElementById("btnShare").textContent = t("share");
-      document.getElementById("btnClear").textContent = t("clear");
-      document.getElementById("aboutTitle").textContent = t("aboutTitle");
-      document.getElementById("aboutDesc").textContent = t("aboutDesc");
-      document.getElementById("catalogTitle").textContent = t("catalog");
-      document.getElementById("ordersTitle").textContent = t("orders");
-      document.getElementById("policyTitle").textContent = t("policyTitle");
-      document.getElementById("policyText").textContent = t("policyText");
-
-      updateUserUI();
-      renderTopDownload();
-      renderProducts();
-      renderDetails();
-      renderOrders();
-    }
-
-    switchLang("ar");
-  </script>
-</body>
-</html>
+      writeWindowState({ user: user || null });
+      writeCookie(USER_KEY, user ? JSON.stringify(user) :
