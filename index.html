@@ -92,6 +92,17 @@
       font-weight: bold;
       display: none;
     }
+    .done-notice-box {
+      background: #f0fdf4;
+      border: 1px solid #10b981;
+      color: #065f46;
+      padding: 12px 14px;
+      border-radius: 8px;
+      margin-bottom: 18px;
+      font-size: 14px;
+      font-weight: bold;
+      display: none;
+    }
     .top-success-banner {
       display: none;
       background: #ecfdf5;
@@ -211,6 +222,7 @@
   <main class="container">
     <div id="browserNotice" class="notice-box"></div>
     <div id="authConfirmBox" class="auth-confirm-box"></div>
+    <div id="doneNoticeBox" class="done-notice-box"></div>
 
     <div id="topSuccessBanner" class="top-success-banner">
       <div id="topSuccessTitle" class="top-success-title">تم الدفع بنجاح! كتابك جاهز للتحميل الآن</div>
@@ -353,6 +365,9 @@
     var currentPiUser = null;
     var ordersList = loadOrders();
     var lastPaidBookKey = null;
+    var downloadBannerDismissed = false;
+    var downloadHideTimer = null;
+    var allCompletedNoticeVisible = false;
 
     function isPiSdkMessagingTimeoutError(errOrMsg) {
       var text = "";
@@ -462,7 +477,8 @@
           bookLabel: "الكتاب",
           priceLabel: "السعر",
           topBannerTitle: "تم الدفع بنجاح! كتابك جاهز للتحميل الآن",
-          topBannerBookPrefix: "الإصدار المفعّل: "
+          topBannerBookPrefix: "الإصدار المفعّل: ",
+          allDoneNotice: "تم فتح/تحميل الكتاب بنجاح واكتملت العملية بالكامل."
         },
         en: {
           dir: "ltr",
@@ -487,7 +503,8 @@
           bookLabel: "Book",
           priceLabel: "Price",
           topBannerTitle: "Payment Successful! Your Book is Ready to Download",
-          topBannerBookPrefix: "Unlocked Edition: "
+          topBannerBookPrefix: "Unlocked Edition: ",
+          allDoneNotice: "Book opened/downloaded successfully. Everything is completed."
         },
         fr: {
           dir: "ltr",
@@ -512,7 +529,8 @@
           bookLabel: "Livre",
           priceLabel: "Prix",
           topBannerTitle: "Paiement Reussi ! Votre Livre est Pret au Telechargement",
-          topBannerBookPrefix: "Edition Debloquee : "
+          topBannerBookPrefix: "Edition Debloquee : ",
+          allDoneNotice: "Livre ouvert/telecharge avec succes. Tout est termine."
         }
       };
       var langSet = dict.ar;
@@ -634,6 +652,29 @@
       }
     }
 
+    function renderDoneNotice() {
+      var doneBox = document.getElementById("doneNoticeBox");
+      if (!doneBox) return;
+      if (allCompletedNoticeVisible) {
+        doneBox.textContent = getText("allDoneNotice");
+        doneBox.style.display = "block";
+      } else {
+        doneBox.style.display = "none";
+      }
+    }
+
+    function scheduleDownloadBannerDismiss() {
+      if (downloadHideTimer) {
+        clearTimeout(downloadHideTimer);
+      }
+      downloadHideTimer = setTimeout(function() {
+        downloadBannerDismissed = true;
+        allCompletedNoticeVisible = true;
+        renderTopSuccessBanner();
+        renderDoneNotice();
+      }, 4000);
+    }
+
     function getCleanDownloadUrl(bookKey) {
       var book = BOOKS_DATA[bookKey];
       if (!book || !book.downloadUrl) return "";
@@ -644,7 +685,7 @@
       var cleanUrl = getCleanDownloadUrl(bookKey);
       if (cleanUrl === "") return "";
 
-      return "<a class='btn btn-download' href='" + cleanUrl + "' target='_blank' rel='noopener noreferrer'>" + getText("downloadBtn") + "</a>";
+      return "<a class='btn btn-download' href='" + cleanUrl + "' target='_blank' rel='noopener noreferrer' onclick='scheduleDownloadBannerDismiss()'>" + getText("downloadBtn") + "</a>";
     }
 
     function renderTopSuccessBanner() {
@@ -653,6 +694,11 @@
       var bookEl = document.getElementById("topSuccessBook");
       var actionEl = document.getElementById("topSuccessAction");
       if (!banner || !titleEl || !bookEl || !actionEl) return;
+
+      if (downloadBannerDismissed) {
+        banner.style.display = "none";
+        return;
+      }
 
       var targetKey = lastPaidBookKey;
       if (!targetKey) {
@@ -688,6 +734,7 @@
       } catch (e) {
         window.location.href = cleanUrl;
       }
+      scheduleDownloadBannerDismiss();
     }
 
     function setLanguage(lang) {
@@ -711,6 +758,7 @@
 
       updateUserBadge();
       updateBrowserNotice();
+      renderDoneNotice();
       renderTopSuccessBanner();
       renderBooks();
       renderOrdersList();
@@ -731,8 +779,11 @@
 
       if (status === "paid" && matchedBookKey) {
         lastPaidBookKey = matchedBookKey;
+        downloadBannerDismissed = false;
+        allCompletedNoticeVisible = false;
       }
 
+      renderDoneNotice();
       renderTopSuccessBanner();
       renderOrdersList();
 
