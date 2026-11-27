@@ -742,4 +742,555 @@
       toast.textContent = message;
       toast.style.display = "block";
       if (copyToastTimer) {
-        clear
+        clearTimeout(copyToastTimer);
+      }
+      copyToastTimer = setTimeout(function() {
+        toast.style.display = "none";
+      }, 3500);
+    }
+
+    function getCleanDownloadUrl(bookKey) {
+      var book = BOOKS_DATA[bookKey];
+      if (!book || !book.downloadUrl) return "";
+      return String(book.downloadUrl).trim();
+    }
+
+    function copyBookDownloadLink(bookKey) {
+      var cleanUrl = getCleanDownloadUrl(bookKey);
+      if (!cleanUrl) return;
+
+      if (navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
+        navigator.clipboard.writeText(cleanUrl)
+          .then(function() {
+            showCopyToast(getText("linkCopied"));
+          })
+          .catch(function() {
+            fallbackCopyText(cleanUrl);
+          });
+      } else {
+        fallbackCopyText(cleanUrl);
+      }
+    }
+
+    function fallbackCopyText(text) {
+      try {
+        var tempInput = document.createElement("textarea");
+        tempInput.value = text;
+        tempInput.setAttribute("readonly", "");
+        tempInput.style.position = "absolute";
+        tempInput.style.left = "-9999px";
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        document.execCommand("copy");
+        document.body.removeChild(tempInput);
+        showCopyToast(getText("linkCopied"));
+      } catch (e) {
+        showCopyToast(text);
+      }
+    }
+
+    function updateUserBadge() {
+      var badge = document.getElementById("piUserBadge");
+      var btnAuth = document.getElementById("btnAuth");
+      var confirmBox = document.getElementById("authConfirmBox");
+      var isLoggedIn = !!(currentPiUser && currentPiUser.username);
+
+      if (badge) {
+        if (isLoggedIn) {
+          badge.textContent = "@" + currentPiUser.username;
+          badge.className = "user-badge logged-in";
+        } else {
+          badge.textContent = getText("guest");
+          badge.className = "user-badge";
+        }
+      }
+
+      if (btnAuth) {
+        if (isLoggedIn) {
+          btnAuth.textContent = getText("loggedInBtnPrefix") + currentPiUser.username;
+          btnAuth.className = "auth-btn logged-in";
+        } else {
+          btnAuth.textContent = getText("authBtn");
+          btnAuth.className = "auth-btn";
+        }
+      }
+
+      if (confirmBox) {
+        if (isLoggedIn) {
+          confirmBox.textContent = getText("authConfirmedPrefix") + currentPiUser.username;
+          confirmBox.style.display = "block";
+        } else {
+          confirmBox.style.display = "none";
+        }
+      }
+    }
+
+    function authenticatePiUser(options) {
+      var silent = options && options.silent === true;
+      var badge = document.getElementById("piUserBadge");
+
+      if (!window.Pi || typeof window.Pi.authenticate !== "function") {
+        updateUserBadge();
+        if (!silent) {
+          alert(getText("sdkNotReady"));
+        }
+        return Promise.resolve(null);
+      }
+
+      if (badge) {
+        badge.textContent = getText("signingIn");
+      }
+
+      var settled = false;
+      var uiTimer = setTimeout(function() {
+        if (!settled && !currentPiUser) {
+          updateUserBadge();
+        }
+      }, 8000);
+
+      try {
+        var authPromise = window.Pi.authenticate(["username", "payments"], function(incompletePayment) {
+          console.log("Incomplete payment found:", incompletePayment);
+        });
+
+        if (authPromise && typeof authPromise.catch === "function") {
+          authPromise.catch(function() {});
+        }
+
+        return authPromise
+          .then(function(auth) {
+            settled = true;
+            clearTimeout(uiTimer);
+            if (auth && auth.user) {
+              currentPiUser = auth.user;
+            }
+            updateUserBadge();
+            fetchOrdersFromServer();
+            return auth;
+          })
+          .catch(function() {
+            settled = true;
+            clearTimeout(uiTimer);
+            updateUserBadge();
+            if (!silent) {
+              alert(getText("authFailed"));
+            }
+            return null;
+          });
+      } catch (err) {
+        settled = true;
+        clearTimeout(uiTimer);
+        updateUserBadge();
+        if (!silent) {
+          alert(getText("authFailed"));
+        }
+        return Promise.resolve(null);
+      }
+    }
+
+    function updateBrowserNotice() {
+      var noticeEl = document.getElementById("browserNotice");
+      if (!noticeEl) return;
+      if (!isLikelyPiBrowser()) {
+        noticeEl.textContent = getText("notice");
+        noticeEl.style.display = "block";
+      } else {
+        noticeEl.style.display = "none";
+      }
+    }
+
+    function renderDoneNotice() {
+      var doneBox = document.getElementById("doneNoticeBox");
+      if (!doneBox) return;
+      if (allCompletedNoticeVisible) {
+        doneBox.textContent = getText("allDoneNotice");
+        doneBox.style.display = "block";
+      } else {
+        doneBox.style.display = "none";
+      }
+    }
+
+    function completeAndDismissBanner() {
+      downloadBannerDismissed = true;
+      allCompletedNoticeVisible = true;
+      if (lastPaidOrderId) {
+        setDismissedOrderId(lastPaidOrderId);
+      }
+      renderTopSuccessBanner();
+      renderDoneNotice();
+    }
+
+    function triggerBookDownload(bookKey) {
+      var cleanUrl = getCleanDownloadUrl(bookKey);
+      completeAndDismissBanner();
+      if (!cleanUrl) return;
+      try {
+        window.open(cleanUrl, "_blank", "noopener,noreferrer");
+      } catch (e) {}
+    }
+
+    function buildDownloadButtonHtml(bookKey) {
+      var cleanUrl = getCleanDownloadUrl(bookKey);
+      if (cleanUrl === "") return "";
+
+      var html = "<div class='action-stack'>";
+      html += "<button type='button' class='btn btn-download' data-download-book='" + bookKey + "'>" + getText("downloadBtn") + "</button>";
+      html += "<button type='button' class='btn btn-copy' data-copy-book='" + bookKey + "'>" + getText("copyLinkBtn") + "</button>";
+      html += "<div class='drive-tip'>" + getText("driveTip") + "</div>";
+      html += "</div>";
+      return html;
+    }
+
+    function renderTopSuccessBanner() {
+      try {
+        var banner = document.getElementById("topSuccessBanner");
+        var titleEl = document.getElementById("topSuccessTitle");
+        var bookEl = document.getElementById("topSuccessBook");
+        var actionEl = document.getElementById("topSuccessAction");
+        if (!banner || !titleEl || !bookEl || !actionEl) return;
+
+        if (downloadBannerDismissed) {
+          banner.style.display = "none";
+          return;
+        }
+
+        var dismissedId = getDismissedOrderId();
+        var targetKey = lastPaidBookKey;
+        var targetOrderId = lastPaidOrderId;
+
+        if (!targetKey) {
+          var i = 0;
+          for (i = 0; i < ordersList.length; i++) {
+            if (ordersList[i].status === "paid" || ordersList[i].paid) {
+              targetKey = ordersList[i].bookKey;
+              targetOrderId = ordersList[i].id || "";
+              break;
+            }
+          }
+        }
+
+        if (targetOrderId && dismissedId && String(targetOrderId) === String(dismissedId)) {
+          banner.style.display = "none";
+          return;
+        }
+
+        if (!targetKey || !BOOKS_DATA[targetKey]) {
+          banner.style.display = "none";
+          return;
+        }
+
+        lastPaidOrderId = targetOrderId;
+        var book = BOOKS_DATA[targetKey];
+        titleEl.textContent = getText("topBannerTitle");
+        bookEl.textContent = getText("topBannerBookPrefix") + getBookTitle(book);
+        actionEl.innerHTML = buildDownloadButtonHtml(targetKey);
+        banner.style.display = "block";
+      } catch (e) {}
+    }
+
+    function updateOrderStatus(orderId, status) {
+      var i = 0;
+      var matchedBookKey = null;
+      var updatedOrder = null;
+      for (i = 0; i < ordersList.length; i++) {
+        if (ordersList[i].id === orderId) {
+          ordersList[i].status = status;
+          ordersList[i].paid = (status === "paid");
+          matchedBookKey = ordersList[i].bookKey;
+          updatedOrder = ordersList[i];
+          break;
+        }
+      }
+      saveOrders();
+      if (updatedOrder) {
+        syncOrderToServer(updatedOrder);
+      }
+
+      if (status === "paid" && matchedBookKey) {
+        lastPaidBookKey = matchedBookKey;
+        lastPaidOrderId = orderId;
+        downloadBannerDismissed = false;
+        allCompletedNoticeVisible = false;
+      }
+
+      renderDoneNotice();
+      renderTopSuccessBanner();
+      renderOrdersList();
+
+      if (status === "paid" && matchedBookKey) {
+        var ordersSec = document.getElementById("ordersSection");
+        if (ordersSec && typeof ordersSec.scrollIntoView === "function") {
+          try {
+            ordersSec.scrollIntoView({ behavior: "smooth", block: "start" });
+          } catch (e) {}
+        }
+        triggerBookDownload(matchedBookKey);
+      }
+    }
+
+    function isCompleteResponseSuccess(res, data) {
+      if (!res || !res.ok) return false;
+      if (!data) return true;
+      if (data.ok === false || data.success === false || data.error) return false;
+      return true;
+    }
+
+    function createOrderAndPay(bookKey) {
+      var book = BOOKS_DATA[bookKey];
+      if (!book) return;
+
+      var newOrder = {
+        id: "ORD-" + String(Date.now()),
+        bookKey: bookKey,
+        pricePi: book.pricePi,
+        status: "pending",
+        paid: false
+      };
+
+      ordersList.unshift(newOrder);
+      saveOrders();
+      syncOrderToServer(newOrder);
+      renderOrdersList();
+
+      if (window.Pi && typeof window.Pi.createPayment === "function") {
+        var startPayment = function() {
+          try {
+            var payPromise = window.Pi.createPayment(
+              {
+                amount: book.pricePi,
+                memo: getBookTitle(book),
+                metadata: { orderId: newOrder.id, bookKey: bookKey }
+              },
+              {
+                onReadyForServerApproval: function(paymentId) {
+                  fetch("/api/pi/approve", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ paymentId: paymentId, orderId: newOrder.id })
+                  })
+                  .then(function(res) { return res.json().catch(function() { return {}; }); })
+                  .catch(function() {
+                    showCopyToast(getText("pendingText"));
+                  });
+                },
+                onReadyForServerCompletion: function(paymentId, txid) {
+                  var responseObj = null;
+                  fetch("/api/pi/complete", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ paymentId: paymentId, txid: txid, orderId: newOrder.id })
+                  })
+                  .then(function(res) {
+                    responseObj = res;
+                    return res.json().catch(function() { return {}; });
+                  })
+                  .then(function(data) {
+                    if (isCompleteResponseSuccess(responseObj, data)) {
+                      updateOrderStatus(newOrder.id, "paid");
+                    } else {
+                      showCopyToast(getText("pendingText"));
+                    }
+                  })
+                  .catch(function() {
+                    showCopyToast(getText("pendingText"));
+                  });
+                },
+                onCancel: function() {
+                  updateOrderStatus(newOrder.id, "cancelled");
+                },
+                onError: function() {
+                  updateOrderStatus(newOrder.id, "cancelled");
+                }
+              }
+            );
+
+            if (payPromise && typeof payPromise.catch === "function") {
+              payPromise.catch(function() {});
+            }
+          } catch (err) {}
+        };
+
+        if (!currentPiUser) {
+          authenticatePiUser({ silent: false }).then(function(auth) {
+            if (auth && auth.user) {
+              startPayment();
+            }
+          });
+        } else {
+          startPayment();
+        }
+      }
+    }
+
+    function renderBooks() {
+      try {
+        var grid = document.getElementById("booksGrid");
+        if (!grid) return;
+
+        var html = "";
+        var keys = Object.keys(BOOKS_DATA);
+        var i = 0;
+        for (i = 0; i < keys.length; i++) {
+          var key = keys[i];
+          var book = BOOKS_DATA[key];
+          html += "<div class='card'>";
+          html += "<div>";
+          html += "<span class='badge'>" + getBookCategory(book) + "</span>";
+          html += "<h3>" + getBookTitle(book) + "</h3>";
+          html += "<p>" + getBookDesc(book) + "</p>";
+          html += "</div>";
+          html += "<div>";
+          html += "<div class='price'>" + book.pricePi + " Pi</div>";
+          html += "<button type='button' class='btn btn-pay' data-pay-book='" + key + "'>" + getText("orderBtn") + " (" + book.pricePi + " Pi)</button>";
+          html += "</div>";
+          html += "</div>";
+        }
+        grid.innerHTML = html;
+      } catch (e) {}
+    }
+
+    function renderOrdersList() {
+      try {
+        var container = document.getElementById("ordersList");
+        if (!container) return;
+
+        if (ordersList.length === 0) {
+          container.innerHTML = "<p>" + getText("noOrders") + "</p>";
+          return;
+        }
+
+        var html = "";
+        var i = 0;
+        for (i = 0; i < ordersList.length; i++) {
+          var order = ordersList[i];
+          var book = BOOKS_DATA[order.bookKey];
+          var bookTitle = book ? getBookTitle(book) : order.bookKey;
+          var currentStatus = order.status || (order.paid ? "paid" : "pending");
+          var itemClass = (currentStatus === "paid") ? "order-item order-item-paid" : "order-item";
+
+          html += "<div class='" + itemClass + "'>";
+          html += "<div><strong>" + getText("orderIdLabel") + ":</strong> " + order.id + "</div>";
+          html += "<div><strong>" + getText("bookLabel") + ":</strong> " + bookTitle + "</div>";
+          html += "<div><strong>" + getText("priceLabel") + ":</strong> " + order.pricePi + " Pi</div>";
+
+          if (currentStatus === "paid") {
+            html += "<div class='status-paid'>" + getText("paidText") + "</div>";
+            html += buildDownloadButtonHtml(order.bookKey);
+          } else if (currentStatus === "cancelled") {
+            html += "<div class='status-cancelled'>" + getText("cancelledText") + "</div>";
+          } else {
+            html += "<div class='status-pending'>" + getText("pendingText") + "</div>";
+          }
+
+          html += "</div>";
+        }
+
+        container.innerHTML = html;
+      } catch (e) {}
+    }
+
+    function setLanguage(lang) {
+      currentLang = lang;
+      document.documentElement.lang = lang;
+      document.documentElement.dir = getText("dir");
+
+      var btnAr = document.getElementById("btnAr");
+      var btnEn = document.getElementById("btnEn");
+      var btnFr = document.getElementById("btnFr");
+      if (btnAr) btnAr.className = (lang === "ar") ? "active" : "";
+      if (btnEn) btnEn.className = (lang === "en") ? "active" : "";
+      if (btnFr) btnFr.className = (lang === "fr") ? "active" : "";
+
+      var storeSub = document.getElementById("storeSub");
+      var aboutHeading = document.getElementById("aboutHeading");
+      var aboutText = document.getElementById("aboutText");
+      var tagInstant = document.getElementById("tagInstant");
+      var tagWorks = document.getElementById("tagWorks");
+      var tagPi = document.getElementById("tagPi");
+      var policyHeading = document.getElementById("policyHeading");
+      var policyText = document.getElementById("policyText");
+      var catalogHeading = document.getElementById("catalogHeading");
+      var ordersHeading = document.getElementById("ordersHeading");
+      if (storeSub) storeSub.textContent = getText("sub");
+      if (aboutHeading) aboutHeading.textContent = getText("aboutHeading");
+      if (aboutText) aboutText.textContent = getText("aboutText");
+      if (tagInstant) tagInstant.textContent = getText("tagInstant");
+      if (tagWorks) tagWorks.textContent = getText("tagWorks");
+      if (tagPi) tagPi.textContent = getText("tagPi");
+      if (policyHeading) policyHeading.textContent = getText("policyHeading");
+      if (policyText) policyText.textContent = getText("policyText");
+      if (catalogHeading) catalogHeading.textContent = getText("catalog");
+      if (ordersHeading) ordersHeading.textContent = getText("orders");
+
+      updateUserBadge();
+      updateBrowserNotice();
+      renderDoneNotice();
+      renderTopSuccessBanner();
+      renderBooks();
+      renderOrdersList();
+    }
+
+    function bindEvents() {
+      var btnAuth = document.getElementById("btnAuth");
+      if (btnAuth) {
+        btnAuth.addEventListener("click", function() {
+          authenticatePiUser({ silent: false });
+        });
+      }
+
+      var langButtons = document.querySelectorAll(".lang-bar button[data-lang]");
+      var j = 0;
+      for (j = 0; j < langButtons.length; j++) {
+        langButtons[j].addEventListener("click", function() {
+          var chosenLang = this.getAttribute("data-lang");
+          if (chosenLang) {
+            setLanguage(chosenLang);
+          }
+        });
+      }
+
+      document.addEventListener("click", function(event) {
+        var target = event.target;
+        if (!target) return;
+
+        var payBtn = target.closest("[data-pay-book]");
+        if (payBtn) {
+          var bookKey = payBtn.getAttribute("data-pay-book");
+          if (bookKey) {
+            createOrderAndPay(bookKey);
+          }
+          return;
+        }
+
+        var copyBtn = target.closest("[data-copy-book]");
+        if (copyBtn) {
+          var copyKey = copyBtn.getAttribute("data-copy-book");
+          if (copyKey) {
+            copyBookDownloadLink(copyKey);
+          }
+          return;
+        }
+
+        var dlBtn = target.closest("[data-download-book]");
+        if (dlBtn) {
+          var dlKey = dlBtn.getAttribute("data-download-book");
+          if (dlKey) {
+            triggerBookDownload(dlKey);
+          }
+        }
+      });
+    }
+
+    function initApp() {
+      bindEvents();
+      setLanguage("ar");
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", initApp);
+    } else {
+      initApp();
+    }
+  </script>
+</body>
+</html>
