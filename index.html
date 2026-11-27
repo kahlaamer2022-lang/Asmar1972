@@ -1079,9 +1079,6 @@
     function initApp() {
       bindEvents();
       setLanguage("ar");
-      if (isLikelyPiBrowser() && window.Pi && typeof window.Pi.authenticate === "function") {
-        authenticatePiUser({ silent: true });
-      }
     }
 
     if (document.readyState === "loading") {
