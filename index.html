@@ -460,12 +460,15 @@
     };
 
     var STORAGE_KEY = "asmar1972_orders_v1";
+    var DISMISSED_ORDER_KEY = "asmar1972_dismissed_order_id";
     var currentLang = "ar";
     var currentPiUser = null;
     var ordersList = loadOrders();
     var lastPaidBookKey = null;
+    var lastPaidOrderId = null;
     var downloadBannerDismissed = false;
     var downloadHideTimer = null;
+    var pendingReturnDismiss = false;
     var allCompletedNoticeVisible = false;
     var copyToastTimer = null;
 
@@ -505,6 +508,22 @@
     function isLikelyPiBrowser() {
       var ua = navigator.userAgent || "";
       return ua.indexOf("PiBrowser") !== -1 || ua.indexOf("Pi Browser") !== -1;
+    }
+
+    function getDismissedOrderId() {
+      try {
+        return localStorage.getItem(DISMISSED_ORDER_KEY) || "";
+      } catch (e) {
+        return "";
+      }
+    }
+
+    function setDismissedOrderId(orderId) {
+      try {
+        if (orderId) {
+          localStorage.setItem(DISMISSED_ORDER_KEY, String(orderId));
+        }
+      } catch (e) {}
     }
 
     function loadOrders() {
@@ -892,16 +911,32 @@
       }
     }
 
+    function completeAndDismissBanner() {
+      if (downloadHideTimer) {
+        clearTimeout(downloadHideTimer);
+        downloadHideTimer = null;
+      }
+      pendingReturnDismiss = false;
+      downloadBannerDismissed = true;
+      allCompletedNoticeVisible = true;
+      if (lastPaidOrderId) {
+        setDismissedOrderId(lastPaidOrderId);
+      }
+      renderTopSuccessBanner();
+      renderDoneNotice();
+    }
+
     function scheduleDownloadBannerDismiss() {
+      pendingReturnDismiss = true;
+      if (lastPaidOrderId) {
+        setDismissedOrderId(lastPaidOrderId);
+      }
       if (downloadHideTimer) {
         clearTimeout(downloadHideTimer);
       }
       downloadHideTimer = setTimeout(function() {
-        downloadBannerDismissed = true;
-        allCompletedNoticeVisible = true;
-        renderTopSuccessBanner();
-        renderDoneNotice();
-      }, 4000);
+        completeAndDismissBanner();
+      }, 2500);
     }
 
     function buildDownloadButtonHtml(bookKey) {
@@ -929,15 +964,24 @@
           return;
         }
 
+        var dismissedId = getDismissedOrderId();
         var targetKey = lastPaidBookKey;
+        var targetOrderId = lastPaidOrderId;
+
         if (!targetKey) {
           var i = 0;
           for (i = 0; i < ordersList.length; i++) {
             if (ordersList[i].status === "paid" || ordersList[i].paid) {
               targetKey = ordersList[i].bookKey;
+              targetOrderId = ordersList[i].id || "";
               break;
             }
           }
+        }
+
+        if (targetOrderId && dismissedId && String(targetOrderId) === String(dismissedId)) {
+          banner.style.display = "none";
+          return;
         }
 
         if (!targetKey || !BOOKS_DATA[targetKey]) {
@@ -945,6 +989,7 @@
           return;
         }
 
+        lastPaidOrderId = targetOrderId;
         var book = BOOKS_DATA[targetKey];
         titleEl.textContent = getText("topBannerTitle");
         bookEl.textContent = getText("topBannerBookPrefix") + getBookTitle(book);
@@ -956,6 +1001,7 @@
     function openBookAutomatically(bookKey) {
       var cleanUrl = getCleanDownloadUrl(bookKey);
       if (!cleanUrl) return;
+      scheduleDownloadBannerDismiss();
       try {
         var openedWin = window.open(cleanUrl, "_blank", "noopener,noreferrer");
         if (!openedWin) {
@@ -964,7 +1010,6 @@
       } catch (e) {
         window.location.href = cleanUrl;
       }
-      scheduleDownloadBannerDismiss();
     }
 
     function updateOrderStatus(orderId, status) {
@@ -987,6 +1032,7 @@
 
       if (status === "paid" && matchedBookKey) {
         lastPaidBookKey = matchedBookKey;
+        lastPaidOrderId = orderId;
         downloadBannerDismissed = false;
         allCompletedNoticeVisible = false;
       }
@@ -1226,6 +1272,24 @@
           }
         });
       }
+
+      document.addEventListener("visibilitychange", function() {
+        if (!document.hidden && pendingReturnDismiss) {
+          completeAndDismissBanner();
+        }
+      });
+
+      window.addEventListener("pageshow", function() {
+        if (pendingReturnDismiss) {
+          completeAndDismissBanner();
+        }
+      });
+
+      window.addEventListener("focus", function() {
+        if (pendingReturnDismiss) {
+          completeAndDismissBanner();
+        }
+      });
 
       document.addEventListener("click", function(event) {
         var target = event.target;
