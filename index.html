@@ -608,6 +608,15 @@
       badge.textContent = piUser && piUser.username ? "@" + piUser.username : t("guest");
     }
 
+    function redirectToPiBrowserDirect() {
+      try {
+        window.location.href = PI_BROWSER_URL;
+      } catch (e) {
+        showBrowserPromptFlag = true;
+        renderBrowserPrompt();
+      }
+    }
+
     function redirectToPiBrowser() {
       showBrowserPromptFlag = true;
       renderBrowserPrompt();
@@ -723,7 +732,7 @@
       if (!item) return;
 
       if (!isInsidePiBrowser() || !window.Pi || typeof window.Pi.createPayment !== "function") {
-        redirectToPiBrowser();
+        redirectToPiBrowserDirect();
         return;
       }
 
@@ -791,11 +800,13 @@
                 writeUserSafe(piUser);
                 updateUserUI();
                 runPay();
+              } else {
+                redirectToPiBrowserDirect();
               }
             })
-            .catch(() => redirectToPiBrowser());
+            .catch(() => redirectToPiBrowserDirect());
         } catch (e) {
-          redirectToPiBrowser();
+          redirectToPiBrowserDirect();
         }
       } else {
         runPay();
