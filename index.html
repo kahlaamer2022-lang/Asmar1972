@@ -107,36 +107,29 @@
       color: #15803d;
       margin-bottom: 10px;
     }
-    .no-pi-panel {
+    .browser-prompt-panel {
       display: none;
-      background: #fffbeb;
-      border: 2px solid #f59e0b;
-      border-inline-start: 6px solid #16a34a;
+      background: #fefce8;
+      border: 2px solid #eab308;
+      border-inline-start: 6px solid #4c1d95;
       border-radius: 10px;
       padding: 16px 18px;
       margin-bottom: 18px;
-      box-shadow: 0 3px 10px rgba(245, 158, 11, 0.14);
     }
-    .no-pi-top {
+    .prompt-top {
       display: flex;
       justify-content: space-between;
       align-items: center;
       gap: 10px;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
-    .no-pi-title {
+    .prompt-title {
       margin: 0;
       font-size: 17px;
       color: #4c1d95;
       font-weight: bold;
     }
-    .no-pi-book {
-      font-size: 14px;
-      font-weight: bold;
-      color: #15803d;
-      margin-bottom: 8px;
-    }
-    .no-pi-text {
+    .prompt-text {
       margin: 0 0 12px 0;
       font-size: 14px;
       color: #1e1b4b;
@@ -184,7 +177,6 @@
     .price { font-size: 17px; font-weight: bold; color: #15803d; margin-bottom: 8px; }
     .actions { display: flex; flex-direction: column; gap: 7px; }
     .btn-order { background: #16a34a; color: #ffffff; width: 100%; }
-    .btn-no-pi { background: #4c1d95; color: #fef08a; width: 100%; border: 1px solid #facc15; }
     .btn-detail { background: #facc15; color: #1e1b4b; width: 100%; border: 1px solid #ca8a04; }
     .btn-dl { background: #eab308; color: #1e1b4b; width: 100%; border: 2px solid #6d28d9; font-size: 14px; padding: 10px 14px; }
     .btn-copy { background: #5b21b6; color: #ffffff; width: 100%; }
@@ -256,14 +248,13 @@
       <div class="actions" id="topDlActions"></div>
     </div>
 
-    <div class="no-pi-panel" id="noPiPanel">
-      <div class="no-pi-top">
-        <h3 class="no-pi-title" id="noPiTitle">ليس لديك عملة Pi أو تتصفح خارج Pi Browser؟</h3>
-        <button type="button" class="btn-close" id="btnCloseNoPi" onclick="hideNoPiPanel()">إغلاق</button>
+    <div class="browser-prompt-panel" id="browserPromptPanel">
+      <div class="prompt-top">
+        <h3 class="prompt-title" id="promptTitle">إتمام الطلب يتطلب Pi Browser</h3>
+        <button type="button" class="btn-close" id="btnClosePrompt" onclick="hideBrowserPrompt()">إغلاق</button>
       </div>
-      <div class="no-pi-book" id="noPiBook"></div>
-      <p class="no-pi-text" id="noPiText">يعتمد هذا المتجر على عملة Pi للتفعيل الفوري داخل Pi Browser. إذا لم تكن تملك عملة Pi حالياً، يمكنك نسخ تفاصيل الطلب للتواصل وطلب الإصدار، أو مشاركة رابط المتجر مع صديق يملك Pi.</p>
-      <div class="actions" id="noPiActions"></div>
+      <p class="prompt-text" id="promptText">يتم تحويلك إلى صفحة تحميل متصفح Pi Browser لإتمام الشراء والدفع داخل نظام Pi. إذا لم يفتح تلقائياً، اضغط على الزر أدناه.</p>
+      <div class="actions" id="promptActions"></div>
     </div>
 
     <div class="detail-panel" id="detailPanel">
@@ -290,6 +281,8 @@
   </div>
 
   <script>
+    const PI_BROWSER_URL = "https://minepi.com/pi-browser/";
+
     const PRODUCTS = [
       {
         id: "dodo_story",
@@ -379,14 +372,11 @@
         catalog: "قائمة الكتب والقصص",
         orders: "الطلبات وحالة الدفع والتحميل",
         orderBtn: "طلب الإصدار",
-        noPiBtn: "ليس لدي عملة Pi",
         detailBtn: "تفاصيل الإصدار",
         closeBtn: "إغلاق",
-        noPiTitle: "ليس لديك عملة Pi أو تتصفح خارج Pi Browser؟",
-        noPiBookPrefix: "الإصدار المطلوب: ",
-        noPiText: "يعتمد هذا المتجر على عملة Pi للتفعيل الفوري داخل Pi Browser. إذا لم تكن تملك عملة Pi حالياً، يمكنك نسخ تفاصيل الطلب للتواصل وطلب الإصدار، أو مشاركة رابط المتجر.",
-        copyRequestBtn: "نسخ تفاصيل الطلب",
-        requestCopied: "تم نسخ تفاصيل الطلب بنجاح.",
+        promptTitle: "إتمام الطلب يتطلب Pi Browser",
+        promptText: "يتم توجيهك إلى صفحة تنزيل متصفح Pi Browser لإتمام الشراء والدفع داخل نظام Pi. إذا لم يتم التحويل تلقائياً، اضغط على الزر أدناه.",
+        getPiBrowserBtn: "تنزيل / فتح Pi Browser",
         topDlTitle: "تم الدفع بنجاح! كتابك جاهز للتحميل الآن",
         topDlBookPrefix: "الكتاب المفعّل: ",
         dlBtn: "تحميل / فتح الكتاب الآن",
@@ -413,14 +403,11 @@
         catalog: "Books & Stories Catalog",
         orders: "Orders, Payment Status & Download",
         orderBtn: "Request Edition",
-        noPiBtn: "No Pi Coin?",
         detailBtn: "Edition Details",
         closeBtn: "Close",
-        noPiTitle: "Don't have Pi coin or browsing outside Pi Browser?",
-        noPiBookPrefix: "Selected Edition: ",
-        noPiText: "This store uses Pi coin for instant unlock inside Pi Browser. If you don't have Pi right now, you can copy your request details or share the store link.",
-        copyRequestBtn: "Copy Request Details",
-        requestCopied: "Request details copied.",
+        promptTitle: "Completing Order Requires Pi Browser",
+        promptText: "Redirecting you to the Pi Browser download page to complete payment inside the Pi Ecosystem. Use the button below if it does not open automatically.",
+        getPiBrowserBtn: "Download / Open Pi Browser",
         topDlTitle: "Payment Successful! Your Book is Ready to Download",
         topDlBookPrefix: "Unlocked Book: ",
         dlBtn: "Download / Open Book Now",
@@ -447,14 +434,11 @@
         catalog: "Catalogue Livres et Histoires",
         orders: "Commandes, Paiement et Telechargement",
         orderBtn: "Commander l Edition",
-        noPiBtn: "Pas de Pi ?",
         detailBtn: "Details de l Edition",
         closeBtn: "Fermer",
-        noPiTitle: "Vous n'avez pas de Pi ou etes hors de Pi Browser ?",
-        noPiBookPrefix: "Edition choisie : ",
-        noPiText: "Cette boutique utilise Pi pour le deblocage immediat dans Pi Browser. Sans Pi, vous pouvez copier les details de demande ou partager le lien.",
-        copyRequestBtn: "Copier les details",
-        requestCopied: "Details copies.",
+        promptTitle: "Pi Browser est requis pour commander",
+        promptText: "Redirection vers la page de telechargement de Pi Browser pour finaliser le paiement dans l'ecosysteme Pi.",
+        getPiBrowserBtn: "Telecharger / Ouvrir Pi Browser",
         topDlTitle: "Paiement Reussi ! Votre Livre est Pret au Telechargement",
         topDlBookPrefix: "Livre Debloque : ",
         dlBtn: "Telecharger / Ouvrir le Livre",
@@ -529,7 +513,7 @@
     let piUser = readUserSafe();
     let orders = readOrdersSafe();
     let activeDetailId = null;
-    let activeNoPiProductId = null;
+    let showBrowserPromptFlag = false;
     let latestPaidProductId = (() => {
       const paid = orders.find((o) => o && o.status === "paid");
       return paid ? paid.productId : null;
@@ -553,17 +537,16 @@
       setTimeout(() => { el.style.display = "none"; }, 3000);
     }
 
-    function copyStr(val, customMsg) {
+    function copyStr(val) {
       if (!val) return;
-      const doneMsg = customMsg || t("copied");
       if (navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
-        navigator.clipboard.writeText(val).then(() => showToast(doneMsg)).catch(() => fallbackCopy(val, doneMsg));
+        navigator.clipboard.writeText(val).then(() => showToast(t("copied"))).catch(() => fallbackCopy(val));
       } else {
-        fallbackCopy(val, doneMsg);
+        fallbackCopy(val);
       }
     }
 
-    function fallbackCopy(val, doneMsg) {
+    function fallbackCopy(val) {
       try {
         const ta = document.createElement("textarea");
         ta.value = val;
@@ -571,7 +554,7 @@
         ta.select();
         document.execCommand("copy");
         document.body.removeChild(ta);
-        showToast(doneMsg);
+        showToast(t("copied"));
       } catch (e) {}
     }
 
@@ -588,13 +571,13 @@
       piUser = null;
       orders = [];
       activeDetailId = null;
-      activeNoPiProductId = null;
+      showBrowserPromptFlag = false;
       latestPaidProductId = null;
       writeUserSafe(null);
       writeOrdersSafe([]);
       updateUserUI();
       renderTopDownload();
-      renderNoPiPanel();
+      renderBrowserPrompt();
       renderDetails();
       renderOrders();
       showToast(t("cleared"));
@@ -608,7 +591,7 @@
 
     function loginPi() {
       if (!window.Pi || typeof window.Pi.authenticate !== "function") {
-        showToast("Pi SDK غير متاح خارج Pi Browser");
+        redirectToPiBrowser();
         return;
       }
       try {
@@ -621,42 +604,40 @@
               showToast("@" + piUser.username);
             }
           })
-          .catch(() => showToast("تعذّر تسجيل الدخول عبر Pi"));
-      } catch (e) {}
+          .catch(() => redirectToPiBrowser());
+      } catch (e) {
+        redirectToPiBrowser();
+      }
     }
 
-    function showNoPiOption(id) {
-      activeNoPiProductId = id;
-      renderNoPiPanel();
+    function redirectToPiBrowser() {
+      showBrowserPromptFlag = true;
+      renderBrowserPrompt();
       try {
-        document.getElementById("noPiPanel").scrollIntoView({ behavior: "smooth", block: "center" });
+        window.open(PI_BROWSER_URL, "_blank", "noopener,noreferrer");
+      } catch (e) {}
+      try {
+        window.location.href = PI_BROWSER_URL;
       } catch (e) {}
     }
 
-    function hideNoPiPanel() {
-      activeNoPiProductId = null;
-      renderNoPiPanel();
+    function hideBrowserPrompt() {
+      showBrowserPromptFlag = false;
+      renderBrowserPrompt();
     }
 
-    function renderNoPiPanel() {
-      const panel = document.getElementById("noPiPanel");
+    function renderBrowserPrompt() {
+      const panel = document.getElementById("browserPromptPanel");
       if (!panel) return;
-      const item = PRODUCTS.find((p) => p.id === activeNoPiProductId);
-      if (!item) {
+      if (!showBrowserPromptFlag) {
         panel.style.display = "none";
         return;
       }
-      const title = item.title[lang] || item.title.ar;
-      const storeUrl = window.location.href || "https://asmar1972.kahlaamer2022.workers.dev";
-      const summaryText = "Asmar 1972 - " + title + " (" + item.price + " Pi) - " + storeUrl;
-
-      document.getElementById("noPiTitle").textContent = t("noPiTitle");
-      document.getElementById("noPiBook").textContent = t("noPiBookPrefix") + title + " (" + item.price + " Pi)";
-      document.getElementById("noPiText").textContent = t("noPiText");
-      document.getElementById("btnCloseNoPi").textContent = t("closeBtn");
-      document.getElementById("noPiActions").innerHTML = `
-        <button type="button" class="btn-copy" onclick="copyStr('${summaryText.replace(/'/g, "\\'")}', '${t("requestCopied").replace(/'/g, "\\'")}')">${t("copyRequestBtn")}</button>
-        <button type="button" class="btn-share" onclick="shareStore()">${t("share")}</button>
+      document.getElementById("promptTitle").textContent = t("promptTitle");
+      document.getElementById("promptText").textContent = t("promptText");
+      document.getElementById("btnClosePrompt").textContent = t("closeBtn");
+      document.getElementById("promptActions").innerHTML = `
+        <a class="btn-link btn-order" href="${PI_BROWSER_URL}" target="_blank" rel="noopener noreferrer">${t("getPiBrowserBtn")}</a>
       `;
       panel.style.display = "block";
     }
@@ -722,6 +703,11 @@
       const item = PRODUCTS.find((p) => p.id === id);
       if (!item) return;
 
+      if (!window.Pi || typeof window.Pi.createPayment !== "function") {
+        redirectToPiBrowser();
+        return;
+      }
+
       const order = {
         id: "ORD-" + Date.now(),
         productId: item.id,
@@ -732,70 +718,68 @@
       writeOrdersSafe(orders);
       renderOrders();
 
-      if (window.Pi && typeof window.Pi.createPayment === "function") {
-        const runPay = () => {
-          try {
-            window.Pi.createPayment(
-              {
-                amount: item.price,
-                memo: item.title[lang] || item.title.ar,
-                metadata: { orderId: order.id, productId: item.id }
+      const runPay = () => {
+        try {
+          window.Pi.createPayment(
+            {
+              amount: item.price,
+              memo: item.title[lang] || item.title.ar,
+              metadata: { orderId: order.id, productId: item.id }
+            },
+            {
+              onReadyForServerApproval: (paymentId) => {
+                fetch("/api/pi/approve", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ paymentId, orderId: order.id })
+                }).catch(() => {});
               },
-              {
-                onReadyForServerApproval: (paymentId) => {
-                  fetch("/api/pi/approve", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ paymentId, orderId: order.id })
-                  }).catch(() => {});
-                },
-                onReadyForServerCompletion: (paymentId, txid) => {
-                  fetch("/api/pi/complete", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ paymentId, txid, orderId: order.id })
+              onReadyForServerCompletion: (paymentId, txid) => {
+                fetch("/api/pi/complete", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ paymentId, txid, orderId: order.id })
+                })
+                  .then((r) => r.ok ? r.json() : null)
+                  .then((data) => {
+                    if (data && data.ok !== false) {
+                      markOrderPaid(order, item);
+                    }
                   })
-                    .then((r) => r.ok ? r.json() : null)
-                    .then((data) => {
-                      if (data && data.ok !== false) {
-                        markOrderPaid(order, item);
-                      }
-                    })
-                    .catch(() => {});
-                },
-                onCancel: () => {
-                  order.status = "cancelled";
-                  writeOrdersSafe(orders);
-                  renderOrders();
-                },
-                onError: () => {
-                  order.status = "cancelled";
-                  writeOrdersSafe(orders);
-                  renderOrders();
-                }
+                  .catch(() => {});
+              },
+              onCancel: () => {
+                order.status = "cancelled";
+                writeOrdersSafe(orders);
+                renderOrders();
+              },
+              onError: () => {
+                order.status = "cancelled";
+                writeOrdersSafe(orders);
+                renderOrders();
               }
-            ).catch(() => {});
-          } catch (e) {}
-        };
+            }
+          ).catch(() => {});
+        } catch (e) {}
+      };
 
-        if (!piUser) {
-          try {
-            window.Pi.authenticate(["username", "payments"], () => {})
-              .then((auth) => {
-                if (auth && auth.user) {
-                  piUser = auth.user;
-                  writeUserSafe(piUser);
-                  updateUserUI();
-                  runPay();
-                }
-              })
-              .catch(() => {});
-          } catch (e) {}
-        } else {
-          runPay();
+      if (!piUser) {
+        try {
+          window.Pi.authenticate(["username", "payments"], () => {})
+            .then((auth) => {
+              if (auth && auth.user) {
+                piUser = auth.user;
+                writeUserSafe(piUser);
+                updateUserUI();
+                runPay();
+              }
+            })
+            .catch(() => redirectToPiBrowser());
+        } catch (e) {
+          redirectToPiBrowser();
         }
       } else {
-        showNoPiOption(item.id);
+        runPay();
       }
     }
 
@@ -813,7 +797,6 @@
             <div class="price">${p.price} Pi</div>
             <div class="actions">
               <button type="button" class="btn-order" onclick="orderProduct('${p.id}')">${t("orderBtn")} (${p.price} Pi)</button>
-              <button type="button" class="btn-no-pi" onclick="showNoPiOption('${p.id}')">${t("noPiBtn")}</button>
               <button type="button" class="btn-detail" onclick="showDetails('${p.id}')">${t("detailBtn")}</button>
             </div>
           </div>
@@ -880,7 +863,7 @@
 
       updateUserUI();
       renderTopDownload();
-      renderNoPiPanel();
+      renderBrowserPrompt();
       renderProducts();
       renderDetails();
       renderOrders();
