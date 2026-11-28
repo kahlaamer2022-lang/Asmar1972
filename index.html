@@ -245,6 +245,76 @@
       display: inline-block;
     }
 
+    .filter-toolbar {
+      background: var(--pi-card);
+      border: 1px solid var(--pi-border);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 18px;
+      box-shadow: 0 4px 14px rgba(76, 29, 149, 0.06);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .search-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .search-input {
+      flex: 1;
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 2px solid var(--pi-border);
+      font-family: inherit;
+      font-size: 14px;
+      color: var(--pi-text);
+      background: #faf8ff;
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    .search-input:focus {
+      border-color: var(--pi-purple);
+      background: #ffffff;
+      box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+    }
+    .btn-reset-search {
+      background: var(--pi-purple-soft);
+      color: var(--pi-purple-dark);
+      border: 1px solid #c4b5fd;
+      padding: 10px 14px;
+      white-space: nowrap;
+    }
+    .cat-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .chip-btn {
+      background: #f5f3ff;
+      color: var(--pi-purple-dark);
+      border: 1px solid var(--pi-border);
+      border-radius: 999px;
+      padding: 6px 14px;
+      font-size: 13px;
+      font-weight: bold;
+    }
+    .chip-btn.active {
+      background: linear-gradient(135deg, var(--pi-purple) 0%, var(--pi-purple-mid) 100%);
+      color: #ffffff;
+      border-color: var(--pi-purple);
+      box-shadow: 0 3px 10px rgba(91, 33, 182, 0.22);
+    }
+    .empty-results {
+      grid-column: 1 / -1;
+      background: var(--pi-card);
+      border: 1px dashed var(--pi-purple-mid);
+      border-radius: 16px;
+      padding: 26px 20px;
+      text-align: center;
+      color: var(--pi-muted);
+    }
+
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
@@ -447,6 +517,15 @@
     </div>
 
     <h2 class="section-heading" id="catalogTitle">قائمة الكتب والقصص</h2>
+
+    <div class="filter-toolbar">
+      <div class="search-row">
+        <input type="text" id="searchInput" class="search-input" oninput="onSearchChange(this.value)" placeholder="ابحث عن كتاب أو قصة أو موضوع..." />
+        <button type="button" id="btnResetSearch" class="btn-reset-search" onclick="resetFilters()">عرض الكل</button>
+      </div>
+      <div class="cat-chips" id="categoryChips"></div>
+    </div>
+
     <div class="grid" id="productsGrid"></div>
 
     <div class="orders-box">
@@ -467,6 +546,7 @@
     const PRODUCTS = [
       {
         id: "dodo_story",
+        catKey: "children",
         price: 3,
         cat: { ar: "قصص الأطفال", en: "Children Story", fr: "Histoire Enfants" },
         title: { ar: "قصة دودو ودراجته الحمراء", en: "Dodo and His Red Bicycle", fr: "Dodo et son Velo Rouge" },
@@ -475,6 +555,7 @@
       },
       {
         id: "grandpa_nutrition",
+        catKey: "natural_nutrition",
         price: 5,
         cat: { ar: "التغذية الطبيعية", en: "Natural Nutrition", fr: "Nutrition Naturelle" },
         title: { ar: "حكمة الأجداد في التغذية", en: "Ancestors Wisdom in Nutrition", fr: "Sagesse des Ancetres en Nutrition" },
@@ -483,6 +564,7 @@
       },
       {
         id: "nutrition_tips",
+        catKey: "health_nutrition",
         price: 4,
         cat: { ar: "الصحة والتغذية", en: "Health & Nutrition", fr: "Sante et Nutrition" },
         title: { ar: "نصائح في التغذية", en: "Nutrition Tips", fr: "Conseils en Nutrition" },
@@ -491,6 +573,7 @@
       },
       {
         id: "construction_calc",
+        catKey: "projects",
         price: 6,
         cat: { ar: "أدوات ومشاريع", en: "Projects & Tools", fr: "Projets et Outils" },
         title: { ar: "حاسبة مشاريع البناء", en: "Construction Projects Calculator", fr: "Calculateur Projets Construction" },
@@ -499,6 +582,7 @@
       },
       {
         id: "amer_hero",
+        catKey: "children",
         price: 3,
         cat: { ar: "قصص الأطفال", en: "Children Story", fr: "Histoire Enfants" },
         title: { ar: "عامر البطل الصغير", en: "Amer the Little Hero", fr: "Amer le Petit Heros" },
@@ -507,6 +591,7 @@
       },
       {
         id: "amer_moto",
+        catKey: "children",
         price: 3,
         cat: { ar: "قصص الأطفال", en: "Children Story", fr: "Histoire Enfants" },
         title: { ar: "عامر وبطولة الدراجة النارية", en: "Amer and the Motorcycle Championship", fr: "Amer et le Championnat de Moto" },
@@ -515,6 +600,7 @@
       },
       {
         id: "amer_stars",
+        catKey: "children",
         price: 3,
         cat: { ar: "قصص الأطفال", en: "Children Story", fr: "Histoire Enfants" },
         title: { ar: "عامر وليلة النجوم عند الجدة", en: "Amer and the Night of Stars at Grandma", fr: "Amer et la Nuit des Etoiles chez Grand-Mere" },
@@ -523,6 +609,7 @@
       },
       {
         id: "fun_trio",
+        catKey: "children",
         price: 4,
         cat: { ar: "قصص الأطفال", en: "Children Story", fr: "Histoire Enfants" },
         title: { ar: "مغامرات الثلاثي المرح", en: "Adventures of the Fun Trio", fr: "Aventures du Trio Joyeux" },
@@ -531,12 +618,22 @@
       },
       {
         id: "humayma_bidah",
+        catKey: "wisdom",
         price: 5,
         cat: { ar: "قصص وحكم", en: "Stories & Wisdom", fr: "Contes et Sagesse" },
         title: { ar: "هميمة وبدعة - بريق الذهب وصدى الواجب -", en: "Humayma and Bidah: Gold Gleam & Echo of Duty", fr: "Houmayma et Bidah : Eclat d Or et Echo du Devoir" },
         desc: { ar: "عمل قصصي يبرز قيمة الأمانة والواجب أمام بريق المظاهر.", en: "Story highlighting duty and sincerity beyond appearances.", fr: "Recit mettant en valeur le devoir au-dela des apparences." },
         url: "https://drive.google.com/file/d/1m-PEmBbwFD-0gnWvPkwPLgfWxAilm27Q/view?usp=sharing"
       }
+    ];
+
+    const CATEGORIES = [
+      { key: "all", label: { ar: "الكل (9)", en: "All (9)", fr: "Tout (9)" } },
+      { key: "children", label: { ar: "قصص الأطفال", en: "Children Stories", fr: "Histoires Enfants" } },
+      { key: "natural_nutrition", label: { ar: "التغذية الطبيعية", en: "Natural Nutrition", fr: "Nutrition Naturelle" } },
+      { key: "health_nutrition", label: { ar: "الصحة والتغذية", en: "Health & Nutrition", fr: "Sante et Nutrition" } },
+      { key: "projects", label: { ar: "أدوات ومشاريع", en: "Projects & Tools", fr: "Projets et Outils" } },
+      { key: "wisdom", label: { ar: "قصص وحكم", en: "Stories & Wisdom", fr: "Contes et Sagesse" } }
     ];
 
     const I18N = {
@@ -551,6 +648,9 @@
         aboutTitle: "عن متجر Asmar 1972",
         aboutDesc: "متجر رقمي يقدم 9 أعمال أصلية تشمل قصص الأطفال، أدلة التغذية الطبيعية، وحاسبة مشاريع البناء مع تسليم رقمي فوري بعد إتمام الدفع عبر Pi.",
         catalog: "قائمة الكتب والقصص",
+        searchPlaceholder: "ابحث عن كتاب أو قصة أو موضوع...",
+        resetFilters: "عرض الكل",
+        noMatches: "لا توجد إصدارات مطابقة لبحثك حالياً.",
         orders: "الطلبات وحالة الدفع والتحميل",
         orderBtn: "طلب الإصدار",
         detailBtn: "تفاصيل الإصدار",
@@ -571,24 +671,3 @@
         policyTitle: "سياسة الخصوصية وشروط الاستخدام",
         policyText: "جميع المنتجات المعروضة هي ملفات رقمية متاحة فوراً بعد تأكيد الدفع ولا تتطلب شحناً مادياً. نستخدم معرف Pi فقط لتأكيد الهوية وإتمام الدفع."
       },
-      en: {
-        dir: "ltr",
-        eco: "Integrated Digital Store - Pi Ecosystem",
-        sub: "E-Books and Children Stories",
-        guest: "Guest / Signed out",
-        login: "Pi Login",
-        share: "Share Store Link",
-        clear: "Clear Session",
-        aboutTitle: "About Asmar 1972",
-        aboutDesc: "Digital store offering 9 original works including children's stories, natural nutrition guides, and a construction projects calculator with instant digital delivery via Pi.",
-        catalog: "Books & Stories Catalog",
-        orders: "Orders, Payment Status & Download",
-        orderBtn: "Request Edition",
-        detailBtn: "Edition Details",
-        closeBtn: "Close",
-        promptTitle: "Completing Order Requires Pi Browser",
-        promptText: "Redirecting you to the Pi Network invitation link to download the app and complete payment inside the Pi Ecosystem. Use the button below if it does not open automatically.",
-        getPiBrowserBtn: "Download / Open Pi via Invite",
-        topDlTitle: "Payment Successful! Your Book is Ready to Download",
-        topDlBookPrefix: "Unlocked Book: ",
-        dlBtn: "
