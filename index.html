@@ -7,114 +7,179 @@
   <script src="https://sdk.minepi.com/pi-sdk.js"></script>
   <style>
     * { box-sizing: border-box; }
+    :root {
+      --pi-purple-dark: #2e1065;
+      --pi-purple: #5b21b6;
+      --pi-purple-mid: #7c3aed;
+      --pi-purple-soft: #ede9fe;
+      --pi-gold: #f59e0b;
+      --pi-gold-bright: #fbbf24;
+      --pi-gold-soft: #fffbeb;
+      --pi-green: #059669;
+      --pi-green-soft: #d1fae5;
+      --pi-bg: #f6f4ff;
+      --pi-card: #ffffff;
+      --pi-text: #1e1b4b;
+      --pi-muted: #4b5563;
+      --pi-border: #ddd6fe;
+    }
     body {
       margin: 0;
       font-family: Tahoma, Arial, sans-serif;
-      background: #f5f3ff;
-      color: #1e1b4b;
-      line-height: 1.6;
+      background: radial-gradient(circle at top, #ede9fe 0%, var(--pi-bg) 45%, #faf8ff 100%);
+      color: var(--pi-text);
+      line-height: 1.65;
+      min-height: 100vh;
     }
     .eco-bar {
-      background: #facc15;
-      color: #1e1b4b;
+      background: linear-gradient(90deg, var(--pi-purple-dark) 0%, var(--pi-purple) 50%, var(--pi-purple-dark) 100%);
+      color: var(--pi-gold-bright);
       text-align: center;
-      padding: 8px 14px;
+      padding: 9px 16px;
       font-weight: bold;
-      font-size: 14px;
-      border-bottom: 2px solid #ca8a04;
+      font-size: 13px;
+      letter-spacing: 0.3px;
+      border-bottom: 2px solid var(--pi-gold);
     }
     header {
-      background: linear-gradient(135deg, #4c1d95 0%, #6d28d9 55%, #15803d 100%);
+      background: linear-gradient(135deg, #240b4c 0%, var(--pi-purple) 55%, var(--pi-purple-mid) 100%);
       color: #ffffff;
-      padding: 16px 20px;
+      padding: 20px 24px;
       display: flex;
       flex-wrap: wrap;
       justify-content: space-between;
       align-items: center;
-      gap: 10px;
-      border-bottom: 3px solid #facc15;
+      gap: 14px;
+      box-shadow: 0 8px 24px rgba(46, 16, 101, 0.22);
+      border-bottom: 3px solid var(--pi-gold-bright);
     }
-    .brand-title { font-size: 20px; font-weight: bold; color: #fef08a; }
-    .brand-sub { font-size: 13px; color: #ede9fe; }
-    .controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    .brand-title {
+      font-size: 23px;
+      font-weight: bold;
+      color: var(--pi-gold-bright);
+      text-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+    }
+    .brand-sub {
+      font-size: 13px;
+      color: #f3e8ff;
+      margin-top: 2px;
+    }
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
     .badge-user {
-      background: #3b0764;
-      color: #fef08a;
-      border: 1px solid #facc15;
-      padding: 6px 10px;
-      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.12);
+      color: var(--pi-gold-bright);
+      border: 1px solid rgba(251, 191, 36, 0.65);
+      padding: 7px 12px;
+      border-radius: 999px;
       font-size: 12px;
       font-weight: bold;
     }
     button, a.btn-link {
       border: none;
-      border-radius: 7px;
-      padding: 8px 12px;
+      border-radius: 10px;
+      padding: 9px 14px;
       cursor: pointer;
       font-weight: bold;
       font-family: inherit;
       font-size: 13px;
       text-decoration: none;
-      display: inline-block;
-      text-align: center;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
     }
-    .btn-pi { background: #facc15; color: #1e1b4b; }
-    .btn-share { background: #16a34a; color: #ffffff; border: 1px solid #fef08a; }
-    .btn-clear { background: #eab308; color: #1e1b4b; border: 1px solid #4c1d95; }
-    .btn-lang { background: #3b0764; color: #ffffff; border: 1px solid #c4b5fd; }
-    .btn-lang.active { background: #facc15; color: #1e1b4b; }
+    button:hover, a.btn-link:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(46, 16, 101, 0.18);
+    }
+    .btn-pi {
+      background: linear-gradient(135deg, var(--pi-gold-bright) 0%, var(--pi-gold) 100%);
+      color: var(--pi-purple-dark);
+    }
+    .btn-share {
+      background: rgba(255, 255, 255, 0.16);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+    }
+    .btn-clear {
+      background: #4c1d95;
+      color: #fef08a;
+      border: 1px solid rgba(251, 191, 36, 0.45);
+    }
+    .btn-lang {
+      background: rgba(20, 6, 44, 0.45);
+      color: #ede9fe;
+      border: 1px solid rgba(221, 214, 254, 0.35);
+      padding: 7px 11px;
+    }
+    .btn-lang.active {
+      background: var(--pi-gold-bright);
+      color: var(--pi-purple-dark);
+      border-color: var(--pi-gold-bright);
+    }
 
-    .wrap { max-width: 1100px; margin: 20px auto; padding: 0 16px; }
+    .wrap {
+      max-width: 1120px;
+      margin: 24px auto;
+      padding: 0 18px 28px;
+    }
     .box {
-      background: #ffffff;
-      border-radius: 10px;
-      padding: 15px 18px;
-      margin-bottom: 16px;
-      box-shadow: 0 2px 8px rgba(76, 29, 149, 0.08);
-      border-inline-start: 5px solid #16a34a;
-      border-top: 2px solid #facc15;
+      background: linear-gradient(135deg, #ffffff 0%, #faf7ff 100%);
+      border-radius: 16px;
+      padding: 20px 22px;
+      margin-bottom: 18px;
+      box-shadow: 0 6px 20px rgba(76, 29, 149, 0.08);
+      border: 1px solid var(--pi-border);
+      border-inline-start: 6px solid var(--pi-gold);
     }
     .toast {
       display: none;
-      background: #4c1d95;
-      color: #fef08a;
-      border: 2px solid #facc15;
-      padding: 10px 14px;
-      border-radius: 8px;
-      margin-bottom: 14px;
+      background: var(--pi-purple-dark);
+      color: var(--pi-gold-bright);
+      border: 2px solid var(--pi-gold);
+      padding: 12px 16px;
+      border-radius: 12px;
+      margin-bottom: 16px;
       font-weight: bold;
       font-size: 14px;
+      box-shadow: 0 6px 16px rgba(46, 16, 101, 0.18);
     }
     .top-download-box {
       display: none;
-      background: #dcfce7;
-      border: 3px solid #16a34a;
-      border-inline-start: 6px solid #4c1d95;
-      border-radius: 10px;
-      padding: 16px 18px;
-      margin-bottom: 18px;
-      box-shadow: 0 4px 14px rgba(21, 128, 61, 0.2);
+      background: linear-gradient(135deg, var(--pi-green-soft) 0%, #ecfdf5 100%);
+      border: 2px solid var(--pi-green);
+      border-inline-start: 6px solid var(--pi-purple);
+      border-radius: 16px;
+      padding: 18px 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 8px 22px rgba(5, 150, 105, 0.15);
     }
     .top-dl-title {
       font-size: 17px;
       font-weight: bold;
-      color: #4c1d95;
+      color: var(--pi-purple-dark);
       margin-bottom: 4px;
     }
     .top-dl-book {
       font-size: 15px;
       font-weight: bold;
-      color: #15803d;
-      margin-bottom: 10px;
+      color: var(--pi-green);
+      margin-bottom: 12px;
     }
     .browser-prompt-panel {
       display: none;
-      background: #fefce8;
-      border: 2px solid #eab308;
-      border-inline-start: 6px solid #4c1d95;
-      border-radius: 10px;
-      padding: 16px 18px;
-      margin-bottom: 18px;
+      background: linear-gradient(135deg, var(--pi-gold-soft) 0%, #ffffff 100%);
+      border: 2px solid var(--pi-gold);
+      border-inline-start: 6px solid var(--pi-purple);
+      border-radius: 16px;
+      padding: 18px 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 6px 18px rgba(245, 158, 11, 0.14);
     }
     .prompt-top {
       display: flex;
@@ -126,93 +191,208 @@
     .prompt-title {
       margin: 0;
       font-size: 17px;
-      color: #4c1d95;
+      color: var(--pi-purple-dark);
       font-weight: bold;
     }
     .prompt-text {
       margin: 0 0 12px 0;
       font-size: 14px;
-      color: #1e1b4b;
+      color: var(--pi-text);
     }
     .detail-panel {
       display: none;
-      background: #fefce8;
-      border: 2px solid #eab308;
-      border-inline-start: 5px solid #6d28d9;
-      padding: 16px;
-      border-radius: 10px;
-      margin-bottom: 18px;
+      background: linear-gradient(135deg, #ffffff 0%, var(--pi-gold-soft) 100%);
+      border: 2px solid var(--pi-gold-bright);
+      border-inline-start: 6px solid var(--pi-purple);
+      padding: 18px 20px;
+      border-radius: 16px;
+      margin-bottom: 20px;
+      box-shadow: 0 8px 20px rgba(76, 29, 149, 0.1);
     }
-    .detail-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
-    .detail-title { margin: 0; color: #4c1d95; font-size: 17px; }
-    .btn-close { background: #6d28d9; color: #ffffff; padding: 5px 10px; font-size: 12px; }
+    .detail-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+    .detail-title {
+      margin: 0;
+      color: var(--pi-purple-dark);
+      font-size: 18px;
+    }
+    .btn-close {
+      background: var(--pi-purple);
+      color: #ffffff;
+      padding: 6px 12px;
+      font-size: 12px;
+      border-radius: 8px;
+    }
+
+    .section-heading {
+      color: var(--pi-purple-dark);
+      font-size: 20px;
+      margin: 8px 0 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-heading::before {
+      content: "";
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--pi-purple) 0%, var(--pi-gold) 100%);
+      display: inline-block;
+    }
 
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 16px;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      gap: 18px;
     }
     .card {
-      background: #ffffff;
-      border-radius: 10px;
-      padding: 16px;
-      box-shadow: 0 2px 8px rgba(76, 29, 149, 0.08);
-      border-top: 4px solid #6d28d9;
+      background: var(--pi-card);
+      border-radius: 16px;
+      padding: 18px;
+      box-shadow: 0 6px 18px rgba(76, 29, 149, 0.08);
+      border: 1px solid var(--pi-border);
+      border-top: 5px solid var(--pi-purple);
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      gap: 12px;
+      gap: 14px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 26px rgba(91, 33, 182, 0.14);
+      border-top-color: var(--pi-gold);
     }
     .cat {
       display: inline-block;
-      background: #ede9fe;
-      color: #5b21b6;
-      padding: 3px 9px;
+      background: var(--pi-purple-soft);
+      color: var(--pi-purple);
+      border: 1px solid #c4b5fd;
+      padding: 4px 11px;
       border-radius: 999px;
       font-size: 12px;
       font-weight: bold;
     }
-    .card h3 { margin: 8px 0 6px; color: #4c1d95; font-size: 17px; }
-    .card p { margin: 0; font-size: 14px; color: #374151; }
-    .price { font-size: 17px; font-weight: bold; color: #15803d; margin-bottom: 8px; }
-    .actions { display: flex; flex-direction: column; gap: 7px; }
-    .btn-order { background: #16a34a; color: #ffffff; width: 100%; }
-    .btn-detail { background: #facc15; color: #1e1b4b; width: 100%; border: 1px solid #ca8a04; }
-    .btn-dl { background: #eab308; color: #1e1b4b; width: 100%; border: 2px solid #6d28d9; font-size: 14px; padding: 10px 14px; }
-    .btn-copy { background: #5b21b6; color: #ffffff; width: 100%; }
+    .card h3 {
+      margin: 10px 0 7px;
+      color: var(--pi-purple-dark);
+      font-size: 17px;
+    }
+    .card p {
+      margin: 0;
+      font-size: 14px;
+      color: var(--pi-muted);
+    }
+    .price {
+      font-size: 18px;
+      font-weight: bold;
+      color: var(--pi-purple);
+      background: var(--pi-gold-soft);
+      border: 1px solid #fde68a;
+      border-radius: 10px;
+      padding: 6px 10px;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+    .actions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .btn-order {
+      background: linear-gradient(135deg, var(--pi-purple) 0%, var(--pi-purple-mid) 100%);
+      color: #ffffff;
+      width: 100%;
+    }
+    .btn-order:hover {
+      background: linear-gradient(135deg, var(--pi-purple-dark) 0%, var(--pi-purple) 100%);
+    }
+    .btn-detail {
+      background: var(--pi-gold-soft);
+      color: var(--pi-purple-dark);
+      width: 100%;
+      border: 1px solid var(--pi-gold);
+    }
+    .btn-dl {
+      background: linear-gradient(135deg, var(--pi-gold-bright) 0%, var(--pi-gold) 100%);
+      color: var(--pi-purple-dark);
+      width: 100%;
+      border: 2px solid var(--pi-purple);
+      font-size: 14px;
+      padding: 10px 14px;
+    }
+    .btn-copy {
+      background: var(--pi-purple);
+      color: #ffffff;
+      width: 100%;
+    }
 
     .orders-box {
-      margin-top: 24px;
-      background: #ffffff;
-      border-radius: 10px;
-      padding: 18px;
-      box-shadow: 0 2px 8px rgba(76, 29, 149, 0.08);
-      border-top: 3px solid #16a34a;
+      margin-top: 26px;
+      background: var(--pi-card);
+      border-radius: 16px;
+      padding: 20px 22px;
+      box-shadow: 0 6px 20px rgba(76, 29, 149, 0.08);
+      border: 1px solid var(--pi-border);
+      border-top: 4px solid var(--pi-purple);
     }
-    .orders-box h2 { margin-top: 0; color: #4c1d95; }
+    .orders-box h2 {
+      margin-top: 0;
+      color: var(--pi-purple-dark);
+      font-size: 19px;
+    }
     .order-card {
-      border: 1px solid #ddd6fe;
-      background: #faf5ff;
-      border-radius: 8px;
-      padding: 12px;
-      margin-top: 10px;
+      border: 1px solid var(--pi-border);
+      background: #faf7ff;
+      border-radius: 12px;
+      padding: 14px;
+      margin-top: 12px;
     }
-    .order-paid { border-color: #16a34a; background: #dcfce7; }
-    .paid-msg { color: #15803d; font-weight: bold; margin: 6px 0; }
-    .pending-msg { color: #a16207; font-weight: bold; margin: 6px 0; }
-    .cancel-msg { color: #b91c1c; font-weight: bold; margin: 6px 0; }
+    .order-paid {
+      border-color: var(--pi-green);
+      background: var(--pi-green-soft);
+    }
+    .paid-msg {
+      color: var(--pi-green);
+      font-weight: bold;
+      margin: 6px 0;
+    }
+    .pending-msg {
+      color: #b45309;
+      font-weight: bold;
+      margin: 6px 0;
+    }
+    .cancel-msg {
+      color: #b91c1c;
+      font-weight: bold;
+      margin: 6px 0;
+    }
 
     footer {
       margin-top: 24px;
-      background: #ffffff;
-      border-radius: 10px;
-      padding: 16px 18px;
-      border-bottom: 4px solid #6d28d9;
+      background: linear-gradient(135deg, #ffffff 0%, #f5f3ff 100%);
+      border-radius: 16px;
+      padding: 18px 22px;
+      border: 1px solid var(--pi-border);
+      border-bottom: 4px solid var(--pi-gold);
+      box-shadow: 0 4px 14px rgba(76, 29, 149, 0.06);
       font-size: 13px;
-      color: #312e81;
+      color: var(--pi-text);
     }
-    footer h3 { margin: 0 0 6px; color: #4c1d95; font-size: 15px; }
-    footer p { margin: 0; }
+    footer h3 {
+      margin: 0 0 6px;
+      color: var(--pi-purple-dark);
+      font-size: 15px;
+    }
+    footer p {
+      margin: 0;
+      color: var(--pi-muted);
+    }
   </style>
 </head>
 <body>
@@ -236,8 +416,8 @@
 
   <div class="wrap">
     <div class="box">
-      <h2 id="aboutTitle" style="margin:0 0 6px;color:#4c1d95;font-size:18px;">عن متجر Asmar 1972</h2>
-      <p id="aboutDesc" style="margin:0;font-size:14px;">متجر رقمي يقدم 9 أعمال أصلية تشمل قصص الأطفال، أدلة التغذية الطبيعية، وحاسبة مشاريع البناء مع تسليم رقمي فوري بعد إتمام الدفع عبر Pi.</p>
+      <h2 id="aboutTitle" style="margin:0 0 6px;color:#2e1065;font-size:18px;">عن متجر Asmar 1972</h2>
+      <p id="aboutDesc" style="margin:0;font-size:14px;color:#4b5563;">متجر رقمي يقدم 9 أعمال أصلية تشمل قصص الأطفال، أدلة التغذية الطبيعية، وحاسبة مشاريع البناء مع تسليم رقمي فوري بعد إتمام الدفع عبر Pi.</p>
     </div>
 
     <div class="toast" id="toastBox"></div>
@@ -253,7 +433,7 @@
         <h3 class="prompt-title" id="promptTitle">إتمام الطلب يتطلب Pi Browser</h3>
         <button type="button" class="btn-close" id="btnClosePrompt" onclick="hideBrowserPrompt()">إغلاق</button>
       </div>
-      <p class="prompt-text" id="promptText">يتم توجيهك إلى صفحة تنزيل متصفح Pi Browser لإتمام الشراء والدفع داخل نظام Pi. إذا لم يفتح تلقائياً، اضغط على الزر أدناه.</p>
+      <p class="prompt-text" id="promptText">يتم توجيهك إلى رابط دعوة Pi Network لتنزيل التطبيق وإتمام الشراء والدفع داخل نظام Pi. إذا لم يفتح تلقائياً، اضغط على الزر أدناه.</p>
       <div class="actions" id="promptActions"></div>
     </div>
 
@@ -262,11 +442,11 @@
         <h3 class="detail-title" id="detailTitle"></h3>
         <button type="button" class="btn-close" id="btnCloseDetail" onclick="hideDetails()">إغلاق</button>
       </div>
-      <div id="detailMeta" style="font-size:13px;font-weight:bold;color:#15803d;margin:6px 0;"></div>
-      <p id="detailText" style="margin:0;font-size:14px;"></p>
+      <div id="detailMeta" style="font-size:13px;font-weight:bold;color:#5b21b6;margin:8px 0;"></div>
+      <p id="detailText" style="margin:0;font-size:14px;color:#374151;"></p>
     </div>
 
-    <h2 id="catalogTitle" style="color:#4c1d95;">قائمة الكتب والقصص</h2>
+    <h2 class="section-heading" id="catalogTitle">قائمة الكتب والقصص</h2>
     <div class="grid" id="productsGrid"></div>
 
     <div class="orders-box">
@@ -281,7 +461,8 @@
   </div>
 
   <script>
-    const PI_BROWSER_URL = "https://minepi.com/pi-browser/";
+    const PI_USERNAME = "Asmar1972";
+    const PI_INVITE_URL = "https://minepi.com/" + PI_USERNAME;
 
     const PRODUCTS = [
       {
@@ -375,8 +556,8 @@
         detailBtn: "تفاصيل الإصدار",
         closeBtn: "إغلاق",
         promptTitle: "إتمام الطلب يتطلب Pi Browser",
-        promptText: "يتم توجيهك إلى صفحة تنزيل متصفح Pi Browser لإتمام الشراء والدفع داخل نظام Pi. إذا لم يفتح تلقائياً، اضغط على الزر أدناه.",
-        getPiBrowserBtn: "تنزيل / فتح Pi Browser",
+        promptText: "يتم توجيهك إلى رابط دعوة Pi Network لتنزيل التطبيق وإتمام الشراء والدفع داخل نظام Pi. إذا لم يفتح تلقائياً، اضغط على الزر أدناه.",
+        getPiBrowserBtn: "تنزيل / فتح Pi عبر الدعوة",
         topDlTitle: "تم الدفع بنجاح! كتابك جاهز للتحميل الآن",
         topDlBookPrefix: "الكتاب المفعّل: ",
         dlBtn: "تحميل / فتح الكتاب الآن",
@@ -406,500 +587,8 @@
         detailBtn: "Edition Details",
         closeBtn: "Close",
         promptTitle: "Completing Order Requires Pi Browser",
-        promptText: "Redirecting you to the Pi Browser download page to complete payment inside the Pi Ecosystem. Use the button below if it does not open automatically.",
-        getPiBrowserBtn: "Download / Open Pi Browser",
+        promptText: "Redirecting you to the Pi Network invitation link to download the app and complete payment inside the Pi Ecosystem. Use the button below if it does not open automatically.",
+        getPiBrowserBtn: "Download / Open Pi via Invite",
         topDlTitle: "Payment Successful! Your Book is Ready to Download",
         topDlBookPrefix: "Unlocked Book: ",
-        dlBtn: "Download / Open Book Now",
-        copyBtn: "Copy Download Link",
-        copied: "Copied successfully.",
-        cleared: "Session cleared successfully.",
-        noOrders: "No orders yet.",
-        paid: "Paid & Unlocked",
-        pending: "Pending Payment",
-        cancelled: "Cancelled / Failed",
-        policyTitle: "Privacy Policy & Terms of Use",
-        policyText: "All items are digital files delivered immediately after payment confirmation with no physical shipping. We only use Pi identity for sign-in and payment."
-      },
-      fr: {
-        dir: "ltr",
-        eco: "Boutique Numerique Integree - Pi Ecosystem",
-        sub: "Livres Numeriques et Histoires Enfants",
-        guest: "Invite / Non connecte",
-        login: "Connexion Pi",
-        share: "Partager le Lien",
-        clear: "Effacer Session",
-        aboutTitle: "A propos d'Asmar 1972",
-        aboutDesc: "Boutique numerique proposant 9 oeuvres originales : histoires pour enfants, guides de nutrition naturelle et calculateur de projets de construction via Pi.",
-        catalog: "Catalogue Livres et Histoires",
-        orders: "Commandes, Paiement et Telechargement",
-        orderBtn: "Commander l Edition",
-        detailBtn: "Details de l Edition",
-        closeBtn: "Fermer",
-        promptTitle: "Pi Browser est requis pour commander",
-        promptText: "Redirection vers la page de telechargement de Pi Browser pour finaliser le paiement dans l'ecosysteme Pi.",
-        getPiBrowserBtn: "Telecharger / Ouvrir Pi Browser",
-        topDlTitle: "Paiement Reussi ! Votre Livre est Pret au Telechargement",
-        topDlBookPrefix: "Livre Debloque : ",
-        dlBtn: "Telecharger / Ouvrir le Livre",
-        copyBtn: "Copier le Lien",
-        copied: "Copie avec succes.",
-        cleared: "Session effacee.",
-        noOrders: "Aucune commande.",
-        paid: "Paye et Debloque",
-        pending: "En attente",
-        cancelled: "Annule",
-        policyTitle: "Politique de Confidentialite et Conditions",
-        policyText: "Tous les produits sont des fichiers numeriques livres immediatement apres confirmation du paiement, sans expedition physique."
-      }
-    };
-
-    const LS_ORDERS_KEY = "asmar1972_orders_safe_v6";
-    const LS_USER_KEY = "asmar1972_user_safe_v6";
-
-    function isInsidePiBrowser() {
-      try {
-        const ua = (navigator.userAgent || "").toLowerCase();
-        if (ua.includes("pibrowser") || ua.includes("pi browser")) {
-          return true;
-        }
-        return Boolean(
-          window.Pi &&
-          typeof window.Pi.createPayment === "function" &&
-          typeof window.Pi.authenticate === "function" &&
-          !ua.includes("chrome/") &&
-          !ua.includes("safari/") &&
-          !ua.includes("firefox/")
-        );
-      } catch (e) {
-        return false;
-      }
-    }
-
-    function safeParseArray(str) {
-      try {
-        if (!str) return [];
-        const v = JSON.parse(str);
-        return Array.isArray(v) ? v : [];
-      } catch (e) {
-        return [];
-      }
-    }
-
-    function safeParseUser(str) {
-      try {
-        if (!str) return null;
-        const v = JSON.parse(str);
-        return v && typeof v === "object" ? v : null;
-      } catch (e) {
-        return null;
-      }
-    }
-
-    function readOrdersSafe() {
-      try {
-        return safeParseArray(localStorage.getItem(LS_ORDERS_KEY));
-      } catch (e) {
-        return [];
-      }
-    }
-
-    function writeOrdersSafe(list) {
-      try {
-        localStorage.setItem(LS_ORDERS_KEY, JSON.stringify(Array.isArray(list) ? list : []));
-      } catch (e) {}
-    }
-
-    function readUserSafe() {
-      try {
-        return safeParseUser(localStorage.getItem(LS_USER_KEY));
-      } catch (e) {
-        return null;
-      }
-    }
-
-    function writeUserSafe(user) {
-      try {
-        if (user) {
-          localStorage.setItem(LS_USER_KEY, JSON.stringify(user));
-        } else {
-          localStorage.removeItem(LS_USER_KEY);
-        }
-      } catch (e) {}
-    }
-
-    let lang = "ar";
-    let piUser = readUserSafe();
-    let orders = readOrdersSafe();
-    let activeDetailId = null;
-    let showBrowserPromptFlag = false;
-    let latestPaidProductId = (() => {
-      const paid = orders.find((o) => o && o.status === "paid");
-      return paid ? paid.productId : null;
-    })();
-
-    try {
-      if (isInsidePiBrowser() && window.Pi && typeof window.Pi.init === "function") {
-        window.Pi.init({ version: "2.0", sandbox: false });
-      }
-    } catch (e) {}
-
-    function t(key) {
-      return (I18N[lang] && I18N[lang][key]) || I18N.ar[key] || "";
-    }
-
-    function showToast(msg) {
-      const el = document.getElementById("toastBox");
-      if (!el) return;
-      el.textContent = msg;
-      el.style.display = "block";
-      setTimeout(() => { el.style.display = "none"; }, 3000);
-    }
-
-    function copyStr(val) {
-      if (!val) return;
-      if (navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
-        navigator.clipboard.writeText(val).then(() => showToast(t("copied"))).catch(() => fallbackCopy(val));
-      } else {
-        fallbackCopy(val);
-      }
-    }
-
-    function fallbackCopy(val) {
-      try {
-        const ta = document.createElement("textarea");
-        ta.value = val;
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand("copy");
-        document.body.removeChild(ta);
-        showToast(t("copied"));
-      } catch (e) {}
-    }
-
-    function shareStore() {
-      const url = window.location.href || "https://asmar1972.kahlaamer2022.workers.dev";
-      if (navigator.share && typeof navigator.share === "function") {
-        navigator.share({ title: "Asmar 1972", text: t("aboutDesc"), url }).catch(() => copyStr(url));
-      } else {
-        copyStr(url);
-      }
-    }
-
-    function clearSession() {
-      piUser = null;
-      orders = [];
-      activeDetailId = null;
-      showBrowserPromptFlag = false;
-      latestPaidProductId = null;
-      writeUserSafe(null);
-      writeOrdersSafe([]);
-      updateUserUI();
-      renderTopDownload();
-      renderBrowserPrompt();
-      renderDetails();
-      renderOrders();
-      showToast(t("cleared"));
-    }
-
-    function updateUserUI() {
-      const badge = document.getElementById("userBadge");
-      if (!badge) return;
-      badge.textContent = piUser && piUser.username ? "@" + piUser.username : t("guest");
-    }
-
-    function redirectToPiBrowserDirect() {
-      try {
-        window.location.href = PI_BROWSER_URL;
-      } catch (e) {
-        showBrowserPromptFlag = true;
-        renderBrowserPrompt();
-      }
-    }
-
-    function redirectToPiBrowser() {
-      showBrowserPromptFlag = true;
-      renderBrowserPrompt();
-      try {
-        document.getElementById("browserPromptPanel").scrollIntoView({ behavior: "smooth", block: "center" });
-      } catch (e) {}
-      try {
-        window.open(PI_BROWSER_URL, "_blank", "noopener,noreferrer");
-      } catch (e) {}
-    }
-
-    function hideBrowserPrompt() {
-      showBrowserPromptFlag = false;
-      renderBrowserPrompt();
-    }
-
-    function renderBrowserPrompt() {
-      const panel = document.getElementById("browserPromptPanel");
-      if (!panel) return;
-      if (!showBrowserPromptFlag) {
-        panel.style.display = "none";
-        return;
-      }
-      document.getElementById("promptTitle").textContent = t("promptTitle");
-      document.getElementById("promptText").textContent = t("promptText");
-      document.getElementById("btnClosePrompt").textContent = t("closeBtn");
-      document.getElementById("promptActions").innerHTML = `
-        <a class="btn-link btn-order" href="${PI_BROWSER_URL}" target="_blank" rel="noopener noreferrer">${t("getPiBrowserBtn")}</a>
-      `;
-      panel.style.display = "block";
-    }
-
-    function loginPi() {
-      if (!isInsidePiBrowser() || !window.Pi || typeof window.Pi.authenticate !== "function") {
-        redirectToPiBrowser();
-        return;
-      }
-      try {
-        window.Pi.authenticate(["username", "payments"], () => {})
-          .then((auth) => {
-            if (auth && auth.user) {
-              piUser = auth.user;
-              writeUserSafe(piUser);
-              updateUserUI();
-              showToast("@" + piUser.username);
-            }
-          })
-          .catch(() => redirectToPiBrowser());
-      } catch (e) {
-        redirectToPiBrowser();
-      }
-    }
-
-    function renderTopDownload() {
-      const box = document.getElementById("topDownloadBox");
-      if (!box) return;
-      const item = PRODUCTS.find((p) => p.id === latestPaidProductId);
-      if (!item || !item.url) {
-        box.style.display = "none";
-        return;
-      }
-      document.getElementById("topDlTitle").textContent = t("topDlTitle");
-      document.getElementById("topDlBook").textContent = t("topDlBookPrefix") + (item.title[lang] || item.title.ar);
-      document.getElementById("topDlActions").innerHTML = `
-        <a class="btn-link btn-dl" href="${item.url}" target="_blank" rel="noopener noreferrer">${t("dlBtn")}</a>
-        <button type="button" class="btn-copy" onclick="copyStr('${item.url}')">${t("copyBtn")}</button>
-      `;
-      box.style.display = "block";
-    }
-
-    function markOrderPaid(order, product) {
-      order.status = "paid";
-      writeOrdersSafe(orders);
-      latestPaidProductId = product.id;
-      renderTopDownload();
-      renderOrders();
-      try {
-        document.getElementById("topDownloadBox").scrollIntoView({ behavior: "smooth", block: "center" });
-        window.open(product.url, "_blank", "noopener,noreferrer");
-      } catch (e) {}
-    }
-
-    function showDetails(id) {
-      activeDetailId = id;
-      renderDetails();
-      try {
-        document.getElementById("detailPanel").scrollIntoView({ behavior: "smooth", block: "nearest" });
-      } catch (e) {}
-    }
-
-    function hideDetails() {
-      activeDetailId = null;
-      renderDetails();
-    }
-
-    function renderDetails() {
-      const panel = document.getElementById("detailPanel");
-      if (!panel) return;
-      const item = PRODUCTS.find((p) => p.id === activeDetailId);
-      if (!item) {
-        panel.style.display = "none";
-        return;
-      }
-      document.getElementById("detailTitle").textContent = item.title[lang] || item.title.ar;
-      document.getElementById("detailMeta").textContent = (item.cat[lang] || item.cat.ar) + " | " + item.price + " Pi";
-      document.getElementById("detailText").textContent = item.desc[lang] || item.desc.ar;
-      document.getElementById("btnCloseDetail").textContent = t("closeBtn");
-      panel.style.display = "block";
-    }
-
-    function orderProduct(id) {
-      const item = PRODUCTS.find((p) => p.id === id);
-      if (!item) return;
-
-      if (!isInsidePiBrowser() || !window.Pi || typeof window.Pi.createPayment !== "function") {
-        redirectToPiBrowserDirect();
-        return;
-      }
-
-      const order = {
-        id: "ORD-" + Date.now(),
-        productId: item.id,
-        price: item.price,
-        status: "pending"
-      };
-      orders.unshift(order);
-      writeOrdersSafe(orders);
-      renderOrders();
-
-      const runPay = () => {
-        try {
-          window.Pi.createPayment(
-            {
-              amount: item.price,
-              memo: item.title[lang] || item.title.ar,
-              metadata: { orderId: order.id, productId: item.id }
-            },
-            {
-              onReadyForServerApproval: (paymentId) => {
-                fetch("/api/pi/approve", {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ paymentId, orderId: order.id })
-                }).catch(() => {});
-              },
-              onReadyForServerCompletion: (paymentId, txid) => {
-                fetch("/api/pi/complete", {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ paymentId, txid, orderId: order.id })
-                })
-                  .then((r) => r.ok ? r.json() : null)
-                  .then((data) => {
-                    if (data && data.ok !== false) {
-                      markOrderPaid(order, item);
-                    }
-                  })
-                  .catch(() => {});
-              },
-              onCancel: () => {
-                order.status = "cancelled";
-                writeOrdersSafe(orders);
-                renderOrders();
-              },
-              onError: () => {
-                order.status = "cancelled";
-                writeOrdersSafe(orders);
-                renderOrders();
-              }
-            }
-          ).catch(() => {});
-        } catch (e) {}
-      };
-
-      if (!piUser) {
-        try {
-          window.Pi.authenticate(["username", "payments"], () => {})
-            .then((auth) => {
-              if (auth && auth.user) {
-                piUser = auth.user;
-                writeUserSafe(piUser);
-                updateUserUI();
-                runPay();
-              } else {
-                redirectToPiBrowserDirect();
-              }
-            })
-            .catch(() => redirectToPiBrowserDirect());
-        } catch (e) {
-          redirectToPiBrowserDirect();
-        }
-      } else {
-        runPay();
-      }
-    }
-
-    function renderProducts() {
-      const grid = document.getElementById("productsGrid");
-      if (!grid) return;
-      grid.innerHTML = PRODUCTS.map((p) => `
-        <div class="card">
-          <div>
-            <span class="cat">${p.cat[lang] || p.cat.ar}</span>
-            <h3>${p.title[lang] || p.title.ar}</h3>
-            <p>${p.desc[lang] || p.desc.ar}</p>
-          </div>
-          <div>
-            <div class="price">${p.price} Pi</div>
-            <div class="actions">
-              <button type="button" class="btn-order" onclick="orderProduct('${p.id}')">${t("orderBtn")} (${p.price} Pi)</button>
-              <button type="button" class="btn-detail" onclick="showDetails('${p.id}')">${t("detailBtn")}</button>
-            </div>
-          </div>
-        </div>
-      `).join("");
-    }
-
-    function renderOrders() {
-      const box = document.getElementById("ordersContainer");
-      if (!box) return;
-      if (!orders.length) {
-        box.innerHTML = "<p style='margin:0;color:#4b5563;'>" + t("noOrders") + "</p>";
-        return;
-      }
-      box.innerHTML = orders.map((o) => {
-        const p = PRODUCTS.find((x) => x.id === o.productId);
-        const title = p ? (p.title[lang] || p.title.ar) : o.productId;
-        const url = p ? p.url : "";
-        let statusHtml = `<div class="pending-msg">${t("pending")}</div>`;
-        let extra = "";
-        if (o.status === "paid") {
-          statusHtml = `<div class="paid-msg">${t("paid")}</div>`;
-          if (url) {
-            extra = `
-              <div class="actions" style="margin-top:8px;">
-                <a class="btn-link btn-dl" href="${url}" target="_blank" rel="noopener noreferrer">${t("dlBtn")}</a>
-                <button type="button" class="btn-copy" onclick="copyStr('${url}')">${t("copyBtn")}</button>
-              </div>
-            `;
-          }
-        } else if (o.status === "cancelled") {
-          statusHtml = `<div class="cancel-msg">${t("cancelled")}</div>`;
-        }
-        return `
-          <div class="order-card ${o.status === "paid" ? "order-paid" : ""}">
-            <div><strong>${o.id}</strong> — ${title} (${o.price} Pi)</div>
-            ${statusHtml}
-            ${extra}
-          </div>
-        `;
-      }).join("");
-    }
-
-    function switchLang(newLang) {
-      lang = newLang;
-      document.documentElement.lang = lang;
-      document.documentElement.dir = t("dir");
-
-      document.getElementById("langAr").className = "btn-lang" + (lang === "ar" ? " active" : "");
-      document.getElementById("langEn").className = "btn-lang" + (lang === "en" ? " active" : "");
-      document.getElementById("langFr").className = "btn-lang" + (lang === "fr" ? " active" : "");
-
-      document.getElementById("ecoBar").textContent = t("eco");
-      document.getElementById("subTitle").textContent = t("sub");
-      document.getElementById("btnLogin").textContent = t("login");
-      document.getElementById("btnShare").textContent = t("share");
-      document.getElementById("btnClear").textContent = t("clear");
-      document.getElementById("aboutTitle").textContent = t("aboutTitle");
-      document.getElementById("aboutDesc").textContent = t("aboutDesc");
-      document.getElementById("catalogTitle").textContent = t("catalog");
-      document.getElementById("ordersTitle").textContent = t("orders");
-      document.getElementById("policyTitle").textContent = t("policyTitle");
-      document.getElementById("policyText").textContent = t("policyText");
-
-      updateUserUI();
-      renderTopDownload();
-      renderBrowserPrompt();
-      renderProducts();
-      renderDetails();
-      renderOrders();
-    }
-
-    switchLang("ar");
-  </script>
-</body>
-</html>
+        dlBtn: "
